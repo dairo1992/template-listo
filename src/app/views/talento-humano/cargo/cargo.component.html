@@ -1,0 +1,72 @@
+@if(loading){
+<p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
+}
+<div class="flex overflow-hidden">
+    <p-toast></p-toast>
+    <div class="card flex-none font-bold m-2 px-5 border-round">
+        <div class="grid">
+            <div class="col-12 md:col-12 sm:col-12">
+                <form [formGroup]="formCargo">
+                    <div class="p-fluid">
+                        <h5>Registrar Area</h5>
+                        <div class="field">
+                            <label htmlFor="nombre">NOMBRE</label>
+                            <input pInputText id="nombre" formControlName="NOMBRE" style="text-transform: uppercase"
+                                type="text" autocomplete="off" />
+                        </div>
+                        <div class="field">
+                            <p-dropdown formControlName="AREA" [options]="tHumanoService.areas()" appendTo="body"
+                                [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'" [optionValue]="'ID'"
+                                [showClear]="true" placeholder="Seleccionar Area">
+                            </p-dropdown>
+                        </div>
+                        <!-- {{tHumanoService.areas2() | json}} -->
+                        <div class="flex flex-wrap gap-2 align-items-center justify-content-center">
+                            <p-button icon="pi pi-save" [loading]="loading" (onClick)="guardar()"></p-button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="card flex-grow-1 font-bold m-2 px-5 py-3 border-round content-custom">
+        <p-table [value]="tHumanoService.cargos()" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+            [tableStyle]="{ 'min-width': '50rem' }"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cargos"
+            [rowsPerPageOptions]="[5, 10, 20]">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>AREA</th>
+                    <th>ESTADO</th>
+                    <th>FECHA CREACION</th>
+                    <th>FECHA ACTUALIZACION</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-cargo>
+                <tr>
+                    <td>{{ cargo.NOMBRE | uppercase }}</td>
+                    <td>{{ cargo.NOMBRE_AREA | uppercase }}</td>
+                    <td>
+                        @if(cargo.ESTADO == 'A'){
+                        <p-tag severity="success" value="ACTIVO"></p-tag>
+                        } @else{
+                        <p-tag severity="danger" value="INACTIVO"></p-tag>
+                        }
+                    </td>
+                    <td>{{ cargo.FECHA_CREACION | date : "MM/dd/yyyy" }}</td>
+                    <td>
+                        {{ cargo.FECHA_ACTUALIZACION | date : "MM/dd/yyyy" }}
+                    </td>
+                    <td>
+                        <button pButton pRipple [icon]="
+                                cargo.ESTADO == 'I'
+                                    ? 'pi pi-check'
+                                    : 'pi pi-times'
+                            " (click)="cambiarEstado(cargo)"></button>
+                    </td>
+                </tr>
+            </ng-template></p-table>
+    </div>
+</div>

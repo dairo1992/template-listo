@@ -1,0 +1,7 @@
+[
+    { "CODIGO": "OL", "NOMBRE": "OBRA LABOR" },
+    { "CODIGO": "TF", "NOMBRE": "TERMINO FIJO" },
+    { "CODIGO": "TI", "NOMBRE": "TERMINO INDEFINIDO" },
+    { "CODIGO": "AP", "NOMBRE": "APRENDIZAJE" },
+    { "CODIGO": "TE", "NOMBRE": "TEMPORAL" }
+]

@@ -1,0 +1,355 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card" id="htmlData">
+            <p-toast></p-toast>
+            @if(uitility.loading()){
+            <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
+            }
+            <p-table #dt1 [value]="thService.personas()" [paginator]="true" [rows]="10" dataKey="id"
+                [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '50rem' }" styleClass="p-datatable-striped"
+                currentPageReportTemplate="{first} hasta {last} de {totalRecords} registros"
+                [showCurrentPageReport]="true" [rowsPerPageOptions]="[5, 10, 20]" editMode="row" [lazy]="true"
+                [globalFilterFields]="['NOMBRE','TIPO_DOCUMENTO','DOCUMENTO','NEGOCIO']">
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <button pButton pRipple label="Nuevo" class="p-button-outlined mr-2" icon="pi pi-user-plus"
+                            (click)="showModal('NUEVA PERSONA')"></button>
+                        <span class="p-input-icon-left ml-auto">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" #filter (input)="applyFilterGlobal(dt1, $event, 'contains')"
+                                placeholder="Filtro" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>DOCUMENTO</th>
+                        <th>SEDE</th>
+                        <th>EMPLEADOR</th>
+                        <th>AREA</th>
+                        <th>CARGO</th>
+                        <th>FECHA INGRESO</th>
+                        <th>ESTADO</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-persona>
+                    <tr>
+                        <td>
+                            {{ persona.NOMBRES | uppercase }}
+                        </td>
+                        <td>
+                            {{ persona.TIPO_DOCUMENTO.CODIGO == undefined ? persona.TIPO_DOCUMENTO :
+                            persona.TIPO_DOCUMENTO.CODIGO}} - {{ persona.DOCUMENTO }}
+                        </td>
+                        <td>
+                            {{ persona.SEDE_NOMBRE }}
+                        </td>
+                        <td>
+                            {{ persona.EMPLEADOR }}
+                        </td>
+                        <td>
+                            {{ persona.AREA_NOMBRE }}
+                        </td>
+                        <td>
+                            {{ persona.CARGO_NOMBRE }}
+                        </td>
+                        <td>
+                            {{ persona.FECHA_INGRESO }}
+                        </td>
+                        <td>
+                            <p-tag severity="{{persona.ESTADO == 'A' ? 'success' : 'danger'}}"
+                                value="{{persona.ESTADO == 'A' ? 'Activo' : 'Inactivo'}}"></p-tag>
+                        </td>
+                        <td>
+                            <div class="flex align-items-center justify-content-center gap-2">
+                                <p-button pRipple icon="pi pi-user-edit" severity="info" [outlined]="true"
+                                    (click)="editarUsuario(persona)"></p-button>
+                                <p-button [icon]="persona.ESTADO == 'I' ? 'pi pi-check' : 'pi pi-times'" pRipple
+                                    [severity]="persona.ESTADO == 'I'?'success': 'danger'" [outlined]="true"
+                                    (click)="cambiarEstadoPersona(persona)"></p-button>
+                                <p-button pRipple icon="pi pi-plus" severity="warning" [outlined]="true"
+                                    (click)="addComision(persona)"></p-button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+<p-dialog [header]="tituloModal" [(visible)]="modalPersona" [modal]="true">
+    <ng-template pTemplate="body">
+        <form [formGroup]="formPersona" style="height: 85vh; width: 80VW;">
+            <div class="grid">
+                <div class="col-12 md:col-12">
+                    <div class="card p-fluid">
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlFor="NOMBRES">NOMBRES</label>
+                                <input formControlName="NOMBRES" style="text-transform: uppercase" type="text"
+                                    pInputText />
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="APELLIDOS">APELLIDOS</label>
+                                <input formControlName="APELLIDOS" style="text-transform: uppercase" type="text"
+                                    pInputText />
+                            </div>
+                        </div>
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlFor="TIPO_DOCUMENTO">TIPO DOCUMENTO</label>
+                                <p-dropdown formControlName="TIPO_DOCUMENTO" [options]="uitility.tiposDocumento()"
+                                    appendTo="body" [optionLabel]="'NOMBRE'" [optionValue]="'CODIGO'"
+                                    placeholder="Seleccionar" [filter]="true" filterBy="NOMBRE">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="DOCUMENTO">DOCUMENTO</label>
+                                <p-inputNumber formControlName="DOCUMENTO" inputId="minmax" mode="decimal" [min]="0">
+                                </p-inputNumber>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="RH">RH</label>
+                                <p-dropdown formControlName="RH" [options]="uitility.tiposRh()" appendTo="body"
+                                    [optionLabel]="'NOMBRE'" [optionValue]="'CODIGO'" placeholder="Seleccionar"
+                                    [filter]="true" filterBy="NOMBRE">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="SEXO">SEXO</label>
+                                <p-dropdown formControlName="SEXO" [options]="[{CODIGO: 'M', NOMBRE: 'MASCULINO'},{CODIGO: 'F', NOMBRE: 'FEMENINO'},{CODIGO:'NA', NOMBRE: '
+                                    PREFIERO NO DECIRLO'}]" appendTo="body" [optionLabel]="'NOMBRE'"
+                                    [optionValue]="'CODIGO'" placeholder="SELECCIONAR" [filter]="true"
+                                    filterBy="NOMBRE">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlFor="FECHA_NACIMIENTO">FECHA NACIMIENTO</label>
+                                <p-calendar formControlName="FECHA_NACIMIENTO" id="FECHA_NACIMIENTO"
+                                    dateFormat="dd-mm-yy" [iconDisplay]="'input'" [showIcon]="true"></p-calendar>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="ESTADO_CIVIL">ESTADO CIVIL</label>
+                                <p-dropdown formControlName="ESTADO_CIVIL" [options]="uitility.estadoCivil()"
+                                    appendTo="body" [optionLabel]="'NOMBRE'" [optionValue]="'CODIGO'"
+                                    placeholder="Seleccionar" [filter]="true" filterBy="NOMBRE">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="TELEFONO">TELEFONO</label>
+                                <p-inputMask formControlName="TELEFONO" mask="(999) 999-9999"
+                                    placeholder="(999) 999-9999"></p-inputMask>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="DEPARTAMENTO">DEPARTAMENTO</label>
+                                <p-dropdown formControlName="DEPARTAMENTO" [options]="uitility.departamentos()"
+                                    appendTo="body" [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'"
+                                    [optionValue]="'ID'" [showClear]="true" placeholder="Seleccionar"
+                                    (onChange)="obtenerMuni()">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlFor="MUNICIPIO">MUNICIPIO</label>
+                                <p-dropdown formControlName="MUNICIPIO" [options]="uitility.municipios()"
+                                    appendTo="body" [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'"
+                                    [optionValue]="'ID'" [showClear]="true" placeholder="Seleccionar">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="DIRECCION">DIRECCION</label>
+                                <input pInputText id="DIRECCION" formControlName="DIRECCION" type="text"
+                                    style="text-transform: uppercase" />
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="BARRIO">BARRIO</label>
+                                <input pInputText id="BARRIO" formControlName="BARRIO" type="text"
+                                    style="text-transform: uppercase" />
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="EMAIL">CORREO ELECTRONICO</label>
+                                <input pInputText id="EMAIL" formControlName="EMAIL" type="text"
+                                    style="text-transform: uppercase" />
+                            </div>
+                        </div>
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlFor="SEDE">SEDE</label>
+                                <p-dropdown formControlName="SEDE" [options]="thService.sedes()" appendTo="body"
+                                    [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'" [optionValue]="'ID'"
+                                    [showClear]="true" placeholder="Seleccionar">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="AREA">AREA</label>
+                                <p-dropdown formControlName="AREA" [options]="thService.areas()" appendTo="body"
+                                    [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'" [optionValue]="'ID'"
+                                    [showClear]="true" placeholder="Seleccionar" (onChange)="obtenerCargos()">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="CARGO">CARGO</label>
+                                <p-dropdown formControlName="CARGO" [options]="thService.cargos()" appendTo="body"
+                                    [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'" [optionValue]="'ID'"
+                                    [showClear]="true" placeholder="Seleccionar">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="TIPO_CONTRATO">TIPO CONTRATO</label>
+                                <p-dropdown formControlName="TIPO_CONTRATO" [options]="uitility.tiposContratos()"
+                                    appendTo="body" [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'"
+                                    [optionValue]="'CODIGO'" [showClear]="true" placeholder="Seleccionar">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlFor="EMPLEADOR">EMPLEADOR</label>
+                                <input pInputText id="EMPLEADOR" formControlName="EMPLEADOR"
+                                    style="text-transform: uppercase" type="text" />
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="JEFE">JEFE INMEDIATO</label>
+                                <p-dropdown formControlName="JEFE" [options]="thService.personas()" appendTo="body"
+                                    [filter]="true" [filterBy]="'NOMBRES'" [optionLabel]="'NOMBRES'"
+                                    [optionValue]="'ID'" [showClear]="true" placeholder="Seleccionar">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="FECHA_INGRESO">FECHA INGRESO</label>
+                                <p-calendar formControlName="FECHA_INGRESO" dateFormat="dd-mm-yy" [minDate]="minDate"
+                                    [iconDisplay]="'input'" [showIcon]="true"></p-calendar>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="FECHA_EGRESOO">FECHA EGRESO</label>
+                                <p-calendar formControlName="FECHA_EGRESO" dateFormat="dd-mm-yy" [minDate]="minDate"
+                                    [iconDisplay]="'input'" [showIcon]="true"></p-calendar>
+                            </div>
+                        </div>
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlFor="SALARIO">SALARIO</label>
+                                <p-inputNumber formControlName="SALARIO" inputId="currency-us" mode="currency"
+                                    currency="COP" locale="es-ES">
+                                </p-inputNumber>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="BANCO">BANCO</label>
+                                <p-dropdown formControlName="BANCO" [options]="uitility.bancos()" appendTo="body"
+                                    [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'" [optionValue]="'ID'"
+                                    [showClear]="true" placeholder="Seleccionar">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="TIPO_CUENTA">TIPO CUENTA</label>
+                                <p-dropdown formControlName="TIPO_CUENTA"
+                                    [options]="[{CODIGO: 'C', NOMBRE: 'CORRIENTE'},{CODIGO: 'A', NOMBRE:'AHORROS'}]"
+                                    appendTo="body" [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'"
+                                    [optionValue]="'CODIGO'" [showClear]="true" placeholder="Seleccionar">
+                                </p-dropdown>
+                            </div>
+                            <div class="field col">
+                                <label htmlFor="CUENTA">CUENTA</label>
+                                <p-inputNumber formControlName="CUENTA" inputId="minmax" mode="decimal" [min]="0">
+                                </p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex">
+                <div class="flex-1 flex justify-content-center m-2 py-3">
+                    <p-button label="Registrar" [disabled]="!formPersona.valid" [loading]="loading"
+                        (onClick)="nuevaPersona()"></p-button>
+                </div>
+            </div>
+
+        </form>
+    </ng-template>
+</p-dialog>
+<!-- MODAL COMISION -->
+<p-dialog [header]="tituloModal" [(visible)]="modalHorasEstras" [modal]="true">
+    <ng-template pTemplate="body">
+        <div class="grid">
+            <div class="col-12 md:col-12">
+                <div class="card p-fluid">
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="TIPO_CUENTA">TIPO</label>
+                            <p-dropdown [(ngModel)]="formComision.TIPO_COMISION"
+                                [options]="[{CODIGO: 'E', NOMBRE: 'HORAS EXTRAS'}, {CODIGO: 'C', NOMBRE: 'COMISION'}]"
+                                appendTo="body" [filter]="true" [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'"
+                                [optionValue]="'CODIGO'" [showClear]="true" placeholder="Seleccionar">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if(formComision.TIPO_COMISION == 'E'){
+        <div class="grid">
+            <div class="col-12 md:col-12">
+                <div class="card p-fluid">
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="HORAS_EXTRAS">HORAS EXTRAS</label>
+                            <p-inputNumber [(ngModel)]="formComision.HORAS_EXTRAS" mode="decimal"
+                                inputId="withoutgrouping" [useGrouping]="false"> </p-inputNumber>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="TIPO_CUENTA">TIPO HORAS EXTRA</label>
+                            <p-dropdown [(ngModel)]="formComision.TIPO_HORAS_EXTRAS"
+                                [options]="uitility.tipoHoraExtra()" appendTo="body" [filter]="true"
+                                [filterBy]="'NOMBRE'" [optionLabel]="'NOMBRE'" [optionValue]="'CODIGO'"
+                                [showClear]="true" placeholder="Seleccionar">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="OBSERVACION">OBSERVACION</label>
+                            <textarea rows="5" cols="30" pInputTextarea [autoResize]="true"
+                                [(ngModel)]="formComision.OBSERVACION"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+        @if(formComision.TIPO_COMISION == 'C') {
+        <div class="grid">
+            <div class="col-12 md:col-12">
+                <div class="card p-fluid">
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="COMISION">COMISION</label>
+                            <p-inputNumber [(ngModel)]="formComision.COMISION" inputId="currency-us" mode="currency"
+                                currency="COP" locale="es-ES">
+                            </p-inputNumber>
+                        </div>
+                    </div>
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="OBSERVACION">OBSERVACION</label>
+                            <textarea rows="5" cols="30" pInputTextarea [autoResize]="true"
+                                [(ngModel)]="formComision.OBSERVACION"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+        @if(formComision.TIPO_COMISION == 'E' || formComision.TIPO_COMISION == 'C'){
+        <div class="flex">
+            <div class="flex-1 flex justify-content-center m-2 py-3">
+                <p-button label="AGREGAR" [loading]="loading" (onClick)="nuevaComision()"></p-button>
+            </div>
+        </div>
+        }
+    </ng-template>
+</p-dialog>

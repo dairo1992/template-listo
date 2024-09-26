@@ -1,0 +1,34 @@
+[
+    {
+        "CODIGO": "A+",
+        "NOMBRE": "A+"
+    },
+    {
+        "CODIGO": "A-",
+        "NOMBRE": "A-"
+    },
+    {
+        "CODIGO": "B+",
+        "NOMBRE": "B+"
+    },
+    {
+        "CODIGO": "B-",
+        "NOMBRE": "B-"
+    },
+    {
+        "CODIGO": "O+",
+        "NOMBRE": "O+"
+    },
+    {
+        "CODIGO": "O-",
+        "NOMBRE": "O-"
+    },
+    {
+        "CODIGO": "AB+",
+        "NOMBRE": "AB+"
+    },
+    {
+        "CODIGO": "AB-",
+        "NOMBRE": "AB-"
+    }
+]

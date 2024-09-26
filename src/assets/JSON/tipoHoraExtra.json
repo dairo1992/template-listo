@@ -1,0 +1,26 @@
+[
+    {
+        "CODIGO": "HED",
+        "NOMBRE": "HORA EXTRA DIURNA"
+    },
+    {
+        "CODIGO": "HEN",
+        "NOMBRE": "HORA EXTRA NOCTURNA"
+    },
+    {
+        "CODIGO": "HEDD",
+        "NOMBRE": "HORA EXTRA DIURNA DOMINICAL O FESTIVA"
+    },
+    {
+        "CODIGO": "HEND",
+        "NOMBRE": "HORA EXTRA NOCTURNA DOCIMINICAL O FESTIVA"
+    },
+    {
+        "CODIGO": "RN",
+        "NOMBRE": "RECARGO NOCTURO"
+    },
+    {
+        "CODIGO": "RND",
+        "NOMBRE": "RECARGO NOCTURO DOMINICAL"
+    }
+]

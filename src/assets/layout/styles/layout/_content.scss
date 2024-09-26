@@ -1,0 +1,20 @@
+.layout-main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: space-between;
+    padding: 7rem 2rem 2rem 4rem;
+    transition: margin-left $transitionDuration;
+}
+
+.content-custom {
+    min-height: calc(100vh - 10rem);
+    max-height: calc(100vh - 9rem);
+    overflow: auto;
+}
+
+.layout-main {
+    flex: 1 1 auto;
+    overflow: auto;
+    max-height: calc(100vh - 9rem);
+}

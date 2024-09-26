@@ -1,0 +1,34 @@
+[
+    {
+        "CODIGO": "S",
+        "NOMBRE": "SOLTERO"
+    },
+    {
+        "CODIGO": "C",
+        "NOMBRE": "CASADO"
+    },
+    {
+        "CODIGO": "D",
+        "NOMBRE": "DIVORCIADO"
+    },
+    {
+        "CODIGO": "V",
+        "NOMBRE": "VIUDO"
+    },
+    {
+        "CODIGO": "I",
+        "NOMBRE": "SE IGNORA"
+    },
+    {
+        "CODIGO": "E",
+        "NOMBRE": "SEPARADO"
+    },
+    {
+        "CODIGO": "B",
+        "NOMBRE": "CONCUBINATO"
+    },
+    {
+        "CODIGO": "U",
+        "NOMBRE": "UNION LIBRE"
+    }
+]
