@@ -1,0 +1,119 @@
+<p-toast />
+<div class="flex flex-column flex-wrap">
+    <div class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
+        <strong>USUARIOS REGISTRADOS</strong>
+    </div>
+</div>
+@if(service.isLoading()){
+<div class="flex flex-wrap justify-content-center" style="max-width: 100vw">
+    <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+        animationDuration=".5s" />
+</div>
+}
+@else{
+<p-table #table_usuarios [value]="service.lista_usuarios()" styleClass="p-datatable-striped p-datatable-gridlines"
+    [tableStyle]="{'min-width': '50rem'}" [globalFilterFields]="['nombre','documento', 'apellido']" [paginator]="true"
+    [rows]="1" [rowsPerPageOptions]="[5, 10, 20]" stateStorage="session" stateKey="statedemo-session">
+    <ng-template pTemplate="caption">
+        <div class="flex">
+            <p-button label="Nuevo" [outlined]="true" icon="pi pi-user-plus"
+                (click)="modalNuevoUsuario = !modalNuevoUsuario" />
+            <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" [(ngModel)]="searchValue"
+                    (input)="table_usuarios.filterGlobal($event.target.value, 'contains')"
+                    placeholder="Search keyword" />
+            </span>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>DOCUMENTO</th>
+            <th>NOMBRE</th>
+            <th>TIPO USUARIO</th>
+            <th>ESTADO</th>
+            <th>ACCION</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-usuario>
+        <tr>
+            <td>{{usuario.documento}}</td>
+            <td>{{usuario.nombre | uppercase}} {{usuario.apellido | uppercase}}</td>
+            <td>{{usuario.tipo_usuario}}</td>
+            <td><p-tag [value]="getStatus(usuario.estado).nombre" [severity]="getStatus(usuario.estado).color" />
+            <td>
+                <div class="flex align-items-center justify-content-center gap-2">
+                    <p-button pRipple [icon]="usuario.estado== 'A' ?'pi pi-trash' : 'pi pi-check'" [rounded]="true"
+                        [disabled]="loading" [severity]="usuario.estado== 'A' ? 'danger' : 'success'" [outlined]="true"
+                        (click)="uiEstado(usuario)"></p-button>
+                    <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading" severity="info"
+                        [outlined]="true" (click)="setUsuario(usuario)"></p-button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+}
+<p-dialog [header]="modalTitle" [(visible)]="modalNuevoUsuario" [modal]="true" (onHide)="close()"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
+    [resizable]="false">
+    <div class="card p-fluid">
+        <form [formGroup]="formUsuario" #formDirective="ngForm" (ngSubmit)="nuevoUsuario()">
+            <div class="p-formgrid grid">
+                <div class="field col"><label htmlfor="documento">DOCUMENTO</label>
+                    <p-inputNumber inputId="integeronly" formControlName="documento"
+                        [readonly]="formUsuario.value.id > 0" />
+                    @if(formUsuario.get('documento').invalid && (formUsuario.get('documento').dirty ||
+                    formUsuario.get('documento').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+                <div class="field col"><label htmlfor="tipo_usuario">TIPO USUARIO</label>
+                    <p-dropdown [options]="tiposUsuario" formControlName="tipo_usuario" />
+                    @if(formUsuario.get('tipo_usuario').invalid && (formUsuario.get('tipo_usuario').dirty ||
+                    formUsuario.get('tipo_usuario').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+                <div class="field col"><label htmlfor="empresa">EMPRESA</label>
+                    <p-dropdown [options]="listaEmpresas()" formControlName="empresa" [optionLabel]="'nombre'"
+                        [optionValue]="'id'" />
+                    @if(formUsuario.get('empresa').invalid && (formUsuario.get('empresa').dirty ||
+                    formUsuario.get('empresa').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            <div class="p-formgrid grid">
+                <div class="field col"><label htmlfor="nombre">NOMBRES</label>
+                    <input formControlName="nombre" id="nombre" type="text" class="p-inputtext p-component p-element">
+                    @if(formUsuario.get('nombre').invalid &&
+                    (formUsuario.get('nombre').dirty ||
+                    formUsuario.get('nombre').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+                <div class="field col"><label htmlfor="apellido">APELLIDOS</label><input formControlName="apellido"
+                        id="apellido" type="text" class="p-inputtext p-component p-element">
+                    @if(formUsuario.get('apellido').invalid && (formUsuario.get('apellido').dirty ||
+                    formUsuario.get('apellido').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
+        [loading]="service.isLoading()" [disabled]="!formUsuario.valid"
+        (onClick)="formUsuario.value.id > 0 ? actualizarUsuario(formUsuario.value) : nuevoUsuario()" />
+</p-dialog>

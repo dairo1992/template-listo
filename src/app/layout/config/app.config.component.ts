@@ -18,8 +18,8 @@ export class AppConfigComponent {
         this.layoutService.config.update((config) => ({
             ...config,
             ripple: true,
-            theme: 'lara-dark-teal',
-            colorScheme: 'dark',
+            theme: 'lara-light-indigo',
+            colorScheme: 'light',
         }));
     }
 

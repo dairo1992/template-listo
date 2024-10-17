@@ -1,0 +1,103 @@
+<p-toast />
+<div class="flex flex-column flex-wrap">
+    <div class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
+        <strong>MODULOS REGISTRADOS</strong>
+    </div>
+</div>
+@if(service.isLoading()){
+<div class="flex flex-wrap justify-content-center" style="max-width: 100vw">
+    <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+        animationDuration=".5s" />
+</div>
+}
+@else{
+<p-table #table_usuarios [value]="service.lista_modulos()" styleClass="p-datatable-striped p-datatable-gridlines"
+    [tableStyle]="{'min-width': '50rem'}" [globalFilterFields]="['EMPRESA','NOMBRE','ESTADO','ESTADO']" [rows]="10"
+    [paginator]="true" stateStorage="session" stateKey="statedemo-session">
+    <ng-template pTemplate="caption">
+        <div class="flex">
+            <p-button label="Nuevo" [outlined]="true" icon="pi pi-user-plus"
+                (click)="modalNuevaSede = !modalNuevaSede" />
+            <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" [(ngModel)]="searchValue"
+                    (input)="table_usuarios.filterGlobal($event.target.value, 'contains')"
+                    placeholder="Search keyword" />
+            </span>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>EMPRESA</th>
+            <th>SEDE</th>
+            <th>NOMBRE</th>
+            <th>ESTADO</th>
+            <th>FECHA CREACION</th>
+            <th>ACCION</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-modulo>
+        <tr>
+            <td>{{modulo.sede.empresa.nombre}}</td>
+            <td>{{modulo.sede.nombre | uppercase}}</td>
+            <td>{{modulo.nombre | uppercase}}</td>
+            <td><p-tag [value]="getStatus(modulo.estado).nombre" [severity]="getStatus(modulo.estado).color" />
+            <td>{{modulo.created_at | date : 'dd-MM-yyyy'}}</td>
+            <td>
+                <div class="flex align-items-center justify-content-center gap-2">
+                    <p-button pRipple [icon]="modulo.estado== 'A' ?'pi pi-trash' : 'pi pi-check'" [rounded]="true"
+                        [disabled]="loading" [severity]="modulo.estado== 'A' ? 'danger' : 'success'" [outlined]="true"
+                        (click)="uiEstado(modulo)"></p-button>
+                    <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading" severity="info"
+                        [outlined]="true" (click)="setModulo(modulo)"></p-button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+}
+<p-dialog [header]="modalTitle" [(visible)]="modalNuevaSede" [modal]="true" (onHide)="close()"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
+    [resizable]="false">
+    <div class="card p-fluid">
+        <form [formGroup]="moduloForm" #formDirective="ngForm" (ngSubmit)="nuevoModulo()">
+            <div class="p-formgrid grid">
+                <div class="field col"><label htmlfor="empresa_id">EMPRESA</label>
+                    <p-dropdown [options]="listaEmpresas()" formControlName="empresa_id" [optionLabel]="'nombre'"
+                        [optionValue]="'id'" (onChange)="listaSedesByEmpresa(moduloForm.value.empresa_id)" />
+                    @if(moduloForm.get('empresa_id').invalid && (moduloForm.get('empresa_id').dirty ||
+                    moduloForm.get('empresa_id').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+                <div class="field col"><label htmlfor="sede_id">SEDE</label>
+                    <p-dropdown [options]="listaSedesFilter" formControlName="sede_id" [optionLabel]="'nombre'"
+                        [optionValue]="'id'" />
+                    @if(moduloForm.get('sede_id').invalid && (moduloForm.get('sede_id').dirty ||
+                    moduloForm.get('sede_id').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            <div class="p-formgrid grid">
+                <div class="field col"><label htmlfor="nombre">NOMBRE</label>
+                    <input formControlName="nombre" id="nombre" type="text" class="p-inputtext p-component p-element">
+                    @if(moduloForm.get('nombre').invalid &&
+                    (moduloForm.get('nombre').dirty ||
+                    moduloForm.get('nombre').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
+        [loading]="service.isLoading()" [disabled]="!moduloForm.valid"
+        (onClick)="moduloForm.value.id > 0 ? actualizarModulo(moduloForm.value) : nuevoModulo()" />
+</p-dialog>

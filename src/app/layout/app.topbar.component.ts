@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from './service/app.layout.service';
 import { MenuService } from './app.menu.service';
-import { AuthserviceService } from '../service/authservice.service';
+import { AuthserviceService } from '../services/authservice.service';
 
 @Component({
     selector: 'app-topbar',
@@ -28,8 +28,8 @@ export class AppTopBarComponent {
         this.layoutService.config.update((config) => ({
             ...config,
             ripple: true,
-            theme: 'lara-dark-teal',
-            colorScheme: 'dark',
+            theme: 'lara-light-teal',
+            colorScheme: 'light',
         }));
         this.itemsTopbar = [
             {

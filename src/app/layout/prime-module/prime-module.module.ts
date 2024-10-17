@@ -27,9 +27,13 @@ import { DividerModule } from 'primeng/divider';
 import { PasswordModule } from 'primeng/password';
 import { ChartModule } from 'primeng/chart';
 import { MenuModule } from 'primeng/menu';
+import { DatePipe, JsonPipe, UpperCasePipe } from '@angular/common';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { CardModule } from 'primeng/card';
 
 @NgModule({
     declarations: [],
+    imports: [DatePipe, UpperCasePipe, JsonPipe],
     exports: [
         TableModule,
         ProgressBarModule,
@@ -60,6 +64,11 @@ import { MenuModule } from 'primeng/menu';
         PasswordModule,
         ChartModule,
         MenuModule,
+        DatePipe,
+        UpperCasePipe,
+        JsonPipe,
+        OverlayPanelModule,
+        CardModule
     ],
 })
-export class PrimeModuleModule {}
+export class PrimeModule {}

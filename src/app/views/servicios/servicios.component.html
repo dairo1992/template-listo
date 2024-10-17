@@ -1,0 +1,120 @@
+<p-toast />
+
+<div class="flex flex-row flex-wrap">
+    <div class="flex align-items-center justify-content-center w-4 border-round m-2">
+        <div class="card layout-main  min-h-full">
+            <div class="flex flex-column flex-wrap">
+                <div
+                    class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
+                    <strong>REGISTRO</strong>
+                </div>
+            </div>
+            <form [formGroup]="servicioForm" #formDirective="ngForm" (ngSubmit)="nuevoServicio()">
+                <div class="flex flex-column flex-wrap">
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlfor="nombre">NOMBRE</label>
+                            <input formControlName="nombre" id="nombre" type="text"
+                                class="p-inputtext p-component p-element w-full p-3">
+                            @if(servicioForm.get('nombre').invalid &&
+                            (servicioForm.get('nombre').dirty ||
+                            servicioForm.get('nombre').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlfor="descripcion">DESCRIPCION</label>
+                            <input formControlName="descripcion" id="descripcion" type="text"
+                                class="p-inputtext p-component p-element w-full p-3">
+                            @if(servicioForm.get('descripcion').invalid &&
+                            (servicioForm.get('descripcion').dirty ||
+                            servicioForm.get('descripcion').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
+                        [loading]="service.isLoading()" [disabled]="!servicioForm.valid"
+                        (onClick)="servicioForm.value.id > 0 ? actualizarServicio(servicioForm.value) : nuevoServicio()" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="flex align-items-center justify-content-center border-round m-2">
+        <div class="card layout-main">
+            <div class="flex flex-column flex-wrap">
+                <div
+                    class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
+                    <strong>SERVICIOS REGISTRADOS</strong>
+                </div>
+            </div>
+            <p-table #table_servicios [value]="service.lista_servicios()"
+                styleClass="p-datatable-striped p-datatable-gridlines" [tableStyle]="{'min-width': '50rem'}"
+                [globalFilterFields]="['NOMBRE']" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 20]"
+                stateStorage="session" stateKey="statedemo-session" appendTo="body">
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <span class="p-input-icon-left ml-auto">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" [(ngModel)]="searchValue"
+                                (input)="table_usuarios.filterGlobal($event.target.value, 'contains')"
+                                placeholder="Search keyword" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>ESTADO</th>
+                        <th>ACCION</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-servicio>
+                    <tr>
+                        <td>{{servicio.nombre | uppercase}}</td>
+                        <td>
+                            <p-tag [value]="getStatus(servicio.estado).nombre"
+                                [severity]="getStatus(servicio.estado).color" />
+                        <td>
+                            <div class="flex align-items-center justify-content-center gap-2">
+                                <p-button pRipple [icon]="servicio.estado== 'A' ?'pi pi-trash' : 'pi pi-check'"
+                                    [rounded]="true" [disabled]="loading"
+                                    [severity]="servicio.estado== 'A' ? 'danger' : 'success'" [outlined]="true"
+                                    (click)="uiEstado(servicio)"></p-button>
+                                <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading"
+                                    severity="info" [outlined]="true" (click)="setServicio(servicio)"></p-button>
+                                <p-button pRipple icon="pi pi-spin pi-cog" [rounded]="true" [disabled]="loading"
+                                    severity="info" [outlined]="true"
+                                    (click)="op.toggle($event); selectServicio(servicio)"></p-button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<p-overlayPanel #op>
+    <div class="flex align-items-center justify-content-center font-bold border-round m-2">
+        <strong>CONFIGURAR MODULO</strong>
+    </div>
+    <div class="flex justify-content-center">
+        <div class="field">
+            <p-dropdown [options]="moduloService.lista_modulos()" id="config_modulo" [(ngModel)]="modulo"
+                [optionLabel]="'nombre'" [optionValue]="'id'" placeholder="SELECCIONAR"
+                inputStyleClass="surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            </p-dropdown>
+        </div>
+    </div>
+    <div class="field">
+        <p-button class="flex align-items-center justify-content-center" label="Configurar" icon="pi pi-check"
+            [loading]="service.isLoading()" (onClick)="config_modulo_servicio(modulo); op.toggle($event)" />
+    </div>
+</p-overlayPanel>
