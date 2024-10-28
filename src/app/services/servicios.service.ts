@@ -43,7 +43,7 @@ export class ServiciosService {
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -70,7 +70,7 @@ export class ServiciosService {
                     detail: `ACTUALIZADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -94,7 +94,7 @@ export class ServiciosService {
                     detail: `ACTUALIZADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -115,7 +115,7 @@ export class ServiciosService {
                         detail: `CONFIGURACION REALIZADA CORRECTAMENTE`,
                     });
                 },
-                error(err) {
+                error: (err) => {
                     this.messageService.add({
                         severity: 'warn',
                         summary: '!NOTIFICACION¡',

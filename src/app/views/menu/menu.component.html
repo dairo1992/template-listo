@@ -1,0 +1,131 @@
+<p-toast />
+<p-toast />
+<div class="flex flex-row flex-wrap">
+    <div class="flex w-4 border-round mr-4 card">
+        <div class="flex flex-column">
+            <div class="flex align-items-center justify-content-center h-4rem">
+                <div class="flex mb-2 gap-2">
+                    <p-tabMenu [model]="items" [activeItem]="activeItem"
+                        (activeItemChange)="onActiveItemChange($event)" />
+                </div>
+            </div>
+            <div class="flex align-items-center justify-content-center mt-5">
+                <div class="flex flex-column p-fluid">
+                    <form #formDirective="ngForm">
+                        @if(activeItem.id == '0'){
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlfor="nombre">NOMBRE</label>
+                                <input name="nombre" [(ngModel)]="nuevoModulo.label_menu" type="text"
+                                    class="p-inputtext p-component p-element w-full p-3">
+                            </div>
+                        </div>
+                        }
+                        @if(activeItem.id == '1'){
+                        <div class="p-formgrid grid">
+                            <div class="field col"><label htmlfor="menu">MENU</label>
+                                <p-dropdown [options]="menus" [(ngModel)]="nuevoModulo.label_menu" name="menu"
+                                    [optionLabel]="'label'" [optionValue]="'label'" />
+                            </div>
+                        </div>
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlfor="label">NOMBRE</label>
+                                <input id="label" type="text" name="label" [(ngModel)]="nuevoModulo.label"
+                                    class="p-inputtext p-component p-element w-full p-3">
+                            </div>
+                        </div>
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlfor="ruta">RUTA</label>
+                                <input id="ruta" type="text" name="label" [(ngModel)]="nuevoModulo.routerLink"
+                                    class="p-inputtext p-component p-element w-full p-3">
+                            </div>
+                        </div>
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <p-button label="ICONO" [outlined]="true" severity="help"
+                                    (onClick)="modalIcon = !modalIcon" />
+                            </div>
+                        </div>
+                        }
+                        <p-button class="flex align-items-center justify-content-center" label="Guardar"
+                            icon="pi pi-check" (onClick)="uiMenus(nuevoModulo)" />
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex w-7 border-round card" style="min-height: 70dvh;">
+        <div class="w-12">
+            <p-table [value]="menus" dataKey="label" [expandedRowKeys]="expandedRows">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 5rem"></th>
+                        <th>NOMBRE</th>
+                        <th>ICONO</th>
+                        <th>ACCION</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-menu let-expanded="expanded">
+                    <tr>
+                        <td><p-button type="button" pRipple [pRowToggler]="menu" [text]="true" [rounded]="true"
+                                [plain]="true" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" /></td>
+                        <td>{{ menu.label }}</td>
+                        <td><i [class]="menu.items.length > 0 ? menu.items[0].icon: 'pi pi-info'"></i></td>
+                        <td><p-button type="button" icon="pi pi-trash" (click)="removerMenu(menu)" /></td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="rowexpansion" let-menu>
+                    <tr>
+                        <td colspan="7">
+                            <div class="p-3">
+                                <p-table [value]="menu.items">
+                                    <ng-template pTemplate="header">
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>ICON</th>
+                        <th>RUTA</th>
+                        <th>ACCION</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-child>
+                    <tr>
+                        <td>{{ child.label }}</td>
+                        <td><i [class]="child.icon != undefined ? child.icon : 'pi pi-info'"></i></td>
+                        <td>{{ child.routerLink }}</td>
+                        <td><p-button type="button" icon="pi pi-minus" (click)="removerMenu(child)" /></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        </td>
+        </tr>
+        </ng-template>
+        </p-table>
+    </div>
+</div>
+</div>
+<p-dialog header="SELECCIONAR ICONO" [(visible)]="modalIcon" [modal]="true"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
+    [resizable]="false">
+    <div class="flex flex-column">
+        <div><input pinputtext="" [(ngModel)]="query" (ngModelChange)="filterIcon(query)" placeholder="Search an icon"
+                class="p-inputtext p-component w-full p-3 mt-3 mb-4">
+        </div>
+        <div>
+            ICONO: <i class="mb-3 pi pi-file-plus text-2xl text-color-secondary"></i>
+        </div>
+        <div class="card">
+            <div class="grid text-center">
+                @for(icon of iconsTemp; track $index){
+                <div class="col-12 md:col-2 mb-5" (click)="SelectIcon(icon)" style="cursor: pointer;">
+                    <i class="mb-3 text-2xl text-color-secondary" [class]="icon"></i>
+                    <div>{{icon}}</div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</p-dialog>

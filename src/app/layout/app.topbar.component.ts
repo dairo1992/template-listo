@@ -1,8 +1,10 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from './service/app.layout.service';
 import { MenuService } from './app.menu.service';
 import { AuthserviceService } from '../services/authservice.service';
+import { StorageService } from '../services/storage.service';
+import { Usuario } from '../interfaces/usuario.interface';
 
 @Component({
     selector: 'app-topbar',
@@ -12,7 +14,9 @@ export class AppTopBarComponent {
     items!: MenuItem[];
     itemsTopbar: MenuItem[] | undefined;
     @Input() minimal: boolean = false;
-
+    private storageService = inject(StorageService);
+    // public service = inject(UsuarioService);
+    public currentUser: Usuario;
     scales: number[] = [12, 13, 14, 15, 16];
     @ViewChild('menubutton') menuButton!: ElementRef;
 
@@ -25,15 +29,19 @@ export class AppTopBarComponent {
         private authService: AuthserviceService,
         public menuService: MenuService
     ) {
+        this.currentUser = this.storageService.currentUser();
         this.layoutService.config.update((config) => ({
             ...config,
             ripple: true,
-            theme: 'lara-light-teal',
-            colorScheme: 'light',
+            theme: 'lara-dark-teal',
+            colorScheme: 'dark',
         }));
         this.itemsTopbar = [
             {
-                label: 'Optiones',
+                label: this.currentUser
+                    ? this.currentUser.nombre.toUpperCase()
+                    : 'Optiones',
+                // label: 'Optiones',
                 items: [
                     {
                         label: 'Perfil',

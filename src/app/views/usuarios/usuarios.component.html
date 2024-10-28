@@ -12,8 +12,8 @@
 }
 @else{
 <p-table #table_usuarios [value]="service.lista_usuarios()" styleClass="p-datatable-striped p-datatable-gridlines"
-    [tableStyle]="{'min-width': '50rem'}" [globalFilterFields]="['nombre','documento', 'apellido']" [paginator]="true"
-    [rows]="1" [rowsPerPageOptions]="[5, 10, 20]" stateStorage="session" stateKey="statedemo-session">
+    [globalFilterFields]="['nombre','documento', 'apellido']" [paginator]="true"
+    [rows]="service.lista_usuarios().length" [rowsPerPageOptions]="[5, 10, 20]">
     <ng-template pTemplate="caption">
         <div class="flex">
             <p-button label="Nuevo" [outlined]="true" icon="pi pi-user-plus"
@@ -48,11 +48,14 @@
                         (click)="uiEstado(usuario)"></p-button>
                     <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading" severity="info"
                         [outlined]="true" (click)="setUsuario(usuario)"></p-button>
+                    <p-button pRipple icon="pi pi-cog" [rounded]="true" [disabled]="loading" severity="info"
+                        [outlined]="true" (click)="configUsuario(usuario)"></p-button>
                 </div>
             </td>
         </tr>
     </ng-template>
 </p-table>
+
 }
 <p-dialog [header]="modalTitle" [(visible)]="modalNuevoUsuario" [modal]="true" (onHide)="close()"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
@@ -80,10 +83,10 @@
                     }
                 </div>
                 <div class="field col"><label htmlfor="empresa">EMPRESA</label>
-                    <p-dropdown [options]="listaEmpresas()" formControlName="empresa" [optionLabel]="'nombre'"
+                    <p-dropdown [options]="listaEmpresas()" formControlName="empresa_id" [optionLabel]="'nombre'"
                         [optionValue]="'id'" />
-                    @if(formUsuario.get('empresa').invalid && (formUsuario.get('empresa').dirty ||
-                    formUsuario.get('empresa').touched)){
+                    @if(formUsuario.get('empresa_id').invalid && (formUsuario.get('empresa_id').dirty ||
+                    formUsuario.get('empresa_id').touched)){
                     <div>
                         <span style="color: red; font-weight: bold;">Este campo es requerido</span>
                     </div>
@@ -116,4 +119,62 @@
     <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
         [loading]="service.isLoading()" [disabled]="!formUsuario.valid"
         (onClick)="formUsuario.value.id > 0 ? actualizarUsuario(formUsuario.value) : nuevoUsuario()" />
+</p-dialog>
+
+<!-- CONFIGURACION DE USUARIO -->
+<p-dialog [header]="modalTitle" [(visible)]="modalConfig" [modal]="true" (onHide)="close()"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
+    [resizable]="false">
+    @if(usuarioSelected != null){
+    <div class="flex flex-column">
+        <div class="flex align-items-center justify-content-center  border-round m-2">
+            <p-table styleClass="p-datatable-striped p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>NOMBRE USUARIO</th>
+                        <th>DOCUMENTO</th>
+                        <th>ROL</th>
+                    </tr>
+                    <tr>
+                        <th>{{usuarioSelected.nombre.toUpperCase()}}
+                            {{usuarioSelected.apellido.toUpperCase()}}</th>
+                        <th>{{usuarioSelected.documento}}</th>
+                        <th>
+                            <div class="flex align-items-center justify-content-center border-round m-2 bg-primary p-2">
+                                <strong>{{usuarioSelected.tipo_usuario}}</strong>
+                            </div>
+                        </th>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <div class="flex align-items-center justify-content-center  border-round m-2">
+            <div class="flex flex-row flex-wrap">
+                <div class="flex align-items-center justify-content-center border-round m-2">
+                    <div class="p-fluid">
+                        <strong>MODULOS EXISTENTES</strong>
+                        <p-tree [value]="menuFull" selectionMode="checkbox" class="w-full md:w-30rem"
+                            [(selection)]="selected" />
+                        <div class="flex align-items-center justify-content-center  border-round m-2">
+                            <p-button label="" [outlined]="true" icon="pi pi-plus" (click)="agregarModulo()" />
+                        </div>
+                    </div>
+                </div>
+                <div class="flex align-items-center justify-content-center border-round m-2">
+                    <div class="p-fluid">
+                        <strong>MODULOS DEL USUARIO</strong>
+                        <p-tree [value]="menuUser" [(selection)]="selected_user" selectionMode="checkbox">
+                        </p-tree>
+                        <div class="flex align-items-center justify-content-center  border-round m-2">
+                            <p-button label="" [outlined]="true" icon="pi pi-trash" (click)="removerModulos()" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex align-items-center justify-content-center  border-round m-2">
+            <p-button label="GUARDAR" [outlined]="true" icon="pi pi-trash" (click)="guardarModulos()" />
+        </div>
+    </div>
+    }
 </p-dialog>

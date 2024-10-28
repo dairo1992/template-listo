@@ -1,13 +1,21 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import {
     LocalStorageService,
     SessionStorageService,
 } from 'angular-web-storage';
+import * as CryptoJS from 'crypto-js';
+import { cryptoKey } from 'src/environments/environment';
+import { Usuario } from '../interfaces/usuario.interface';
 
 @Injectable({
     providedIn: 'root',
 })
 export class StorageService {
+    private _currentUser = signal<Usuario>(null);
+    public currentUser = computed(() => this._currentUser());
+    private _token = signal<String>('');
+    public token = computed(() => this._token());
+
     constructor(
         private session: SessionStorageService,
         private storage: LocalStorageService
@@ -30,20 +38,46 @@ export class StorageService {
     }
 
     limpiarStorage(): void {
-        this.session.clear();
+        this.session.remove('token');
         this.storage.clear();
+        this._currentUser.set(null);
     }
 
-    almacenarToken(token: String): void {
+    async almacenarToken(token: String): Promise<boolean> {
         this.session.set('token', token);
+        this._token.set(token);
+        return true;
     }
 
-    almacenarDatosUsuario(datos: any): void {
-        this.storage.set('usuario', datos);
+    almacenarDatosUsuario(datos: Usuario): void {
+        this._currentUser.set(datos);
+        const dataEncrypted = CryptoJS.AES.encrypt(
+            JSON.stringify(datos),
+            cryptoKey
+        ).toString();
+        this.storage.set('usuario', dataEncrypted);
     }
 
-    obtenerDatosUsuario() {
-        return this.storage.get('usuario');
+    almacenarRutaActual(ruta: string) {
+        this.storage.set('currentURL', ruta);
+    }
+
+    obtenerRutaActual(): string {
+        return this.storage.get('currentURL');
+    }
+
+    obtenerDatosUsuario(): Usuario {
+        const dataEncrypted = this.storage.get('usuario');
+        this._token.set(this.session.get('token'));
+        if (dataEncrypted) {
+            const decryptData = CryptoJS.AES.decrypt(
+                dataEncrypted,
+                cryptoKey
+            ).toString(CryptoJS.enc.Utf8);
+            this._currentUser.set(JSON.parse(decryptData));
+            return JSON.parse(decryptData);
+        }
+        return null;
     }
 
     obtenerTipoUsuario(): String {

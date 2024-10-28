@@ -5,10 +5,12 @@
             alt="logo"> -->
         <span>TLAS</span>
     </a>
-
     <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
         <i class="pi pi-bars"></i>
     </button>
+    <!-- <strong class="text-center">
+        {{currentUser ? (currentUser.nombre.toUpperCase() + ' ' +currentUser.apellido.toUpperCase()) : "SIN DATOS"}}
+    </strong> -->
 
     <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
         (click)="layoutService.showProfileSidebar()">

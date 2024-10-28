@@ -51,7 +51,7 @@ export class SedesService {
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -76,7 +76,7 @@ export class SedesService {
                     detail: `ACTUALIZADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -100,7 +100,7 @@ export class SedesService {
                     detail: `ACTUALIZADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',

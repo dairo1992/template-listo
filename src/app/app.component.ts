@@ -1,15 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
+import { StorageService } from './services/storage.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
-    constructor(private primengConfig: PrimeNGConfig) {}
+    private storageService = inject(StorageService);
+    constructor(private primengConfig: PrimeNGConfig, private router: Router) {}
 
     ngOnInit() {
         this.primengConfig.ripple = true;
+        let currentUser = this.storageService.obtenerDatosUsuario();
+        let currentURL = this.storageService.obtenerRutaActual();
+        if (currentUser) {
+            this.router.navigateByUrl(`${currentURL}`);
+        }
         // this.thService.obtenerAreas();
         // this.thService.obtenerSedes();
         // this.utilityService.obtenerDepartamentos();

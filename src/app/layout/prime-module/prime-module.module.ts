@@ -30,6 +30,9 @@ import { MenuModule } from 'primeng/menu';
 import { DatePipe, JsonPipe, UpperCasePipe } from '@angular/common';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { CardModule } from 'primeng/card';
+import { TreeModule } from 'primeng/tree';
+import { PaginatorModule } from 'primeng/paginator';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 @NgModule({
     declarations: [],
@@ -68,7 +71,10 @@ import { CardModule } from 'primeng/card';
         UpperCasePipe,
         JsonPipe,
         OverlayPanelModule,
-        CardModule
+        CardModule,
+        TreeModule,
+        PaginatorModule,
+        TabMenuModule,
     ],
 })
 export class PrimeModule {}

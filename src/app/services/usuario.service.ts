@@ -8,9 +8,9 @@ import { url } from 'src/environments/environment';
     providedIn: 'root',
 })
 export class UsuarioService {
-    private _lista_usuarios = signal<Usuario[]>([]);
     private _isLoading = signal<boolean>(true);
     public isLoading = computed(() => this._isLoading());
+    private _lista_usuarios = signal<Usuario[]>([]);
     public lista_usuarios = computed(() => this._lista_usuarios());
     private http = inject(HttpClient);
 
@@ -21,7 +21,6 @@ export class UsuarioService {
     obtenerUsuarios(): void {
         this.http.get<Usuario[]>(`${url}/usuarios`).subscribe({
             next: (data) => {
-                console.log(data);
                 this._isLoading.set(false);
                 this._lista_usuarios.set(data);
             },
@@ -46,7 +45,7 @@ export class UsuarioService {
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -73,7 +72,7 @@ export class UsuarioService {
                     detail: `ACTUALIZADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -97,7 +96,33 @@ export class UsuarioService {
                     detail: `ACTUALIZADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: '!NOTIFICACION¡',
+                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                });
+            },
+        });
+    }
+
+    obt_modulos(id_usuario) {
+        return this.http.post(`${url}/usuarios/obt_modulos`, { id_usuario });
+    }
+
+    actualizarmodulos(id: number, modulos: any) {
+        this.http.patch(`${url}/menu/${id}`, modulos).subscribe({
+            next: (value: Usuario) => {
+                console.log(value);
+                this.messageService.add({
+                    severity: 'success',
+                    summary: '!NOTIFICACION¡',
+                    detail: `ACTUALIZADO CORRECTAMENTE`,
+                });
+            },
+            error: (err) => {
+                console.log(err);
+
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',

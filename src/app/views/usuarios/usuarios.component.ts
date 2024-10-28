@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { TreeNode } from 'primeng/api';
 import { Usuario } from 'src/app/interfaces/usuario.interface';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { EmpresaService } from 'src/app/services/empresa.service';
@@ -20,7 +21,13 @@ export default class UsuariosComponent {
     public listaEmpresas = inject(EmpresaService).lista_empresas;
     public modalTitle: string = 'REGISTRAR NUEVO USUARIO';
     public modalNuevoUsuario: boolean = false;
+    public modalConfig: boolean = false;
     public tiposUsuario = ['ADMIN', 'EMPLEADO', 'SUPER_ADMIN'];
+    public usuarioSelected: Usuario = null;
+    public menuUser: TreeNode[] = [];
+    public menuFull: TreeNode[] = [];
+    selected: TreeNode[];
+    selected_user: TreeNode[];
 
     constructor() {
         this.formUsuario = new FormGroup({
@@ -30,7 +37,7 @@ export default class UsuariosComponent {
             documento: new FormControl('', Validators.required),
             tipo_usuario: new FormControl('', Validators.required),
             estado: new FormControl('A'),
-            empresa: new FormControl(0),
+            empresa_id: new FormControl(0),
         });
     }
 
@@ -49,6 +56,7 @@ export default class UsuariosComponent {
             documento: '',
             tipo_usuario: '',
             estado: 'A',
+            empresa_id: 0,
         });
     }
 
@@ -64,4 +72,162 @@ export default class UsuariosComponent {
     uiEstado(usuario: Usuario): void {
         this.service.uiEstado(usuario);
     }
+
+    configUsuario(usuario: Usuario) {
+        this.menuFull = [];
+        this.menuUser = [];
+        this.service.obt_modulos(usuario.id).subscribe({
+            next: (response: any) => {
+                response.menu.map((m: any, i: number) => {
+                    this.menuFull.push({
+                        key: `${i}`,
+                        label: m.label,
+                        children: m.items.map((c: any, p: number) => {
+                            return {
+                                key: `${i}-${p}`,
+                                label: c.label,
+                                data: c.routerLink,
+                                icon: c.icon,
+                            };
+                        }),
+                    });
+                });
+                response.usuarioMenu.map((m: any, i: number) => {
+                    this.menuUser.push({
+                        key: `${i}`,
+                        label: m.label,
+                        children: m.items.map((c: any, p: number) => {
+                            return {
+                                key: `${i}-${p}`,
+                                label: c.label,
+                                data: c.routerLink,
+                                icon: c.icon,
+                            };
+                        }),
+                    });
+                });
+            },
+            // error: (error) => (this.jsonMenu = { menu: [], usuarioMenu: [] }),
+        });
+        this.usuarioSelected = usuario;
+        this.modalConfig = true;
+        this.modalTitle = `CONFIGURACION DE USUARIO`;
+    }
+
+    agregarModulo() {
+        this.selected.forEach((s, is) => {
+            if (s.parent != undefined) {
+                // se escogio 1 de n modulos
+                let children = [];
+                let i = this.menuUser.findIndex((m) => m.key == s.parent.key);
+                if (i == -1) {
+                    this.menuUser.push({
+                        key: s.parent.key,
+                        label: s.parent.label,
+                        children: children,
+                    });
+                    this.menuUser[this.menuUser.length - 1].children.push({
+                        key: s.key,
+                        label: s.label,
+                        data: s.data,
+                        icon: s.icon,
+                    });
+                } else {
+                    let ic = this.menuUser[i].children.findIndex(
+                        (c) => c.key == s.key
+                    );
+                    if (ic == -1) {
+                        this.menuUser[i].children.push({
+                            key: s.key,
+                            label: s.label,
+                            data: s.data,
+                            icon: s.icon,
+                        });
+                    }
+                }
+            } else {
+                // se escogieron todos los modulos
+                if (is == 0) {
+                    // buscando si existe padre
+                    let i = this.menuUser.findIndex((m) => m.key == s.key);
+                    if (i == -1) {
+                        this.menuUser.push(s);
+                    }
+                } else {
+                    // buscando si existe hijos
+                    let i = this.menuUser[1].children.findIndex(
+                        (c) => c.key == s.key && s.key.length > 1
+                    );
+                }
+            }
+        });
+    }
+
+    removerModulos() {
+        this.selected_user.forEach((s, is) => {
+            if (s.parent != undefined) {
+                for (let i = 0; i < this.menuUser.length; i++) {
+                    if (s.parent.key == this.menuUser[i].key) {
+                        let ind = this.menuUser[i].children.findIndex(
+                            (m) => m.key == s.key
+                        );
+                        if (ind > -1) {
+                            this.menuUser[i].children.splice(ind, 1);
+                        }
+                    }
+                    if (this.menuUser[i].children.length == 0) {
+                        this.menuUser.splice(i, 1);
+                    }
+                }
+            } else {
+                for (let i = 0; i < this.menuUser.length; i++) {
+                    if (s.key == this.menuUser[i].key) {
+                        let ind = this.menuUser.findIndex(
+                            (m) => m.key == this.menuUser[i].key
+                        );
+                        if (ind > -1) {
+                            this.menuUser.splice(ind, 1);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    guardarModulos() {
+        this.service.actualizarmodulos(
+            this.usuarioSelected.id,
+            this.treeNodeToRuta(this.menuUser)
+        );
+
+        // console.log({
+        //     usuario: this.usuarioSelected.id,
+        //     menu: this.menuUser,
+        //     dairo: this.treeNodeToRuta(this.menuUser),
+        // });
+    }
+
+    treeNodeToRuta(rutas: TreeNode[]) {
+        return rutas.map((r) => {
+            return {
+                label: r.label,
+                items: r.children.map((c) => {
+                    return {
+                        label: c.label,
+                        icon: c.icon,
+                        routerLink: c.data,
+                    };
+                }),
+            };
+        });
+    }
 }
+
+// "label": "Dashboard",
+// "items": [
+//   {
+//     "icon": "pi pi-fw pi-home",
+//     "label": "Dashboard",
+//     "routerLink": "/home"
+//   }
+// ]

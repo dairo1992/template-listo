@@ -1,7 +1,7 @@
 <p-toast />
 
 <div class="flex flex-row flex-wrap">
-    <div class="flex align-items-center justify-content-center w-4 border-round m-2">
+    <div class="flex align-items-center justify-content-center w-4 border-round">
         <div class="card layout-main  min-h-full">
             <div class="flex flex-column flex-wrap">
                 <div
@@ -46,7 +46,7 @@
             </form>
         </div>
     </div>
-    <div class="flex align-items-center justify-content-center border-round m-2">
+    <div class="flex align-items-center justify-content-center border-round w-8">
         <div class="card layout-main">
             <div class="flex flex-column flex-wrap">
                 <div
@@ -55,9 +55,9 @@
                 </div>
             </div>
             <p-table #table_servicios [value]="service.lista_servicios()"
-                styleClass="p-datatable-striped p-datatable-gridlines" [tableStyle]="{'min-width': '50rem'}"
-                [globalFilterFields]="['NOMBRE']" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 20]"
-                stateStorage="session" stateKey="statedemo-session" appendTo="body">
+                styleClass="p-datatable-striped p-datatable-gridlines" [globalFilterFields]="['NOMBRE']"
+                [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 20]" stateStorage="session"
+                stateKey="statedemo-session" appendTo="body">
                 <ng-template pTemplate="caption">
                     <div class="flex">
                         <span class="p-input-icon-left ml-auto">

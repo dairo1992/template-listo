@@ -54,7 +54,7 @@ export class ModuloService {
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -81,7 +81,7 @@ export class ModuloService {
                     detail: `ACTUALIZADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -105,7 +105,29 @@ export class ModuloService {
                     detail: `ACTUALIZADO CORRECTAMENTE`,
                 });
             },
-            error(err) {
+            error: (err) => {
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: '!NOTIFICACION¡',
+                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                });
+            },
+        });
+    }
+
+    uiMenu(json: any) {
+        // implementando guardado de nuevos menus y modulos (incompleta)
+        this.http.patch(`${url}/menu/${0}`, json).subscribe({
+            next: (value) => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: '!NOTIFICACION¡',
+                    detail: `ACTUALIZADO CORRECTAMENTE`,
+                });
+            },
+            error: (err) => {
+                console.log(err);
+
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',

@@ -9,7 +9,7 @@ import { NotfoundComponent } from './views/notfound/notfound.component';
         RouterModule.forRoot(
             [
                 {
-                    path: '',
+                    path: 'home',
                     component: AppLayoutComponent,
                     children: [
                         {
@@ -72,15 +72,21 @@ import { NotfoundComponent } from './views/notfound/notfound.component';
                                             './views/usuarios/usuarios.component'
                                         ),
                                 },
+                                {
+                                    path: 'menus',
+                                    title: 'Menus',
+                                    data: ['pi pi-bars'],
+                                    loadComponent: () =>
+                                        import('./views/menu/menu.component'),
+                                },
                             ],
                         },
                     ],
                 },
                 {
-                    path: 'auth',
+                    path: '',
                     loadComponent: () => import('./views/auth/auth.component'),
                 },
-
                 { path: 'notfound', component: NotfoundComponent },
                 { path: '**', redirectTo: '/notfound' },
             ],
