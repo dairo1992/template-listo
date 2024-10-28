@@ -41,7 +41,7 @@ export default class UsuariosComponent {
         });
     }
 
-    setEmpresa(usuario: Usuario): void {
+    setUsuario(usuario: Usuario): void {
         // empresa.horario_atencion = new Date(empresa.horario_atencion);
         this.formUsuario.setValue(usuario);
         this.modalTitle = `MODIFICAR ${usuario.nombre}`;
@@ -64,6 +64,7 @@ export default class UsuariosComponent {
         this.service.nuevaUsuario(this.formUsuario.value);
         this.modalNuevoUsuario = false;
     }
+
     actualizarUsuario(usuario: Usuario): void {
         this.service.actualizarUsuario(usuario.id, usuario);
         this.modalNuevoUsuario = false;
@@ -199,12 +200,6 @@ export default class UsuariosComponent {
             this.usuarioSelected.id,
             this.treeNodeToRuta(this.menuUser)
         );
-
-        // console.log({
-        //     usuario: this.usuarioSelected.id,
-        //     menu: this.menuUser,
-        //     dairo: this.treeNodeToRuta(this.menuUser),
-        // });
     }
 
     treeNodeToRuta(rutas: TreeNode[]) {
@@ -222,12 +217,3 @@ export default class UsuariosComponent {
         });
     }
 }
-
-// "label": "Dashboard",
-// "items": [
-//   {
-//     "icon": "pi pi-fw pi-home",
-//     "label": "Dashboard",
-//     "routerLink": "/home"
-//   }
-// ]

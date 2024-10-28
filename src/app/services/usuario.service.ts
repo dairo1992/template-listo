@@ -58,12 +58,10 @@ export class UsuarioService {
     actualizarUsuario(id: number, usuario: Usuario): void {
         this.http.patch(`${url}/usuarios/${id}`, usuario).subscribe({
             next: (value: Usuario) => {
-                const i = this.lista_usuarios().findIndex(
-                    (e) => e.id == usuario.id
-                );
+                const i = this.lista_usuarios().findIndex((e) => e.id == id);
                 this._lista_usuarios.update((usuarios) => {
-                    usuarios.splice(i);
-                    usuarios.push(value);
+                    usuarios.splice(i,1);
+                    usuarios.push(usuario);
                     return usuarios;
                 });
                 this.messageService.add({
