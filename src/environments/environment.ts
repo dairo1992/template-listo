@@ -10,7 +10,7 @@ export const environment = {
 // DEVELOPER
 // export const url = 'http://localhost:5500';
 // API NEST
-export const url = 'http://localhost:3000';
+export const url = 'http://localhost:5500';
 export const cryptoKey = 'Restomaikovf87';
 
 /*

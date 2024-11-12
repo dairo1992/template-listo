@@ -10,7 +10,7 @@ import { Usuario } from '../interfaces/usuario.interface';
 @Injectable({
     providedIn: 'root',
 })
-export class StorageService {
+export class AlmacenService {
     private _currentUser = signal<Usuario>(null);
     public currentUser = computed(() => this._currentUser());
     private _token = signal<String>('');
@@ -68,14 +68,17 @@ export class StorageService {
 
     obtenerDatosUsuario(): Usuario {
         const dataEncrypted = this.storage.get('usuario');
-        this._token.set(this.session.get('token'));
         if (dataEncrypted) {
-            const decryptData = CryptoJS.AES.decrypt(
-                dataEncrypted,
-                cryptoKey
-            ).toString(CryptoJS.enc.Utf8);
-            this._currentUser.set(JSON.parse(decryptData));
-            return JSON.parse(decryptData);
+            this._token.set(this.session.get('token'));
+            if (dataEncrypted) {
+                const decryptData = CryptoJS.AES.decrypt(
+                    dataEncrypted,
+                    cryptoKey
+                ).toString(CryptoJS.enc.Utf8);
+                this._currentUser.set(JSON.parse(decryptData));
+                return JSON.parse(decryptData);
+            }
+            return null;
         }
         return null;
     }

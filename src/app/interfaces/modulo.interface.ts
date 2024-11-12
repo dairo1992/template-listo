@@ -1,13 +1,7 @@
-import { Sede } from './sede.interface';
-
 export interface Modulo {
     id: number;
-    sede_id: number;
-    empresa_id: number;
-    nombre: string;
     estado: string;
-    created_at: Date;
-    sede: Sede;
+    nombre: string;
 }
 
 // Converts JSON strings to/from your types

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
-import { StorageService } from './services/storage.service';
+import { AlmacenService } from './services/storage.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,13 +8,14 @@ import { Router } from '@angular/router';
     templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
-    private storageService = inject(StorageService);
+    private storageService = inject(AlmacenService);
     constructor(private primengConfig: PrimeNGConfig, private router: Router) {}
 
     ngOnInit() {
         this.primengConfig.ripple = true;
         let currentUser = this.storageService.obtenerDatosUsuario();
         let currentURL = this.storageService.obtenerRutaActual();
+        console.log(currentUser);
         if (currentUser) {
             this.router.navigateByUrl(`${currentURL}`);
         }

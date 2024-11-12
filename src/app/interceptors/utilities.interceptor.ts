@@ -9,12 +9,12 @@ import {
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { StorageService } from '../services/storage.service';
+import { AlmacenService } from '../services/storage.service';
 import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-    storageService = inject(StorageService);
+    storageService = inject(AlmacenService);
     token: string;
     constructor(private router: Router) {}
 

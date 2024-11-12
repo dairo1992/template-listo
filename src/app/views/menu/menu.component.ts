@@ -3,7 +3,7 @@ import { Route, Router } from '@angular/router';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { ModuloService } from 'src/app/services/modulo.service';
-import { StorageService } from 'src/app/services/storage.service';
+import { AlmacenService } from 'src/app/services/storage.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { icons } from 'src/environments/environment';
 
@@ -16,7 +16,7 @@ import { icons } from 'src/environments/environment';
 })
 export default class MenuComponent implements OnInit {
     private usuariosService = inject(UsuarioService);
-    private storageService = inject(StorageService);
+    private storageService = inject(AlmacenService);
     private menuService = inject(ModuloService);
     items: MenuItem[] | undefined;
     activeItem: MenuItem | undefined;

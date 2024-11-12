@@ -1,6 +1,9 @@
+import { Sede } from './sede.interface';
+
 export interface Empresa {
     id: number;
     nit: string;
+    sede: Sede;
     nombre: string;
     direccion: string;
     estado: string;

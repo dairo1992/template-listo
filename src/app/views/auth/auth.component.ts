@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { AuthserviceService } from 'src/app/services/authservice.service';
-import { StorageService } from 'src/app/services/storage.service';
+import { AlmacenService } from 'src/app/services/storage.service';
 
 @Component({
     selector: 'app-auth',
@@ -26,7 +26,7 @@ import { StorageService } from 'src/app/services/storage.service';
 export default class AuthComponent implements OnInit {
     loading: boolean = false;
     formAuth: FormGroup;
-    public storageService = inject(StorageService);
+    public storageService = inject(AlmacenService);
     private authService = inject(AuthserviceService);
     constructor() {
         this.formAuth = new FormGroup({

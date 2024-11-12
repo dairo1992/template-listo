@@ -41,15 +41,15 @@ export class SedesService {
     nuevaSede(sede: Sede): void {
         this.http.post(`${url}/sedes`, sede).subscribe({
             next: (value: Sede) => {
-                const empresa = this.listaEmpresas().find(
-                    (s) => s.id == sede.empresa_id
-                );
-                value.empresa = empresa;
-                this._lista_sedes.set([...this.lista_sedes(), value]);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
-                });
+                // const empresa = this.listaEmpresas().find(
+                //     (s) => s.id == sede.empresa_id
+                // );
+                // value.empresa = empresa;
+                // this._lista_sedes.set([...this.lista_sedes(), value]);
+                // this.messageService.add({
+                //     severity: 'success',
+                //     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                // });
             },
             error: (err) => {
                 this.messageService.add({

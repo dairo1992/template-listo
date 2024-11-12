@@ -42,10 +42,10 @@ export default class ModulosComponent {
     }
 
     setModulo(sede: Modulo): void {
-        this.listaSedesByEmpresa(sede.empresa_id);
-        this.moduloForm.setValue(sede);
-        this.modalTitle = `MODIFICAR ${sede.nombre}`;
-        this.modalNuevaSede = true;
+        // this.listaSedesByEmpresa(sede.empresa_id);
+        // this.moduloForm.setValue(sede);
+        // this.modalTitle = `MODIFICAR ${sede.nombre}`;
+        // this.modalNuevaSede = true;
     }
 
     actualizarModulo(sede: Modulo): void {
@@ -70,8 +70,8 @@ export default class ModulosComponent {
     }
 
     listaSedesByEmpresa(id_empresa: number) {
-        this.listaSedesFilter = this._sedes_Service
-            .lista_sedes()
-            .filter((sede) => sede.empresa_id == id_empresa);
+        // this.listaSedesFilter = this._sedes_Service
+        //     .lista_sedes()
+        //     .filter((sede) => sede.empresa_id == id_empresa);
     }
 }

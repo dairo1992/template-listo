@@ -3,7 +3,7 @@ import { MenuItem } from 'primeng/api';
 import { LayoutService } from './service/app.layout.service';
 import { MenuService } from './app.menu.service';
 import { AuthserviceService } from '../services/authservice.service';
-import { StorageService } from '../services/storage.service';
+import { AlmacenService } from '../services/storage.service';
 import { Usuario } from '../interfaces/usuario.interface';
 
 @Component({
@@ -14,7 +14,7 @@ export class AppTopBarComponent {
     items!: MenuItem[];
     itemsTopbar: MenuItem[] | undefined;
     @Input() minimal: boolean = false;
-    private storageService = inject(StorageService);
+    private storageService = inject(AlmacenService);
     // public service = inject(UsuarioService);
     public currentUser: Usuario;
     scales: number[] = [12, 13, 14, 15, 16];

@@ -3,6 +3,7 @@ import { Usuario } from '../interfaces/usuario.interface';
 import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { url } from 'src/environments/environment';
+import { AlmacenService } from './storage.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,27 +14,30 @@ export class UsuarioService {
     private _lista_usuarios = signal<Usuario[]>([]);
     public lista_usuarios = computed(() => this._lista_usuarios());
     private http = inject(HttpClient);
+    private storage = inject(AlmacenService);
 
     constructor(private messageService: MessageService) {
         this.obtenerUsuarios();
     }
 
     obtenerUsuarios(): void {
-        this.http.get<Usuario[]>(`${url}/usuarios`).subscribe({
-            next: (data) => {
-                this._isLoading.set(false);
-                this._lista_usuarios.set(data);
-            },
-            error: (err) => {
-                this._lista_usuarios.set([]);
-                this._isLoading.set(false);
-                this.messageService.add({
-                    severity: 'warn',
-                    summary: '!NOTIFICACION¡',
-                    detail: `${err.error.error}`,
-                });
-            },
-        });
+        this.http
+            .get<Usuario[]>(`${url}/usuarios/${this.storage.currentUser().id}`)
+            .subscribe({
+                next: (data) => {
+                    this._isLoading.set(false);
+                    this._lista_usuarios.set(data);
+                },
+                error: (err) => {
+                    this._lista_usuarios.set([]);
+                    this._isLoading.set(false);
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: '!NOTIFICACION¡',
+                        detail: `${err.error.error}`,
+                    });
+                },
+            });
     }
 
     nuevaUsuario(usuario: Usuario): void {
@@ -60,7 +64,7 @@ export class UsuarioService {
             next: (value: Usuario) => {
                 const i = this.lista_usuarios().findIndex((e) => e.id == id);
                 this._lista_usuarios.update((usuarios) => {
-                    usuarios.splice(i,1);
+                    usuarios.splice(i, 1);
                     usuarios.push(usuario);
                     return usuarios;
                 });
@@ -104,12 +108,38 @@ export class UsuarioService {
         });
     }
 
-    obt_modulos(id_usuario) {
-        return this.http.post(`${url}/usuarios/obt_modulos`, { id_usuario });
+    cambiarPassword(password: any, id: number) {
+        this.http
+            .post(`${url}/usuarios/password`, {
+                password: password.password,
+                id,
+            })
+            .subscribe({
+                next: (response: any) => {
+                    console.log(response);
+
+                    this.messageService.add({
+                        severity: response.STATUS ? 'success' : 'error',
+                        summary: '!NOTIFICACION¡',
+                        detail: response.MSG,
+                    });
+                },
+                error: (err) => {
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: '!NOTIFICACION¡',
+                        detail: `OCURRIO UN ERROR: ${err.message}`,
+                    });
+                },
+            });
+    }
+
+    obt_modulos(id_usuario: number) {
+        return this.http.get(`${url}/usuarios/menus/${id_usuario}`);
     }
 
     actualizarmodulos(id: number, modulos: any) {
-        this.http.patch(`${url}/menu/${id}`, modulos).subscribe({
+        this.http.post(`${url}/usuarios/menu/${id}`, modulos).subscribe({
             next: (value: Usuario) => {
                 console.log(value);
                 this.messageService.add({

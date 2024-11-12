@@ -23,12 +23,12 @@ export class ModuloService {
     obtenerModulos(): void {
         this.http.get<Modulo[]>(`${url}/modulos`).subscribe({
             next: (data) => {
-                const lista = data.map<Modulo>((m) => {
-                    m.empresa_id = m.sede.empresa_id;
-                    return m;
-                });
-                this._lista_modulos.set(lista);
-                this._isLoading.set(false);
+                // const lista = data.map<Modulo>((m) => {
+                //     m.empresa_id = m.sede.empresa_id;
+                //     return m;
+                // });
+                // this._lista_modulos.set(lista);
+                // this._isLoading.set(false);
             },
             error: (err) => {
                 this._lista_modulos.set([]);
@@ -44,15 +44,15 @@ export class ModuloService {
     nuevoModulo(modulo: Modulo): void {
         this.http.post(`${url}/modulos`, modulo).subscribe({
             next: (value: Modulo) => {
-                const sede = this.lista_sedes().find(
-                    (m) => m.id == modulo.sede_id
-                );
-                value.sede = sede;
-                this._lista_modulos.set([...this.lista_modulos(), value]);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
-                });
+                // const sede = this.lista_sedes().find(
+                //     (m) => m.id == modulo.sede_id
+                // );
+                // value.sede = sede;
+                // this._lista_modulos.set([...this.lista_modulos(), value]);
+                // this.messageService.add({
+                //     severity: 'success',
+                //     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                // });
             },
             error: (err) => {
                 this.messageService.add({

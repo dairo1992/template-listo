@@ -17,8 +17,8 @@ export class EmpresaService {
         this.obtenerEmpresas();
     }
 
-    obtenerEmpresas(): void {
-        this.http.get<Empresa[]>(`${url}/empresas`).subscribe({
+    obtenerEmpresas(id: number = 0): void {
+        this.http.get<Empresa[]>(`${url}/empresas/${id}`).subscribe({
             next: (data) => {
                 this._lista_empresas.set(data);
                 this._isLoading.set(false);
@@ -82,16 +82,18 @@ export class EmpresaService {
 
     uiEstado(empresa: Empresa): void {
         this.http.delete(`${url}/empresas/${empresa.id}`).subscribe({
-            next: (value: Empresa) => {
-                this._lista_empresas.update((empresas) => {
-                    empresas.find((e) => e.id == empresa.id).estado =
-                        empresa.estado == 'A' ? 'I' : 'A';
-                    return empresas;
-                });
+            next: (value: any) => {
+                if (value.STATUS) {
+                    this._lista_empresas.update((empresas: any) => {
+                        empresas.find((e) => e.id == empresa.id).estado =
+                            empresa.estado == 'A' ? 'I' : 'A';
+                        return empresas;
+                    });
+                }
                 this.messageService.add({
-                    severity: 'success',
+                    severity: value.STATUS ? 'success' : 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `ACTUALIZADO CORRECTAMENTE`,
+                    detail: value.MSG,
                 });
             },
             error: (err) => {

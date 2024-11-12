@@ -79,6 +79,15 @@ import { NotfoundComponent } from './views/notfound/notfound.component';
                                     loadComponent: () =>
                                         import('./views/menu/menu.component'),
                                 },
+                                {
+                                    path: 'config-usuarios',
+                                    title: 'Config Usuarios',
+                                    data: ['pi pi-user-plus'],
+                                    loadComponent: () =>
+                                        import(
+                                            './views/config-usuarios/config-usuarios.component'
+                                        ),
+                                },
                             ],
                         },
                     ],

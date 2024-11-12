@@ -33,6 +33,7 @@ import { CardModule } from 'primeng/card';
 import { TreeModule } from 'primeng/tree';
 import { PaginatorModule } from 'primeng/paginator';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { SplitButtonModule } from 'primeng/splitbutton';
 
 @NgModule({
     declarations: [],
@@ -75,6 +76,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
         TreeModule,
         PaginatorModule,
         TabMenuModule,
+        SplitButtonModule,
     ],
 })
 export class PrimeModule {}

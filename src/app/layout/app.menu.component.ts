@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
 import { Router } from '@angular/router';
 import { MenuService } from './app.menu.service';
-import { StorageService } from '../services/storage.service';
+import { AlmacenService } from '../services/storage.service';
 
 interface MODEL {
     label: string;
@@ -25,7 +25,7 @@ export class AppMenuComponent implements OnInit {
     rutas = [];
     rutas_temp = [];
     private service = inject(MenuService);
-    private storage = inject(StorageService);
+    private storage = inject(AlmacenService);
 
     constructor(public layoutService: LayoutService, private routes: Router) {
         this.service
