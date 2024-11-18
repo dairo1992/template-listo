@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import {
     LocalStorageService,
     SessionStorageService,
@@ -6,15 +6,15 @@ import {
 import * as CryptoJS from 'crypto-js';
 import { cryptoKey } from 'src/environments/environment';
 import { Usuario } from '../interfaces/usuario.interface';
+import { UsuarioService } from './usuario.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AlmacenService {
-    private _currentUser = signal<Usuario>(null);
-    public currentUser = computed(() => this._currentUser());
     private _token = signal<String>('');
     public token = computed(() => this._token());
+    private usuarioService = inject(UsuarioService);
 
     constructor(
         private session: SessionStorageService,
@@ -40,7 +40,7 @@ export class AlmacenService {
     limpiarStorage(): void {
         this.session.remove('token');
         this.storage.clear();
-        this._currentUser.set(null);
+        this.usuarioService.setUsuario(null);
     }
 
     async almacenarToken(token: String): Promise<boolean> {
@@ -50,7 +50,7 @@ export class AlmacenService {
     }
 
     almacenarDatosUsuario(datos: Usuario): void {
-        this._currentUser.set(datos);
+        this.usuarioService.setUsuario(datos);
         const dataEncrypted = CryptoJS.AES.encrypt(
             JSON.stringify(datos),
             cryptoKey
@@ -75,7 +75,7 @@ export class AlmacenService {
                     dataEncrypted,
                     cryptoKey
                 ).toString(CryptoJS.enc.Utf8);
-                this._currentUser.set(JSON.parse(decryptData));
+                this.usuarioService.setUsuario(JSON.parse(decryptData));
                 return JSON.parse(decryptData);
             }
             return null;
@@ -86,5 +86,10 @@ export class AlmacenService {
     obtenerTipoUsuario(): String {
         const tipo = this.storage.get('usuario');
         return tipo.tipo_usuario;
+    }
+
+    limpiarItem(key: string) {
+        if (key == '') return null;
+        this.storage.remove(key);
     }
 }

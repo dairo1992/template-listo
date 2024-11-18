@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { url } from 'src/environments/environment';
 import { MessageService } from 'primeng/api';
 import { EmpresaService } from './empresa.service';
+import { AlmacenService } from './storage.service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,13 +17,13 @@ export class SedesService {
     public lista_sedes = computed(() => this._lista_sedes());
     public sede = computed(() => this._sede());
     private http = inject(HttpClient);
-    private listaEmpresas = inject(EmpresaService).lista_empresas;
+    private storageService = inject(AlmacenService);
     constructor(private messageService: MessageService) {
-        this.obtenerSedes();
+        // this.obtenerSedes(this.storageService.currentUser().id);
     }
 
-    obtenerSedes(): void {
-        this.http.get<Sede[]>(`${url}/sedes`).subscribe({
+    obtenerSedes(id: number): void {
+        this.http.get<Sede[]>(`${url}/sedes/${id}`).subscribe({
             next: (data) => {
                 this._lista_sedes.set(data);
                 this._isLoading.set(false);
@@ -41,15 +42,11 @@ export class SedesService {
     nuevaSede(sede: Sede): void {
         this.http.post(`${url}/sedes`, sede).subscribe({
             next: (value: Sede) => {
-                // const empresa = this.listaEmpresas().find(
-                //     (s) => s.id == sede.empresa_id
-                // );
-                // value.empresa = empresa;
-                // this._lista_sedes.set([...this.lista_sedes(), value]);
-                // this.messageService.add({
-                //     severity: 'success',
-                //     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
-                // });
+                this._lista_sedes.set([...this.lista_sedes(), value]);
+                this.messageService.add({
+                    severity: 'success',
+                    summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                });
             },
             error: (err) => {
                 this.messageService.add({
@@ -118,7 +115,7 @@ export class SedesService {
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
                     detail: `OCURRIO UN ERROR: ${err.message}`,
-                })
+                }),
         });
     }
 }

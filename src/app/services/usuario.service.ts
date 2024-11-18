@@ -3,41 +3,45 @@ import { Usuario } from '../interfaces/usuario.interface';
 import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { url } from 'src/environments/environment';
-import { AlmacenService } from './storage.service';
+import { EmpresaService } from './empresa.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class UsuarioService {
+    private _currentUser = signal<Usuario>(null);
+    public currentUser = computed(() => this._currentUser());
     private _isLoading = signal<boolean>(true);
     public isLoading = computed(() => this._isLoading());
     private _lista_usuarios = signal<Usuario[]>([]);
     public lista_usuarios = computed(() => this._lista_usuarios());
     private http = inject(HttpClient);
-    private storage = inject(AlmacenService);
+    private empresas = inject(EmpresaService);
 
     constructor(private messageService: MessageService) {
-        this.obtenerUsuarios();
+        // this.obtenerUsuarios(this.storage.currentUser().id);
     }
 
-    obtenerUsuarios(): void {
-        this.http
-            .get<Usuario[]>(`${url}/usuarios/${this.storage.currentUser().id}`)
-            .subscribe({
-                next: (data) => {
-                    this._isLoading.set(false);
-                    this._lista_usuarios.set(data);
-                },
-                error: (err) => {
-                    this._lista_usuarios.set([]);
-                    this._isLoading.set(false);
-                    this.messageService.add({
-                        severity: 'warn',
-                        summary: '!NOTIFICACION¡',
-                        detail: `${err.error.error}`,
-                    });
-                },
-            });
+    setUsuario(usuario: Usuario | null) {
+        this._currentUser.set(usuario);
+    }
+
+    obtenerUsuarios(id: number): void {
+        this.http.get<Usuario[]>(`${url}/usuarios/${id}`).subscribe({
+            next: (data) => {
+                this._isLoading.set(false);
+                this._lista_usuarios.set(data);
+            },
+            error: (err) => {
+                this._lista_usuarios.set([]);
+                this._isLoading.set(false);
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: '!NOTIFICACION¡',
+                    detail: `${err.error.error}`,
+                });
+            },
+        });
     }
 
     nuevaUsuario(usuario: Usuario): void {
@@ -59,19 +63,23 @@ export class UsuarioService {
         });
     }
 
-    actualizarUsuario(id: number, usuario: Usuario): void {
+    actualizarUsuario(id: number, usuario: any): void {
         this.http.patch(`${url}/usuarios/${id}`, usuario).subscribe({
-            next: (value: Usuario) => {
+            next: (value: any) => {
                 const i = this.lista_usuarios().findIndex((e) => e.id == id);
                 this._lista_usuarios.update((usuarios) => {
+                    const emp = this.empresas
+                        .lista_empresas()
+                        .find((e) => e.id == usuario.empresa_id);
                     usuarios.splice(i, 1);
+                    usuario.empresa = emp;
                     usuarios.push(usuario);
                     return usuarios;
                 });
                 this.messageService.add({
                     severity: 'success',
                     summary: '!NOTIFICACION¡',
-                    detail: `ACTUALIZADO CORRECTAMENTE`,
+                    detail: value,
                 });
             },
             error: (err) => {
@@ -149,8 +157,6 @@ export class UsuarioService {
                 });
             },
             error: (err) => {
-                console.log(err);
-
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',

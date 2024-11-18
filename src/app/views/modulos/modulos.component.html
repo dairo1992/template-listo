@@ -13,11 +13,11 @@
 @else{
 <p-table #table_usuarios [value]="service.lista_modulos()" styleClass="p-datatable-striped p-datatable-gridlines"
     [tableStyle]="{'min-width': '50rem'}" [globalFilterFields]="['EMPRESA','NOMBRE','ESTADO','ESTADO']" [rows]="10"
-    [paginator]="true" stateStorage="session" stateKey="statedemo-session">
+    [paginator]="true">
     <ng-template pTemplate="caption">
         <div class="flex">
             <p-button label="Nuevo" [outlined]="true" icon="pi pi-user-plus"
-                (click)="modalNuevaSede = !modalNuevaSede" />
+                (click)="listaSedesByEmpresa(currentUser.empresa.id,this.currentUser,'N'); modalNuevaSede = !modalNuevaSede;" />
             <span class="p-input-icon-left ml-auto">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" [(ngModel)]="searchValue"
@@ -62,7 +62,7 @@
     <div class="card p-fluid">
         <form [formGroup]="moduloForm" #formDirective="ngForm" (ngSubmit)="nuevoModulo()">
             <div class="p-formgrid grid">
-                <div class="field col"><label htmlfor="empresa_id">EMPRESA</label>
+                <!-- <div class="field col"><label htmlfor="empresa_id">EMPRESA</label>
                     <p-dropdown [options]="listaEmpresas()" formControlName="empresa_id" [optionLabel]="'nombre'"
                         [optionValue]="'id'" (onChange)="listaSedesByEmpresa(moduloForm.value.empresa_id)" />
                     @if(moduloForm.get('empresa_id').invalid && (moduloForm.get('empresa_id').dirty ||
@@ -71,7 +71,7 @@
                         <span style="color: red; font-weight: bold;">Este campo es requerido</span>
                     </div>
                     }
-                </div>
+                </div> -->
                 <div class="field col"><label htmlfor="sede_id">SEDE</label>
                     <p-dropdown [options]="listaSedesFilter" formControlName="sede_id" [optionLabel]="'nombre'"
                         [optionValue]="'id'" />

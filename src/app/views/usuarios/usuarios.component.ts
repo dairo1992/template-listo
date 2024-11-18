@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { Usuario } from 'src/app/interfaces/usuario.interface';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { EmpresaService } from 'src/app/services/empresa.service';
+import { ModuloService } from 'src/app/services/modulo.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 
@@ -19,6 +20,7 @@ export default class UsuariosComponent {
     public service = inject(UsuarioService);
     public utilitiService = inject(UtilitiesService);
     public listaEmpresas = inject(EmpresaService).lista_empresas;
+    public listaModulos = inject(ModuloService).lista_modulos;
     public tiposUsuario = ['ADMIN', 'EMPLEADO', 'SUPER_ADMIN'];
     public usuarioSelected: Usuario = null;
     public menuUser: TreeNode[] = [];
@@ -27,21 +29,29 @@ export default class UsuariosComponent {
     selected_user: TreeNode[];
     items: MenuItem[];
     rowSelect: Usuario;
+    optionsPrioritarios = [
+        { name: 'NO', id: 0 },
+        { name: 'SI', id: 1 },
+    ];
     modals = {
         modalTitle: 'REGISTRAR NUEVO USUARIO',
         nuevoUsuario: false,
         config: false,
         password: false,
+        config_turnos: false,
     };
-    public modalTitle: string = 'REGISTRAR NUEVO USUARIO';
-    public modalNuevoUsuario: boolean = false;
-    public modalConfig: boolean = false;
     resetPassword = {
         password: '',
         confirmar_password: '',
     };
+    config_turnos = {
+        modulo_id: null,
+        usuario_id: null,
+        prioritarios: null,
+    };
 
     constructor() {
+        this.service.obtenerUsuarios(this.service.currentUser().id);
         this.formUsuario = new FormGroup({
             id: new FormControl(0, Validators.required),
             nombre: new FormControl('', Validators.required),
@@ -69,7 +79,7 @@ export default class UsuariosComponent {
             },
             { separator: true },
             {
-                label: 'Config',
+                label: 'Config Menu',
                 icon: 'pi pi-wrench',
                 command: () => {
                     this.configUsuario(this.rowSelect);
@@ -83,6 +93,21 @@ export default class UsuariosComponent {
                     this.usuarioSelected = this.rowSelect;
                     this.modals.modalTitle = `${this.rowSelect.nombre.toUpperCase()} ${this.rowSelect.apellido.toUpperCase()} `;
                     this.modals.password = true;
+                },
+            },
+            { separator: true },
+            {
+                label: 'Config Turnos',
+                icon: 'pi pi-bookmark',
+                command: () => {
+                    this.usuarioSelected = this.rowSelect;
+                    this.config_turnos.usuario_id = this.usuarioSelected.id;
+                    this.config_turnos.modulo_id =
+                        this.usuarioSelected.config.modulo_id;
+                    this.config_turnos.prioritarios =
+                        this.usuarioSelected.config.prioritarios;
+                    this.modals.modalTitle = `CONFIGURAR TURNOS PARA ${this.rowSelect.nombre.toUpperCase()} `;
+                    this.modals.config_turnos = true;
                 },
             },
         ];
@@ -100,8 +125,8 @@ export default class UsuariosComponent {
             empresa_id: usuario.empresa.id,
         };
         this.formUsuario.setValue(usuarioTemp);
-        this.modalTitle = `MODIFICAR ${usuario.nombre}`;
-        this.modalNuevoUsuario = true;
+        this.modals.modalTitle = `MODIFICAR ${usuario.nombre}`;
+        this.modals.nuevoUsuario = true;
     }
 
     setRow(usuario: Usuario): void {
@@ -109,7 +134,7 @@ export default class UsuariosComponent {
     }
 
     close(modal: string = ''): void {
-        this.modalTitle = 'REGISTRAR NUEVO USUARIO';
+        this.modals.modalTitle = 'REGISTRAR NUEVO USUARIO';
         this.formUsuario.reset({
             id: 0,
             nombre: '',
@@ -127,12 +152,12 @@ export default class UsuariosComponent {
 
     nuevoUsuario(): void {
         this.service.nuevaUsuario(this.formUsuario.value);
-        this.modalNuevoUsuario = false;
+        this.modals.nuevoUsuario = false;
     }
 
     actualizarUsuario(usuario: Usuario): void {
         this.service.actualizarUsuario(usuario.id, usuario);
-        this.modalNuevoUsuario = false;
+        this.modals.nuevoUsuario = false;
     }
 
     uiEstado(usuario: Usuario): void {
@@ -176,8 +201,8 @@ export default class UsuariosComponent {
             // error: (error) => (this.jsonMenu = { menu: [], usuarioMenu: [] }),
         });
         this.usuarioSelected = usuario;
-        this.modalConfig = true;
-        this.modalTitle = `CONFIGURACION DE USUARIO`;
+        this.modals.config = true;
+        this.modals.modalTitle = `CONFIGURACION DE USUARIO`;
     }
 
     agregarModulo() {
@@ -185,7 +210,9 @@ export default class UsuariosComponent {
             if (s.parent != undefined) {
                 // se escogio 1 de n modulos
                 let children = [];
-                let i = this.menuUser.findIndex((m) => m.key == s.parent.key);
+                let i = this.menuUser.findIndex(
+                    (m) => m.label == s.parent.label
+                );
                 if (i == -1) {
                     this.menuUser.push({
                         key: s.parent.key,
@@ -300,5 +327,17 @@ export default class UsuariosComponent {
             password: '',
             confirmar_password: '',
         };
+    }
+
+    config_turno() {
+        if (this.config_turnos.modulo_id == 0) {
+            return this.utilitiService.notification({
+                severity: 'warn',
+                summary: '!NOTIFICACION¡',
+                detail: 'DEBE ELEGIR UN MODULO',
+            });
+        }
+
+        console.log(this.config_turnos);
     }
 }

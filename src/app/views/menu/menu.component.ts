@@ -1,9 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Route, Router } from '@angular/router';
-import { MenuItem, TreeNode } from 'primeng/api';
+import { Route } from '@angular/router';
+import { MenuItem } from 'primeng/api';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { ModuloService } from 'src/app/services/modulo.service';
-import { AlmacenService } from 'src/app/services/storage.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { icons } from 'src/environments/environment';
 
@@ -16,7 +15,6 @@ import { icons } from 'src/environments/environment';
 })
 export default class MenuComponent implements OnInit {
     private usuariosService = inject(UsuarioService);
-    private storageService = inject(AlmacenService);
     private menuService = inject(ModuloService);
     items: MenuItem[] | undefined;
     activeItem: MenuItem | undefined;
@@ -43,7 +41,7 @@ export default class MenuComponent implements OnInit {
             data: ['pi pi-fw pi-home'],
         };
         this.usuariosService
-            .obt_modulos(this.storageService.currentUser().id)
+            .obt_modulos(this.usuariosService.currentUser().id)
             .subscribe({
                 next: (menus: any) => {
                     this.menus = menus.menu.filter(

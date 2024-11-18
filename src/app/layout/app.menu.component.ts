@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
 import { Router } from '@angular/router';
 import { MenuService } from './app.menu.service';
-import { AlmacenService } from '../services/storage.service';
+import { UsuarioService } from '../services/usuario.service';
 
 interface MODEL {
     label: string;
@@ -25,11 +25,11 @@ export class AppMenuComponent implements OnInit {
     rutas = [];
     rutas_temp = [];
     private service = inject(MenuService);
-    private storage = inject(AlmacenService);
+    private usuarioService = inject(UsuarioService);
 
     constructor(public layoutService: LayoutService, private routes: Router) {
         this.service
-            .obtenerRutas(this.storage.currentUser().id)
+            .obtenerRutas(this.usuarioService.currentUser().id)
             .subscribe((rutas) => {
                 this.rutas = rutas;
             });

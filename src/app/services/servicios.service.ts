@@ -3,6 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Servicio } from '../interfaces/servicio.interface';
 import { url } from 'src/environments/environment';
+import { AlmacenService } from './storage.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,12 +14,13 @@ export class ServiciosService {
     private _lista_servicios = signal<Servicio[]>([]);
     public lista_servicios = computed(() => this._lista_servicios());
     private http = inject(HttpClient);
+    private storage = inject(AlmacenService);
     constructor(private messageService: MessageService) {
-        this.obtenerServicios();
+        // this.obtenerServicios(this.storage.currentUser().id);
     }
 
-    obtenerServicios() {
-        this.http.get<Servicio[]>(`${url}/servicios`).subscribe({
+    obtenerServicios(id: number) {
+        this.http.get<Servicio[]>(`${url}/servicios/${id}`).subscribe({
             next: (data) => {
                 this._lista_servicios.set(data);
                 this._isLoading.set(false);
@@ -54,6 +56,7 @@ export class ServiciosService {
     }
 
     actualizarServicio(id: number, servicio: Servicio): void {
+        this._isLoading.set(true);
         this.http.patch(`${url}/servicios/${id}`, servicio).subscribe({
             next: (value: Servicio) => {
                 const i = this.lista_servicios().findIndex(
@@ -69,6 +72,7 @@ export class ServiciosService {
                     summary: '!NOTIFICACION¡',
                     detail: `ACTUALIZADO CORRECTAMENTE`,
                 });
+                this._isLoading.update((x) => (x = false));
             },
             error: (err) => {
                 this.messageService.add({
@@ -106,7 +110,7 @@ export class ServiciosService {
 
     config_modulo_servicio(modulo_id: number, servicio_id: number) {
         this.http
-            .post(`${url}/config-modulo-servicios`, { modulo_id, servicio_id })
+            .post(`${url}/servicios/config`, { modulo_id, servicio_id })
             .subscribe({
                 next: (value: Servicio) => {
                     this.messageService.add({
@@ -119,7 +123,7 @@ export class ServiciosService {
                     this.messageService.add({
                         severity: 'warn',
                         summary: '!NOTIFICACION¡',
-                        detail: `OCURRIO UN ERROR: ${err.message}`,
+                        detail: err.error,
                     });
                 },
             });

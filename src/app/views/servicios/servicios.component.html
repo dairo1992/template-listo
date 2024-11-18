@@ -56,8 +56,7 @@
             </div>
             <p-table #table_servicios [value]="service.lista_servicios()"
                 styleClass="p-datatable-striped p-datatable-gridlines" [globalFilterFields]="['NOMBRE']"
-                [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 20]" stateStorage="session"
-                stateKey="statedemo-session" appendTo="body">
+                [paginator]="true" [rows]="4" [rowsPerPageOptions]="[5, 10, 20]" appendTo="body">
                 <ng-template pTemplate="caption">
                     <div class="flex">
                         <span class="p-input-icon-left ml-auto">

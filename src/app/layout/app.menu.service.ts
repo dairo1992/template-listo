@@ -27,6 +27,6 @@ export class MenuService {
     }
 
     obtenerRutas(id_user: number) {
-        return this.http.get<Routes[]>(`${url}/auth/menu?id=${id_user}`);
+        return this.http.get<Routes[]>(`${url}/auth/menu/${id_user}`);
     }
 }

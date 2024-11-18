@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { Modulo } from '../interfaces/modulo.interface';
 import { url } from 'src/environments/environment';
 import { SedesService } from './sedes.service';
+import { AlmacenService } from './storage.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,27 +16,28 @@ export class ModuloService {
     public lista_modulos = computed(() => this._lista_modulos());
     private lista_sedes = inject(SedesService).lista_sedes;
     private http = inject(HttpClient);
+    private storageService = inject(AlmacenService);
     // private listaEmpresas = inject(EmpresaService).lista_empresas;
     constructor(private messageService: MessageService) {
-        this.obtenerModulos();
+        // this.obtenerModulos(this.storageService.currentUser().id);
     }
 
-    obtenerModulos(): void {
-        this.http.get<Modulo[]>(`${url}/modulos`).subscribe({
+    obtenerModulos(id: number): void {
+        this.http.get<Modulo[]>(`${url}/modulos/${id}`).subscribe({
             next: (data) => {
                 // const lista = data.map<Modulo>((m) => {
-                //     m.empresa_id = m.sede.empresa_id;
+                //     m.
                 //     return m;
                 // });
-                // this._lista_modulos.set(lista);
-                // this._isLoading.set(false);
+                this._lista_modulos.set(data);
+                this._isLoading.set(false);
             },
             error: (err) => {
                 this._lista_modulos.set([]);
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: `OCURRIO UN ERROR: ${err.error}`,
                 });
             },
         });
@@ -44,21 +46,21 @@ export class ModuloService {
     nuevoModulo(modulo: Modulo): void {
         this.http.post(`${url}/modulos`, modulo).subscribe({
             next: (value: Modulo) => {
-                // const sede = this.lista_sedes().find(
-                //     (m) => m.id == modulo.sede_id
-                // );
-                // value.sede = sede;
-                // this._lista_modulos.set([...this.lista_modulos(), value]);
-                // this.messageService.add({
-                //     severity: 'success',
-                //     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
-                // });
+                const sede = this.lista_sedes().find(
+                    (m) => m.id == modulo.sede_id
+                );
+                value.sede = sede;
+                this._lista_modulos.set([...this.lista_modulos(), value]);
+                this.messageService.add({
+                    severity: 'success',
+                    summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                });
             },
             error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: `OCURRIO UN ERROR: ${err.error}`,
                 });
             },
         });
@@ -66,26 +68,30 @@ export class ModuloService {
 
     actualizarModulo(id: number, modulo: Modulo): void {
         this.http.patch(`${url}/modulos/${id}`, modulo).subscribe({
-            next: (value: Modulo) => {
+            next: (value: any) => {
                 const i = this.lista_modulos().findIndex(
                     (e) => e.id == modulo.id
                 );
                 this._lista_modulos.update((empresas) => {
                     empresas.splice(i);
+                    const sed = this.lista_sedes().find(
+                        (s) => s.id == modulo.sede_id
+                    );
+                    modulo.sede = sed;
                     empresas.push(modulo);
                     return empresas;
                 });
                 this.messageService.add({
-                    severity: 'success',
+                    severity: value.STATUS ? 'success' : 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `ACTUALIZADO CORRECTAMENTE`,
+                    detail: value.MSG,
                 });
             },
             error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: `OCURRIO UN ERROR: ${err.error}`,
                 });
             },
         });
@@ -109,7 +115,7 @@ export class ModuloService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: `OCURRIO UN ERROR: ${err.error}`,
                 });
             },
         });
@@ -131,7 +137,7 @@ export class ModuloService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: `OCURRIO UN ERROR: ${err.error}`,
                 });
             },
         });

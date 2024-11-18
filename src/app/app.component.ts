@@ -15,7 +15,6 @@ export class AppComponent implements OnInit {
         this.primengConfig.ripple = true;
         let currentUser = this.storageService.obtenerDatosUsuario();
         let currentURL = this.storageService.obtenerRutaActual();
-        console.log(currentUser);
         if (currentUser) {
             this.router.navigateByUrl(`${currentURL}`);
         }

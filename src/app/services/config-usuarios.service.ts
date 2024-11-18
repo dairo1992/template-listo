@@ -4,7 +4,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { ConfigUser } from 'src/app/interfaces/config-usuarios.interface';
 import { url } from 'src/environments/environment';
-import { AlmacenService } from '../storage.service';
+import { AlmacenService } from './storage.service';
 
 @Injectable({
     providedIn: 'root',
@@ -18,8 +18,8 @@ export class ConfigUsuariosService {
     private message = inject(MessageService);
     private storage = inject(AlmacenService);
     constructor() {
-        let id = this.storage.currentUser().id;
-        this.obtenerUsuarios(id);
+        // let id = this.storage.currentUser().id;
+        // this.obtenerUsuarios(id);
     }
 
     obtenerUsuarios(usuario_id: number): void {

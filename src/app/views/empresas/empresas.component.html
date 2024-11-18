@@ -13,7 +13,7 @@
 @else{
 <p-table #table_usuarios [value]="service.lista_empresas()" styleClass="p-datatable-striped p-datatable-gridlines"
     [tableStyle]="{'min-width': '50rem'}" [globalFilterFields]="['NOMBRE','NIT']" [paginator]="true" [rows]="5"
-    [rowsPerPageOptions]="[5, 10, 20]" stateStorage="session" stateKey="statedemo-session">
+    [rowsPerPageOptions]="[5, 10, 20]">
     <ng-template pTemplate="caption">
         <div class="flex">
             <p-button label="Nuevo" [outlined]="true" icon="pi pi-user-plus"

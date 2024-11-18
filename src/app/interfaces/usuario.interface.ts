@@ -4,17 +4,24 @@ import { Servicio } from './servicio.interface';
 
 export interface Usuario {
     id: number;
+    config: Config;
     estado: string;
     modulo: Modulo;
     nombre: string;
     empresa: Empresa;
     apellido: string;
     password: string;
-    servicio: Servicio;
+    servicio: Servicio[];
     documento: string;
-    prioritario: number;
     tipo_usuario: string;
+    prioritario: number;
     token: string;
+}
+
+export interface Config {
+    id: number;
+    modulo_id: number;
+    prioritarios: number;
 }
 
 // Converts JSON strings to/from your types

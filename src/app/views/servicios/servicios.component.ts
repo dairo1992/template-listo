@@ -49,6 +49,12 @@ export default class ServiciosComponent {
 
     actualizarServicio(servicio: Servicio): void {
         this.service.actualizarServicio(servicio.id, servicio);
+        this.servicioForm.reset({
+            id: 0,
+            nombre: '',
+            descripcion: '',
+            estado: 'A',
+        });
     }
 
     uiEstado(servicio: Servicio): void {

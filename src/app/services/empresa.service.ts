@@ -14,10 +14,10 @@ export class EmpresaService {
     public lista_empresas = computed(() => this._lista_empresas());
     private http = inject(HttpClient);
     constructor(private messageService: MessageService) {
-        this.obtenerEmpresas();
+        // this.obtenerEmpresas(this.storageService.currentUser().id);
     }
 
-    obtenerEmpresas(id: number = 0): void {
+    obtenerEmpresas(id: number): void {
         this.http.get<Empresa[]>(`${url}/empresas/${id}`).subscribe({
             next: (data) => {
                 this._lista_empresas.set(data);

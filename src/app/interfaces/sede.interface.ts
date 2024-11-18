@@ -1,14 +1,13 @@
-// To parse this data:
-//
-//   import { Convert, Sede } from "./file";
-//
-//   const sede = Convert.toSede(json);
+import { Empresa } from "./empresa.interface";
 
 export interface Sede {
-    id:        number;
-    estado:    string;
-    nombre:    string;
-    direccion: string;
+    id:         number;
+    estado:     string;
+    nombre:     string;
+    empresa:    Empresa;
+    direccion:  string;
+    created_at: Date;
+    empresa_id: number;
 }
 
 // Converts JSON strings to/from your types
