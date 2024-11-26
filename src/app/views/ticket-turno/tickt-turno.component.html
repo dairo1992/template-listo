@@ -1,0 +1,34 @@
+<div class="ticket-container" id="ticket-print">
+    <div class="ticket-header">
+        <h1>{{turno_in.empresa}}</h1>
+        <p>{{turno_in.direccion}}</p>
+        <!-- <p>Tel: {{turno_in.}}</p> -->
+    </div>
+
+    <div class="ticket-divider"></div>
+
+    <div class="ticket-body">
+        <div class="ticket-info">
+            <h2>TURNO</h2>
+            <p class="ticket-number">{{ turno_in.turno }}</p>
+
+            <div class="ticket-details">
+                <p><strong>Servicio:</strong> {{ turno_in.servicio }}</p>
+                <p><strong>Fecha Ingreso:</strong> {{ turno_in.fecha_creacion | date:'dd/MM/yyyy' }}</p>
+                <p><strong>Hora Ingreso:</strong> {{ (turno_in.hora_creacion).split('.')[0] }}</p>
+            </div>
+
+            <!-- Contenedor para el QR -->
+            <div class="qr-container">
+                <img #qrImage class="qr-code" />
+            </div>
+        </div>
+    </div>
+
+    <div class="ticket-divider"></div>
+
+    <div class="ticket-footer">
+        <p>Escanea para más información</p>
+        <p class="small-text">Powered by My Digiturno</p>
+    </div>
+</div>

@@ -112,6 +112,15 @@ import { NotfoundComponent } from './views/notfound/notfound.component';
                                             './views/gestion_turnos/reportes/reportes.component'
                                         ),
                                 },
+                                {
+                                    path: 'gestion-turno',
+                                    title: 'Gestion',
+                                    data: ['pi pi-megaphone'],
+                                    loadComponent: () =>
+                                        import(
+                                            './views/gestion_turnos/reportes/reportes.component'
+                                        ),
+                                },
                             ],
                         },
                     ],

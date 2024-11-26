@@ -1,0 +1,64 @@
+.qr-container {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+  }
+
+  .qr-code {
+    width: 130px;
+    height: 130px;
+  }
+
+  .ticket-container {
+    width: 58mm; /* Ancho estándar de ticket térmico */
+    max-width: 58mm;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    text-align: center;
+    border: 1px dashed #000;
+  }
+
+  .ticket-header {
+    margin-bottom: 10px;
+  }
+
+  .ticket-header h1 {
+    margin: 0;
+    font-size: 16px;
+    text-transform: uppercase;
+  }
+
+  .ticket-divider {
+    border-top: 1px dashed #000;
+    margin: 10px 0;
+  }
+
+  .ticket-number {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+
+  .ticket-details {
+    text-align: left;
+    margin: 10px 0;
+  }
+
+  .ticket-footer {
+    margin-top: 10px;
+    font-size: 10px;
+  }
+
+  .small-text {
+    font-size: 8px;
+  }
+
+  @media print {
+    .ticket-container {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+  }

@@ -1,4 +1,6 @@
-<p-toast position="center" key="turno" [breakpoints]="{ '920px': { width: '50%', right: '0', left: '0' } }">
+<p-toast />
+<p-toast position="center" key="turno" [breakpoints]="{ '920px': { width: '50%', right: '0', left: '0' } }"
+    (onClose)="paso = 1">
     <ng-template let-message pTemplate="message">
         <div class="flex flex-column">
             <div class="flex align-items-center justify-content-center mb-2"><i
@@ -10,9 +12,11 @@
             <div class="flex align-items-center justify-content-center mb-2 text-2x1">
                 {{ message.summary }}
             </div>
+            @if(message.data != null){
             <div class="flex align-items-center justify-content-center mb-2">
-                <p-button size="small" label="CONFIRMAR" (onClick)="messageService.clear('turno')" />
+                <p-button size="small" label="IMPRIMIR" (onClick)="imprimirTurno(message.data)" />
             </div>
+            }
         </div>
     </ng-template>
 </p-toast>
@@ -57,6 +61,7 @@
             <p-button class="flex align-items-center justify-content-center" label="Consultar" icon="pi pi-search"
                 [disabled]="!consultaForm.valid" (onClick)="consultarCliente()" />
             }
+            <!-- <app-tickt-turno [turno_in]="'DAIRO BARRIOS'"></app-tickt-turno> -->
             @if(paso === 2){
             <div class="p-fluid">
                 <form [formGroup]="formCliente" #formDirective="ngForm" (ngSubmit)="nuevoCliente()">
@@ -167,30 +172,26 @@
             </div>
             }
             @if(paso === 3){
-                <div class="p-fluid">
-                    <div class="flex justify-content-between flex-wrap">
-                      @for (servicio of ServicioService.lista_servicios(); track $index) {
-                        <div 
-                          class="card flex align-items-center justify-content-center font-bold border-round m-2 shadow-2 hover:shadow-8 cursor-pointer"
-                          [class.selected]="servicioSeleccionado === servicio"
-                          [style]="{'background-color': servicio.color}" 
-                          (click)="seleccionarServicio(servicio)">
-                          <div class="flex flex-column">
+            <div class="p-fluid">
+                <div class="flex justify-content-between flex-wrap">
+                    @for (servicio of ServicioService.lista_servicios(); track $index) {
+                    <div class="card flex align-items-center justify-content-center font-bold border-round m-2 shadow-2 hover:shadow-8 cursor-pointer"
+                        [class.selected]="servicioSeleccionado === servicio"
+                        [style]="{'background-color': servicio.color}" (click)="generarTurno(servicio)">
+                        <div class="flex flex-column">
                             <div class="flex align-items-center justify-content-center border-round m-2">
-                              <i 
-                                class="flex align-items-center justify-content-center" 
-                                [class]="servicio.icon"
-                                style="font-size: 6rem; color: white;">
-                              </i>
+                                <i class="flex align-items-center justify-content-center" [class]="servicio.icon"
+                                    style="font-size: 6rem; color: white;">
+                                </i>
                             </div>
                             <div class="flex align-items-center justify-content-center border-round m-2">
-                              {{servicio.nombre}}
+                                {{servicio.nombre}}
                             </div>
-                          </div>
                         </div>
-                      }
                     </div>
-                  </div>
+                    }
+                </div>
+            </div>
             }
             @if(paso > 1){
             <div class="flex justify-content-center flex-wrap">
@@ -205,16 +206,30 @@
                         (onClick)="nuevoCliente()" />
                 </div>
                 }
-                @if(paso === 3 && turnoForm.value.servicio_id > 0){
+                <!-- @if(paso === 3 && turnoForm.value.servicio_id > 0){
                 <div class="flex align-items-center justify-content-center m-2">
                     <p-button class="flex align-items-center justify-content-center" label="GENERAR" icon="pi pi-check"
                         [loading]="clienteService.isLoading()" [disabled]="!formCliente.valid"
                         (onClick)="generarTurno()" />
                 </div>
-                }
+                } -->
             </div>
             }
         </div>
     </div>
-
 </div>
+<p-dialog header="IMPRIMIR TURNO" [draggable]="false" [modal]="true" [(visible)]="modalImprimir"
+    [style]="{ width: '25rem' }" [resizable]="false" (onHide)="modalImprimir = false">
+    <div class="flex flex-column">
+        <div class="flex align-items-center justify-content-center m-2">
+            @if(turnoGenerado != null){
+            <app-tickt-turno [turno_in]="turnoGenerado"></app-tickt-turno>
+            }
+            @else {
+            <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+                animationDuration=".5s" />
+            }
+        </div>
+    </div>
+
+</p-dialog>

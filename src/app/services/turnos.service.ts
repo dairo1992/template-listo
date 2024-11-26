@@ -31,4 +31,8 @@ export class TurnosService {
         );
         return this.http.post(`${url}/turnos`, turno);
     }
+
+    imprimirTurno(id: number) {
+        return this.http.get(`${url}/turnos/${id}`);
+    }
 }
