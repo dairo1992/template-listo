@@ -1,10 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { ModuloService } from 'src/app/services/modulo.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { icons } from 'src/environments/environment';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
     selector: 'app-menu',
@@ -31,7 +32,10 @@ export default class MenuComponent implements OnInit {
         icon: '',
         routerLink: '',
     };
-    constructor() {
+    constructor(
+        private clipboard: Clipboard,
+        private messageService: MessageService
+    ) {
         this.limpiarForm();
         this.icons = icons;
         this.iconsTemp = icons;
@@ -95,15 +99,25 @@ export default class MenuComponent implements OnInit {
     uiMenus(form: any) {
         if (this.activeItem.id == '0') {
             this.menus.push({ label: form.label_menu, items: [] });
+            this.clipboard.copy(
+                JSON.stringify({ label: form.label_menu, items: [] })
+            );
         } else {
             let i = this.menus.findIndex((m) => m.label == form.label_menu);
-            this.menus[i].items.push({
+            const nuevo = {
                 label: form.label,
                 icon: form.icon == '' ? 'pi pi-info' : form.icon,
                 routerLink: form.routerLink,
-            });
+            };
+            this.menus[i].items.push(nuevo);
+            this.clipboard.copy(JSON.stringify(nuevo));
         }
         this.menuService.uiMenu(this.menus);
+        this.messageService.add({
+            icon: 'pi pi-copy',
+            severity: 'success',
+            summary: 'Copiado al PortaPapeles',
+        });
         this.limpiarForm();
     }
 

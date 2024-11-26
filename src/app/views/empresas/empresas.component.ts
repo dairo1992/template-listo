@@ -5,6 +5,7 @@ import { EmpresaService } from 'src/app/services/empresa.service';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { DatePipe, UpperCasePipe } from '@angular/common';
+import { UsuarioService } from 'src/app/services/usuario.service';
 
 @Component({
     selector: 'app-empresas',
@@ -15,11 +16,14 @@ import { DatePipe, UpperCasePipe } from '@angular/common';
 })
 export default class EmpresasComponent implements OnInit {
     public service = inject(EmpresaService);
+    private usuarioservice = inject(UsuarioService);
     public getStatus = inject(UtilitiesService).getStatus;
     modalNuevaEmpresa: boolean = false;
     modalTitle: string = 'REGISTRAR EMPRESA';
     empresaForm!: FormGroup;
-    constructor() {}
+    constructor() {
+        this.service.obtenerEmpresas(this.usuarioservice.currentUser().id);
+    }
     ngOnInit(): void {
         this.empresaForm = new FormGroup({
             id: new FormControl(0, Validators.required),
@@ -32,7 +36,6 @@ export default class EmpresasComponent implements OnInit {
             estado: new FormControl('A'),
             created_at: new FormControl(''),
         });
-        // this.empresaForm.reset();
     }
 
     nuevaEmpresa(): void {

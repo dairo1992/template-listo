@@ -62,9 +62,10 @@
     <div class="card p-fluid">
         <form [formGroup]="sedeForm" #formDirective="ngForm" (ngSubmit)="nuevaEmpresa()">
             <div class="p-formgrid grid">
+                @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
                 <div class="field col"><label htmlfor="empresa_id">EMPRESA</label>
-                    <p-dropdown [options]="listaEmpresas()" formControlName="empresa_id" [optionLabel]="'nombre'"
-                        [optionValue]="'id'" />
+                    <p-dropdown [options]="empresasService.lista_empresas()" formControlName="empresa_id"
+                        [optionLabel]="'nombre'" [optionValue]="'id'" />
                     @if(sedeForm.get('empresa_id').invalid && (sedeForm.get('empresa_id').dirty ||
                     sedeForm.get('empresa_id').touched)){
                     <div>
@@ -72,6 +73,7 @@
                     </div>
                     }
                 </div>
+                }
                 <div class="field col"><label htmlfor="nombre">NOMBRE</label>
                     <input formControlName="nombre" id="nombre" type="text" class="p-inputtext p-component p-element">
                     @if(sedeForm.get('nombre').invalid &&

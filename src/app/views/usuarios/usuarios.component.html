@@ -91,10 +91,10 @@
                     </div>
                     }
                 </div>
-                @if(formUsuario.value.tipo_usuario != 'SUPER_ADMIN'){
+                @if(currentUser.tipo_usuario == 'SUPER_ADMIN'){
                 <div class="field col"><label htmlfor="empresa">EMPRESA</label>
-                    <p-dropdown [options]="listaEmpresas()" formControlName="empresa_id" [optionLabel]="'nombre'"
-                        [optionValue]="'id'" />
+                    <p-dropdown [options]="empresaService.lista_empresas()" formControlName="empresa_id"
+                        [optionLabel]="'nombre'" [optionValue]="'id'" />
                     @if(formUsuario.get('empresa_id').invalid && (formUsuario.get('empresa_id').dirty ||
                     formUsuario.get('empresa_id').touched)){
                     <div>
@@ -213,14 +213,22 @@
 <p-dialog [header]="modals.modalTitle" [draggable]="false" [modal]="true" [(visible)]="modals.config_turnos"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [resizable]="false">
     <div class="flex align-items-center gap-3 mb-3">
-        <label for="username" class="font-semibold w-6rem">Modulo</label>
-        <p-dropdown [options]="listaModulos()" id="config_turno_modulo" [(ngModel)]="config_turnos.modulo_id"
+        <label for="username" class="font-semibold w-6rem">SEDE</label>
+        <p-dropdown [options]="sedeService.lista_sedes()" id="config_turno_modulo" [(ngModel)]="config_turnos.modulo_id"
+            [optionLabel]="'nombre'" [optionValue]="'id'" placeholder="SELECCIONAR" appendTo="body"
+            (onChange)="filterModulos($event)"
+            inputStyleClass="surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </p-dropdown>
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+        <label for="username" class="font-semibold w-6rem">MODULO</label>
+        <p-dropdown [options]="listaModulosFilter" id="config_turno_modulo" [(ngModel)]="config_turnos.modulo_id"
             [optionLabel]="'nombre'" [optionValue]="'id'" placeholder="SELECCIONAR" appendTo="body"
             inputStyleClass="surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
         </p-dropdown>
     </div>
     <div class="flex align-items-center gap-3 mb-5">
-        <label for="email" class="font-semibold w-6rem">Turno Prioritario</label>
+        <label for="email" class="font-semibold w-6rem">TURNO PRIORITARIO</label>
         <p-dropdown [options]="optionsPrioritarios" [(ngModel)]="config_turnos.prioritarios" [optionLabel]="'name'"
             [optionValue]="'id'" id="config_turno_prioritario" placeholder="SELECCIONAR" appendTo="body"
             inputStyleClass="surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">

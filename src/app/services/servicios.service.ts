@@ -15,9 +15,7 @@ export class ServiciosService {
     public lista_servicios = computed(() => this._lista_servicios());
     private http = inject(HttpClient);
     private storage = inject(AlmacenService);
-    constructor(private messageService: MessageService) {
-        // this.obtenerServicios(this.storage.currentUser().id);
-    }
+    constructor(private messageService: MessageService) {}
 
     obtenerServicios(id: number) {
         this.http.get<Servicio[]>(`${url}/servicios/${id}`).subscribe({
@@ -30,7 +28,7 @@ export class ServiciosService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -39,7 +37,10 @@ export class ServiciosService {
     nuevoServicio(servicio: Servicio): void {
         this.http.post(`${url}/servicios`, servicio).subscribe({
             next: (value: Servicio) => {
-                this._lista_servicios.set([...this.lista_servicios(), value]);
+                this._lista_servicios.set([
+                    ...(this.lista_servicios() || []),
+                    value,
+                ]);
                 this.messageService.add({
                     severity: 'success',
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
@@ -49,7 +50,7 @@ export class ServiciosService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -78,7 +79,7 @@ export class ServiciosService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -102,7 +103,7 @@ export class ServiciosService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });

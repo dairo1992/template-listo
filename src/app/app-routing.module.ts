@@ -73,21 +73,45 @@ import { NotfoundComponent } from './views/notfound/notfound.component';
                                         ),
                                 },
                                 {
+                                    path: 'clientes',
+                                    title: 'Clientes',
+                                    data: ['pi pi-users'],
+                                    loadComponent: () =>
+                                        import(
+                                            './views/clientes/clientes.component'
+                                        ),
+                                },
+                                {
                                     path: 'menus',
                                     title: 'Menus',
                                     data: ['pi pi-bars'],
                                     loadComponent: () =>
                                         import('./views/menu/menu.component'),
                                 },
-                                // {
-                                //     path: 'config-usuarios',
-                                //     title: 'Config Usuarios',
-                                //     data: ['pi pi-user-plus'],
-                                //     loadComponent: () =>
-                                //         import(
-                                //             './views/config-usuarios/config-usuarios.component'
-                                //         ),
-                                // },
+                            ],
+                        },
+                        {
+                            path: '',
+                            title: 'GESTION TURNOS',
+                            children: [
+                                {
+                                    path: 'nuevo-turno',
+                                    title: 'Generar',
+                                    data: ['pi pi-ticket'],
+                                    loadComponent: () =>
+                                        import(
+                                            './views/gestion_turnos/generar/generar.component'
+                                        ),
+                                },
+                                {
+                                    path: 'reporte-turnos',
+                                    title: 'Reporte',
+                                    data: ['pi pi-chart-line'],
+                                    loadComponent: () =>
+                                        import(
+                                            './views/gestion_turnos/reportes/reportes.component'
+                                        ),
+                                },
                             ],
                         },
                     ],

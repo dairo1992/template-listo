@@ -18,9 +18,7 @@ export class UsuarioService {
     private http = inject(HttpClient);
     private empresas = inject(EmpresaService);
 
-    constructor(private messageService: MessageService) {
-        // this.obtenerUsuarios(this.storage.currentUser().id);
-    }
+    constructor(private messageService: MessageService) {}
 
     setUsuario(usuario: Usuario | null) {
         this._currentUser.set(usuario);
@@ -38,7 +36,7 @@ export class UsuarioService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `${err.error.error}`,
+                    detail: err.error,
                 });
             },
         });
@@ -47,7 +45,10 @@ export class UsuarioService {
     nuevaUsuario(usuario: Usuario): void {
         this.http.post(`${url}/usuarios/register`, usuario).subscribe({
             next: (value: Usuario) => {
-                this._lista_usuarios.set([...this.lista_usuarios(), value]);
+                this._lista_usuarios.set([
+                    ...(this.lista_usuarios() || []),
+                    value,
+                ]);
                 this.messageService.add({
                     severity: 'success',
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
@@ -57,7 +58,7 @@ export class UsuarioService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -86,7 +87,7 @@ export class UsuarioService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -110,7 +111,7 @@ export class UsuarioService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -136,7 +137,7 @@ export class UsuarioService {
                     this.messageService.add({
                         severity: 'warn',
                         summary: '!NOTIFICACION¡',
-                        detail: `OCURRIO UN ERROR: ${err.message}`,
+                        detail: err.error,
                     });
                 },
             });
@@ -160,7 +161,26 @@ export class UsuarioService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
+                });
+            },
+        });
+    }
+
+    configurarTurno(config: any) {
+        this.http.post(`${url}/usuarios/config`, config).subscribe({
+            next: (response: any) => {
+                this.messageService.add({
+                    severity: response.STATUS ? 'success' : 'error',
+                    summary: '!NOTIFICACION¡',
+                    detail: response.MSG,
+                });
+            },
+            error: (err) => {
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: '!NOTIFICACION¡',
+                    detail: err.error,
                 });
             },
         });

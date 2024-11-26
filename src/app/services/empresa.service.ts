@@ -9,13 +9,11 @@ import { url } from 'src/environments/environment';
 })
 export class EmpresaService {
     private _lista_empresas = signal<Empresa[]>([]);
-    private _isLoading = signal<boolean>(true);
-    public isLoading = computed(() => this._isLoading());
     public lista_empresas = computed(() => this._lista_empresas());
+    public isLoading = computed(() => this._isLoading());
+    private _isLoading = signal<boolean>(true);
     private http = inject(HttpClient);
-    constructor(private messageService: MessageService) {
-        // this.obtenerEmpresas(this.storageService.currentUser().id);
-    }
+    constructor(private messageService: MessageService) {}
 
     obtenerEmpresas(id: number): void {
         this.http.get<Empresa[]>(`${url}/empresas/${id}`).subscribe({
@@ -28,7 +26,7 @@ export class EmpresaService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -36,18 +34,21 @@ export class EmpresaService {
 
     nuevaEmpresa(empresa: Empresa): void {
         this.http.post(`${url}/empresas`, empresa).subscribe({
-            next: (value: Empresa) => {
-                this._lista_empresas.set([...this.lista_empresas(), value]);
+            next: (nuevaEmpresa: Empresa) => {
+                this._lista_empresas.set([
+                    ...(this._lista_empresas() || []),
+                    nuevaEmpresa,
+                ]);
                 this.messageService.add({
                     severity: 'success',
-                    summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                    summary: `${nuevaEmpresa.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
                 });
             },
             error: (err) => {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -74,7 +75,7 @@ export class EmpresaService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -100,7 +101,7 @@ export class EmpresaService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });

@@ -1,0 +1,220 @@
+<p-toast position="center" key="turno" [breakpoints]="{ '920px': { width: '50%', right: '0', left: '0' } }">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column">
+            <div class="flex align-items-center justify-content-center mb-2"><i
+                    class="flex align-items-center justify-content-center" class="pi pi-discord"
+                    style="font-size: 6rem; color: white;"></i></div>
+            <div class="flex align-items-center justify-content-center mb-2 text-xl">
+                {{ message.detail }}
+            </div>
+            <div class="flex align-items-center justify-content-center mb-2 text-2x1">
+                {{ message.summary }}
+            </div>
+            <div class="flex align-items-center justify-content-center mb-2">
+                <p-button size="small" label="CONFIRMAR" (onClick)="messageService.clear('turno')" />
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="flex flex-row flex-wrap">
+    <div class="flex align-items-center justify-content-center w-full border-round">
+        <div class="card layout-main  min-h-full">
+            @if(paso === 1){
+            <div class="p-fluid">
+                <form [formGroup]="consultaForm" #formDirective="ngForm" (ngSubmit)="consultarCliente()">
+                    <div class="flex flex-column flex-wrap">
+                        <div class="p-formgrid grid">
+                            <div class="field col">
+                                <label htmlfor="tipo_documento">TIPO DOCUMENTO</label>
+                                <p-dropdown [options]="utilityService.tipos_documento()"
+                                    formControlName="tipo_documento" [optionLabel]="'label'" [optionValue]="'value'"
+                                    appendTo="body" />
+                                @if(consultaForm.get('tipo_documento').invalid &&
+                                (consultaForm.get('tipo_documento').dirty ||
+                                consultaForm.get('tipo_documento').touched)){
+                                <div>
+                                    <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                                </div>
+                                }
+                            </div>
+
+                            <div class="field col">
+                                <label htmlfor="documento">DOCUMENTO</label>
+                                <p-inputNumber inputId="integeronly" formControlName="documento" />
+                                @if(consultaForm.get('documento').invalid &&
+                                (consultaForm.get('documento').dirty ||
+                                consultaForm.get('documento').touched)){
+                                <div>
+                                    <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <p-button class="flex align-items-center justify-content-center" label="Consultar" icon="pi pi-search"
+                [disabled]="!consultaForm.valid" (onClick)="consultarCliente()" />
+            }
+            @if(paso === 2){
+            <div class="p-fluid">
+                <form [formGroup]="formCliente" #formDirective="ngForm" (ngSubmit)="nuevoCliente()">
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlfor="tipo_documento">TIPO DOCUMENTO</label>
+                            <p-dropdown styleClass="w-full" [options]="utilityService.tipos_documento()"
+                                formControlName="tipo_documento" [optionLabel]="'label'" [optionValue]="'value'"
+                                appendTo="body" />
+                            @if(formCliente.get('tipo_documento').invalid &&
+                            (formCliente.get('tipo_documento').dirty ||
+                            formCliente.get('tipo_documento').touched)){
+                            <div>
+                                <span style=" color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                        <div class="field col"><label htmlfor="documento">DOCUMENTO</label>
+                            <p-inputNumber inputId="integeronly" formControlName="documento"
+                                [readonly]="formCliente.value.id > 0" />
+                            @if(formCliente.get('documento').invalid && (formCliente.get('documento').dirty ||
+                            formCliente.get('documento').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="p-formgrid grid">
+                        <div class="field col"><label htmlfor="nombre">NOMBRES</label>
+                            <input formControlName="nombre" id="nombre" type="text"
+                                class="p-inputtext p-component p-element" [readonly]="formCliente.value.id > 0">
+                            @if(formCliente.get('nombre').invalid &&
+                            (formCliente.get('nombre').dirty ||
+                            formCliente.get('nombre').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                        <div class="field col"><label htmlfor="apellido">APELLIDOS</label><input
+                                formControlName="apellido" id="apellido" type="text"
+                                class="p-inputtext p-component p-element" [readonly]="formCliente.value.id > 0">
+                            @if(formCliente.get('apellido').invalid && (formCliente.get('apellido').dirty ||
+                            formCliente.get('apellido').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    @if(formCliente.value.id == 0){
+                    <div class="p-formgrid grid">
+                        <div class="field col"><label htmlfor="telefono">TELEFONO</label>
+                            <p-inputMask mask="(999) 999-9999" formControlName="telefono" id="telefono"
+                                placeholder="(999) 999-9999" [readonly]="formCliente.value.id > 0" />
+                            @if(formCliente.get('telefono').invalid &&
+                            (formCliente.get('telefono').dirty ||
+                            formCliente.get('telefono').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                        <div class="field col"><label htmlfor="email">EMAIL</label>
+                            <input formControlName="email" id="email" type="email"
+                                class="p-inputtext p-component p-element" [readonly]="formCliente.value.id > 0">
+                            @if(formCliente.get('email').invalid && (formCliente.get('email').dirty ||
+                            formCliente.get('email').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="p-formgrid grid">
+                        <div class="field col"><label htmlfor="fecha_nacimiento">FECHA NACIMIENTO</label>
+                            <p-calendar formControlName="fecha_nacimiento" appendTo="body" />
+                            @if(formCliente.get('fecha_nacimiento').invalid &&
+                            (formCliente.get('fecha_nacimiento').dirty ||
+                            formCliente.get('fecha_nacimiento').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                        @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
+                        <div class="field col"><label htmlfor="empresa">EMPRESA</label>
+                            <p-dropdown [options]="empresaService.lista_empresas()" formControlName="empresa_id"
+                                [optionLabel]="'nombre'" [optionValue]="'id'" [readonly]="formCliente.value.id > 0" />
+                            @if(formCliente.get('empresa_id').invalid && (formCliente.get('empresa_id').dirty ||
+                            formCliente.get('empresa_id').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                        }
+                    </div>
+                    }
+                </form>
+                <div class="p-formgrid grid">
+                    <div class="field col-2">
+                        <label htmlfor="fecha_nacimiento">TURNO PRIORITARIO?</label>
+                        <p-inputSwitch name="prioridad" [(ngModel)]="prioritario" />
+                    </div>
+                </div>
+            </div>
+            }
+            @if(paso === 3){
+                <div class="p-fluid">
+                    <div class="flex justify-content-between flex-wrap">
+                      @for (servicio of ServicioService.lista_servicios(); track $index) {
+                        <div 
+                          class="card flex align-items-center justify-content-center font-bold border-round m-2 shadow-2 hover:shadow-8 cursor-pointer"
+                          [class.selected]="servicioSeleccionado === servicio"
+                          [style]="{'background-color': servicio.color}" 
+                          (click)="seleccionarServicio(servicio)">
+                          <div class="flex flex-column">
+                            <div class="flex align-items-center justify-content-center border-round m-2">
+                              <i 
+                                class="flex align-items-center justify-content-center" 
+                                [class]="servicio.icon"
+                                style="font-size: 6rem; color: white;">
+                              </i>
+                            </div>
+                            <div class="flex align-items-center justify-content-center border-round m-2">
+                              {{servicio.nombre}}
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+            }
+            @if(paso > 1){
+            <div class="flex justify-content-center flex-wrap">
+                <div class="flex align-items-center justify-content-center m-2">
+                    <p-button class="flex align-items-center justify-content-center" label="ATRAS"
+                        icon="pi pi-arrow-left" (onClick)="paso = paso -1" />
+                </div>
+                @if(paso === 2){
+                <div class="flex align-items-center justify-content-center m-2">
+                    <p-button class="flex align-items-center justify-content-center" label="CONTINUAR"
+                        icon="pi pi-check" [loading]="clienteService.isLoading()" [disabled]="!formCliente.valid"
+                        (onClick)="nuevoCliente()" />
+                </div>
+                }
+                @if(paso === 3 && turnoForm.value.servicio_id > 0){
+                <div class="flex align-items-center justify-content-center m-2">
+                    <p-button class="flex align-items-center justify-content-center" label="GENERAR" icon="pi pi-check"
+                        [loading]="clienteService.isLoading()" [disabled]="!formCliente.valid"
+                        (onClick)="generarTurno()" />
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+
+</div>

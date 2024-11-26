@@ -27,6 +27,11 @@ export default class ModulosComponent {
     modalNuevaSede: boolean = false;
     modalTitle: string = 'REGISTRAR MODULO';
     moduloForm!: FormGroup;
+
+    constructor() {
+        this.service.obtenerModulos(this.usuarioService.currentUser().id);
+        this._sedes_Service.obtenerSedes(this.usuarioService.currentUser().id);
+    }
     ngOnInit(): void {
         this.moduloForm = new FormGroup({
             id: new FormControl(Validators.required),
@@ -44,11 +49,7 @@ export default class ModulosComponent {
     }
 
     setModulo(modulo: Modulo): void {
-        this.listaSedesByEmpresa(
-            modulo.sede.empresa.id,
-            this.usuarioService.currentUser(),
-            'E'
-        );
+        this.listaSedesByEmpresa('E');
         this.moduloForm.setValue(modulo);
         this.modalTitle = `MODIFICAR ${modulo.nombre}`;
         this.modalNuevaSede = true;
@@ -75,18 +76,15 @@ export default class ModulosComponent {
         });
     }
 
-    listaSedesByEmpresa(
-        id_empresa: number,
-        usuario: Usuario,
-        accion: string = 'N'
-    ) {
+    listaSedesByEmpresa(accion: string = 'N') {
+        const usuario = this.usuarioService.currentUser();
         this.listaSedesFilter = this._sedes_Service
             .lista_sedes()
             .filter((sede) => {
                 if (accion === 'N' && usuario.tipo_usuario === 'SUPER_ADMIN') {
                     return sede;
                 } else {
-                    if (sede.empresa_id == id_empresa) {
+                    if (sede.empresa_id == usuario.empresa.id) {
                         return sede;
                     }
                     return null;

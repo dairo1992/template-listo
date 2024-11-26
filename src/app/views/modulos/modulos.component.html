@@ -17,7 +17,7 @@
     <ng-template pTemplate="caption">
         <div class="flex">
             <p-button label="Nuevo" [outlined]="true" icon="pi pi-user-plus"
-                (click)="listaSedesByEmpresa(currentUser.empresa.id,this.currentUser,'N'); modalNuevaSede = !modalNuevaSede;" />
+                (click)="listaSedesByEmpresa('N'); modalNuevaSede = !modalNuevaSede;" />
             <span class="p-input-icon-left ml-auto">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" [(ngModel)]="searchValue"

@@ -1,12 +1,16 @@
-import { Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Message, MessageService } from 'primeng/api';
 import * as CryptoJS from 'crypto-js';
-import { cryptoKey } from 'src/environments/environment';
+import { cryptoKey, url } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root',
 })
 export class UtilitiesService {
+    private _tipos_documento = signal<[]>([]);
+    public tipos_documento = computed(() => this._tipos_documento());
+    private http = inject(HttpClient);
     constructor(private messageService: MessageService) {}
 
     getStatus(status: string) {
@@ -40,9 +44,13 @@ export class UtilitiesService {
         const encryptedData = iv
             .concat(dataEncrypted.ciphertext)
             .toString(CryptoJS.enc.Base64);
-            console.log({iv, cryptoKey});
-            
-        console.log({ cifrado: encryptedData, original: JSON.parse(data), parse: data });
+        console.log({ iv, cryptoKey });
+
+        console.log({
+            cifrado: encryptedData,
+            original: JSON.parse(data),
+            parse: data,
+        });
         return encryptedData;
     }
 
@@ -51,5 +59,16 @@ export class UtilitiesService {
             CryptoJS.enc.Utf8
         );
         return decryptData;
+    }
+
+    obtenerTiposDocumento() {
+        this.http.get<[]>(`${url}/auth/tipos_documento`).subscribe({
+            next: (data) => {
+                this._tipos_documento.set(data);
+            },
+            error: (err) => {
+                this._tipos_documento.set([]);
+            },
+        });
     }
 }

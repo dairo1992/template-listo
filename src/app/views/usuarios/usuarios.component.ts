@@ -1,10 +1,12 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MenuItem, TreeNode } from 'primeng/api';
+import { Modulo } from 'src/app/interfaces/modulo.interface';
 import { Usuario } from 'src/app/interfaces/usuario.interface';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { EmpresaService } from 'src/app/services/empresa.service';
 import { ModuloService } from 'src/app/services/modulo.service';
+import { SedesService } from 'src/app/services/sedes.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 
@@ -19,10 +21,13 @@ export default class UsuariosComponent {
     formUsuario: FormGroup;
     public service = inject(UsuarioService);
     public utilitiService = inject(UtilitiesService);
-    public listaEmpresas = inject(EmpresaService).lista_empresas;
-    public listaModulos = inject(ModuloService).lista_modulos;
-    public tiposUsuario = ['ADMIN', 'EMPLEADO', 'SUPER_ADMIN'];
+    public empresaService = inject(EmpresaService);
+    public sedeService = inject(SedesService);
+    public modulosService = inject(ModuloService);
+    public todosTiposUsuario = ['ADMIN', 'EMPLEADO', 'SUPER_ADMIN'];
+    public tiposUsuario = [];
     public usuarioSelected: Usuario = null;
+    currentUser: Usuario;
     public menuUser: TreeNode[] = [];
     public menuFull: TreeNode[] = [];
     selected: TreeNode[];
@@ -49,9 +54,15 @@ export default class UsuariosComponent {
         usuario_id: null,
         prioritarios: null,
     };
+    listaModulosFilter: Modulo[] = [];
 
     constructor() {
-        this.service.obtenerUsuarios(this.service.currentUser().id);
+        this.currentUser = this.service.currentUser();
+        this.service.obtenerUsuarios(this.currentUser.id);
+        this.empresaService.obtenerEmpresas(this.currentUser.id);
+        this.sedeService.obtenerSedes(this.currentUser.id ?? 0);
+        this.modulosService.obtenerModulos(this.currentUser.id ?? 0);
+        this.setDropdownOptions();
         this.formUsuario = new FormGroup({
             id: new FormControl(0, Validators.required),
             nombre: new FormControl('', Validators.required),
@@ -59,7 +70,7 @@ export default class UsuariosComponent {
             documento: new FormControl('', Validators.required),
             tipo_usuario: new FormControl('', Validators.required),
             estado: new FormControl('A'),
-            empresa_id: new FormControl(0),
+            empresa_id: new FormControl(null),
         });
         this.items = [
             {
@@ -113,6 +124,16 @@ export default class UsuariosComponent {
         ];
     }
 
+    setDropdownOptions(): void {
+        if (this.service.currentUser().tipo_usuario === 'SUPER_ADMIN') {
+            this.tiposUsuario = this.todosTiposUsuario; // Mostrar todas las opciones si el usuario es SUPER_ADMIN
+        } else {
+            this.tiposUsuario = this.todosTiposUsuario.filter(
+                (option) => option !== 'SUPER_ADMIN'
+            ); // Excluir SUPER_ADMIN
+        }
+    }
+
     setUsuario(usuario: Usuario): void {
         // empresa.horario_atencion = new Date(empresa.horario_atencion);
         const usuarioTemp = {
@@ -151,6 +172,11 @@ export default class UsuariosComponent {
     }
 
     nuevoUsuario(): void {
+        if (this.currentUser.tipo_usuario != 'SUPER_ADMIN') {
+            this.formUsuario.controls['empresa_id'].setValue(
+                this.service.currentUser().empresa.id
+            );
+        }
         this.service.nuevaUsuario(this.formUsuario.value);
         this.modals.nuevoUsuario = false;
     }
@@ -337,7 +363,12 @@ export default class UsuariosComponent {
                 detail: 'DEBE ELEGIR UN MODULO',
             });
         }
+        this.service.configurarTurno(this.config_turnos);
+    }
 
-        console.log(this.config_turnos);
+    filterModulos(event: any) {
+        this.listaModulosFilter = this.modulosService
+            .lista_modulos()
+            .filter((m) => m.sede.id == event.value);
     }
 }

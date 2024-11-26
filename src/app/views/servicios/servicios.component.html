@@ -13,6 +13,20 @@
                 <div class="flex flex-column flex-wrap">
                     <div class="p-formgrid grid">
                         <div class="field col">
+                            <label htmlfor="modulo">MODULO</label>
+                            <p-dropdown styleClass="w-full" [options]="moduloService.lista_modulos()"
+                                formControlName="modulo" [optionLabel]="'nombre'" [optionValue]="'id'" />
+                            @if(servicioForm.get('modulo').invalid &&
+                            (servicioForm.get('modulo').dirty ||
+                            servicioForm.get('modulo').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="p-formgrid grid">
+                        <div class="field col">
                             <label htmlfor="nombre">NOMBRE</label>
                             <input formControlName="nombre" id="nombre" type="text"
                                 class="p-inputtext p-component p-element w-full p-3">
@@ -38,6 +52,19 @@
                             </div>
                             }
                         </div>
+                    </div>
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlfor="icon">ICONO</label>
+                            <p-button styleClass="w-full" label="ICONO " [icon]="iconSelect"
+                                (onClick)="modalIcon = !modalIcon"></p-button>
+                        </div>
+                    </div>
+                    <div class="p-formgrid grid">
+                        <div class="field col">
+                            <label htmlfor="color">COLOR</label>
+                        </div>
+                        <p-colorPicker styleClass="w-full" appendTo="body" formControlName="color_servicio" />
                     </div>
                     <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
                         [loading]="service.isLoading()" [disabled]="!servicioForm.valid"
@@ -70,6 +97,9 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th>NOMBRE</th>
+                        <!-- <th>SEDE</th> -->
+                        <th>MODULO</th>
+                        <th>COLOR</th>
                         <th>ESTADO</th>
                         <th>ACCION</th>
                     </tr>
@@ -77,6 +107,18 @@
                 <ng-template pTemplate="body" let-servicio>
                     <tr>
                         <td>{{servicio.nombre | uppercase}}</td>
+                        <!-- <td>{{servicio.modulo.sede.nombre | uppercase}}</td> -->
+                        <td>{{servicio.modulo.nombre | uppercase}}</td>
+                        <!-- <td><i [class]="servicio.icon" style="font-size: 2rem"></i></td> -->
+                        <td>
+                            <!-- <div class="w-full h-3rem border-round flex flex-wrap" [style]="{'background-color': servicio.color}">
+                                <i  class="flex align-items-center justify-content-center" [class]="servicio.icon" style="font-size: 2rem"></i>
+                            </div> -->
+                            <p-tag [style]="{'background-color': servicio.color}" styleClass="w-full h-3rem">
+                                <i class="flex align-items-center justify-content-center" [class]="servicio.icon"
+                                    style="font-size: 2rem; color: rgb(62, 58, 58);"></i>
+                            </p-tag>
+                        </td>
                         <td>
                             <p-tag [value]="getStatus(servicio.estado).nombre"
                                 [severity]="getStatus(servicio.estado).color" />
@@ -117,3 +159,26 @@
             [loading]="service.isLoading()" (onClick)="config_modulo_servicio(modulo); op.toggle($event)" />
     </div>
 </p-overlayPanel>
+
+<p-dialog header="SELECCIONAR ICONO" [(visible)]="modalIcon" [modal]="true"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
+    [resizable]="false">
+    <div class="flex flex-column">
+        <div><input pinputtext="" [(ngModel)]="query" (ngModelChange)="filterIcon(query)" placeholder="Search an icon"
+                class="p-inputtext p-component w-full p-3 mt-3 mb-4">
+        </div>
+        <div>
+            ICONO: <i class="mb-3 pi pi-file-plus text-2xl text-color-secondary"></i>
+        </div>
+        <div class="card">
+            <div class="grid text-center">
+                @for(icon of iconsTemp; track $index){
+                <div class="col-12 md:col-2 mb-5" (click)="SelectIcon(icon)" style="cursor: pointer;">
+                    <i class="mb-3 text-2xl text-color-secondary" [class]="icon"></i>
+                    <div>{{icon}}</div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</p-dialog>

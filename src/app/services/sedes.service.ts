@@ -18,9 +18,7 @@ export class SedesService {
     public sede = computed(() => this._sede());
     private http = inject(HttpClient);
     private storageService = inject(AlmacenService);
-    constructor(private messageService: MessageService) {
-        // this.obtenerSedes(this.storageService.currentUser().id);
-    }
+    constructor(private messageService: MessageService) {}
 
     obtenerSedes(id: number): void {
         this.http.get<Sede[]>(`${url}/sedes/${id}`).subscribe({
@@ -33,7 +31,7 @@ export class SedesService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -42,7 +40,7 @@ export class SedesService {
     nuevaSede(sede: Sede): void {
         this.http.post(`${url}/sedes`, sede).subscribe({
             next: (value: Sede) => {
-                this._lista_sedes.set([...this.lista_sedes(), value]);
+                this._lista_sedes.set([...(this.lista_sedes() || []), value]);
                 this.messageService.add({
                     severity: 'success',
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
@@ -52,7 +50,7 @@ export class SedesService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -77,7 +75,7 @@ export class SedesService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
@@ -101,20 +99,20 @@ export class SedesService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 });
             },
         });
     }
 
     obtenersede(id: number): void {
-        this.http.delete(`${url}/sedes/${id}`).subscribe({
+        this.http.get(`${url}/sedes/${id}`).subscribe({
             next: (sede) => this._sede.update((sede) => sede),
             error: (err) =>
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.message}`,
+                    detail: err.error,
                 }),
         });
     }

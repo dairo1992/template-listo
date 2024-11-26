@@ -11,6 +11,10 @@
                 @if(!loading){
                 <form [formGroup]="formAuth">
                     <div>
+                        <label for="empresa" class="block text-900 text-xl font-medium mb-2">EMPRESA</label>
+                        <p-dropdown styleClass="w-full mb-2" [options]="empresaService.lista_empresas()" formControlName="EMPRESA"
+                            [optionLabel]="'nombre'" [optionValue]="'id'" />
+
                         <label for="usuario" class="block text-900 text-xl font-medium mb-2">USUARIO</label>
                         <p-inputNumber id="usuario" class="w-full md:w-30rem mb-5" inputId="integeronly"
                             styleClass="w-full" [style]="{'width':'100%'}" formControlName="USUARIO"></p-inputNumber>

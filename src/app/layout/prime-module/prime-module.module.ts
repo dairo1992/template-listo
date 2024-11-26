@@ -34,6 +34,8 @@ import { TreeModule } from 'primeng/tree';
 import { PaginatorModule } from 'primeng/paginator';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { SplitButtonModule } from 'primeng/splitbutton';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @NgModule({
     declarations: [],
@@ -77,6 +79,8 @@ import { SplitButtonModule } from 'primeng/splitbutton';
         PaginatorModule,
         TabMenuModule,
         SplitButtonModule,
+        ColorPickerModule,
+        InputSwitchModule,
     ],
 })
 export class PrimeModule {}

@@ -4,7 +4,6 @@ import { MessageService } from 'primeng/api';
 import { Modulo } from '../interfaces/modulo.interface';
 import { url } from 'src/environments/environment';
 import { SedesService } from './sedes.service';
-import { AlmacenService } from './storage.service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,11 +15,7 @@ export class ModuloService {
     public lista_modulos = computed(() => this._lista_modulos());
     private lista_sedes = inject(SedesService).lista_sedes;
     private http = inject(HttpClient);
-    private storageService = inject(AlmacenService);
-    // private listaEmpresas = inject(EmpresaService).lista_empresas;
-    constructor(private messageService: MessageService) {
-        // this.obtenerModulos(this.storageService.currentUser().id);
-    }
+    constructor(private messageService: MessageService) {}
 
     obtenerModulos(id: number): void {
         this.http.get<Modulo[]>(`${url}/modulos/${id}`).subscribe({
@@ -37,7 +32,7 @@ export class ModuloService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.error}`,
+                    detail: err.error,
                 });
             },
         });
@@ -50,7 +45,10 @@ export class ModuloService {
                     (m) => m.id == modulo.sede_id
                 );
                 value.sede = sede;
-                this._lista_modulos.set([...this.lista_modulos(), value]);
+                this._lista_modulos.set([
+                    ...(this.lista_modulos() || []),
+                    value,
+                ]);
                 this.messageService.add({
                     severity: 'success',
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
@@ -60,7 +58,7 @@ export class ModuloService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.error}`,
+                    detail: err.error,
                 });
             },
         });
@@ -91,7 +89,7 @@ export class ModuloService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.error}`,
+                    detail: err.error,
                 });
             },
         });
@@ -115,7 +113,7 @@ export class ModuloService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.error}`,
+                    detail: err.error,
                 });
             },
         });
@@ -123,7 +121,7 @@ export class ModuloService {
 
     uiMenu(json: any) {
         // implementando guardado de nuevos menus y modulos (incompleta)
-        this.http.patch(`${url}/menu/${0}`, json).subscribe({
+        this.http.post(`${url}/auth/gestion_menu`, json).subscribe({
             next: (value) => {
                 this.messageService.add({
                     severity: 'success',
@@ -137,7 +135,7 @@ export class ModuloService {
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
-                    detail: `OCURRIO UN ERROR: ${err.error}`,
+                    detail: err.error,
                 });
             },
         });

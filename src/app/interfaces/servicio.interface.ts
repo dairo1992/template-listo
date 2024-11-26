@@ -1,8 +1,13 @@
+import { Modulo } from './modulo.interface';
+
 export interface Servicio {
     id: number;
+    icon: string;
+    color: string;
+    estado: string;
+    modulo: Modulo;
     nombre: string;
     descripcion: string;
-    estado: string;
 }
 
 export class Convert {

@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { AuthserviceService } from 'src/app/services/authservice.service';
+import { EmpresaService } from 'src/app/services/empresa.service';
 import { AlmacenService } from 'src/app/services/storage.service';
 
 @Component({
@@ -28,9 +29,12 @@ export default class AuthComponent implements OnInit {
     formAuth: FormGroup;
     public storageService = inject(AlmacenService);
     private authService = inject(AuthserviceService);
+    public empresaService = inject(EmpresaService);
     constructor() {
+        this.empresaService.obtenerEmpresas(0);
         this.formAuth = new FormGroup({
-            USUARIO: new FormControl(''),
+            EMPRESA: new FormControl(0),
+            USUARIO: new FormControl(0),
             PASSWORD: new FormControl('', [Validators.required]),
             RECORDAR: new FormControl(false),
         });

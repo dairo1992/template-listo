@@ -22,7 +22,6 @@ export class AuthserviceService {
     ) {}
 
     login(usuario: any) {
-        // const data = { usuario: usuario.USUARIO, password: usuario.PASSWORD };
         this.http.post(`${url}/auth/login`, usuario).subscribe({
             next: async (usuario: Usuario) => {
                 await this.storage.almacenarToken(usuario.token);
