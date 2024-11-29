@@ -1,0 +1,94 @@
+<div class="flex flex-column">
+    <div class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">GESTIONAR
+        TURNOS</div>
+</div>
+<div class="flex flex-column md:flex-row">
+    <div
+        class="flex align-items-center justify-content-center w-5 md:min-w-max h-25rem border-double border-primary-500 border-3 border-round m-2">
+        <p-button [outlined]="true">
+            <div class="flex flex-column">
+                <div class="flex align-items-center justify-content-center font-bold border-round m-2"><strong>
+                        <h2 style="color: var(--primary-color)">SIGUIENTE TURNO</h2>
+                    </strong></div>
+                <div
+                    class="flex align-items-center justify-content-center h-5rem bg-primary font-bold border-round m-2">
+                    <i class="pi pi-arrow-circle-right" style="color: var(--surface-0);font-size: 4rem"></i>
+                </div>
+            </div>
+        </p-button>
+    </div>
+    <div
+        class="flex align-items-center justify-content-center w-7 md:min-w-max h-25rem border-double border-primary-500 border-3 border-round m-2">
+        <div class="flex flex-column align-items-center justify-content-center">
+            <div class="flex align-items-center justify-content-center m-2">
+                <div class="flex flex-row flex-wrap w-full">
+                    <div class="flex align-items-center justify-content-center w-12rem m-3">
+                        <div
+                            class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round">
+                            <span class="m-2" style="color: var(--primary-color)">ACTIVOS</span>
+                            <i class="pi pi-circle text-3xl" style="color: var(--primary-color)" pBadge value="2"></i>
+                        </div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center w-12rem m-2">
+                        <div
+                            class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round">
+                            <span class="m-2" style="color: var(--primary-color)">ATENDIDOS</span>
+                            <i class="pi pi-check-circle text-3xl" style="color: var(--primary-color)" pBadge
+                                value="2"></i>
+                        </div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center w-11rem m-2">
+                        <div
+                            class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round">
+                            <span class="m-2" style="color: var(--primary-color)">TOTAL</span>
+                            <i class="pi pi-hashtag text-3xl" style="color: var(--primary-color)" pBadge value="9"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="flex align-items-center justify-content-center w-6 border-double border-primary-500 border-3 border-round m-2">
+                <div class="flex flex-column">
+                    <div class="flex align-items-center justify-content-center m-2"><i class="pi pi-user"
+                            style="color: var(--primary-color); font-size: 7rem;"></i></div>
+                    <div class="flex align-items-center justify-content-center font-bold m-1">
+                        <span style="color: var(--primary-color)">{{currentUser.nombre | uppercase}}
+                            {{currentUser.apellido | uppercase}}</span>
+                    </div>
+                    <div class="flex align-items-center justify-content-center font-bold m-1">
+                        <span style="color: var(--primary-color)">SEDE: {{currentUser.empresa.sede.nombre|
+                            uppercase}}</span>
+                    </div>
+                    <div class="flex align-items-center justify-content-center font-bold m-1">
+                        <span style="color: var(--primary-color)">MODULO: {{currentUser.modulo.nombre|
+                            uppercase}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="flex flex-row flex-wrap align-items-center justify-content-center">
+    <div class="flex align-items-center justify-content-center W-6 font-bold border-round m-2">
+        <p-button [outlined]="true" label="VER TURNOS" />
+    </div>
+    <div class="flex align-items-center justify-content-center W-6 font-bold border-round m-2">
+        <p-button [outlined]="true" label="GENERAR TURNO" (click)="modalGenerarTurno = true" />
+    </div>
+</div>
+<p-dialog header="GENERAR TURNO" [draggable]="false" [modal]="true" [(visible)]="modalGenerarTurno"
+    [style]="{ width: '50vw' }" [resizable]="false" (onHide)="modalGenerarTurno = false">
+    <div class="flex flex-column">
+        <div class="flex align-items-center justify-content-center m-2">
+            <app-generar></app-generar>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog header="TURNOS ACTIVOS" [draggable]="false" [modal]="true" [(visible)]="modalListaTurno"
+    [style]="{ width: '50vw' }" [resizable]="false" (onHide)="modalGenerarTurno = false">
+    <div class="flex flex-column">
+        <div class="flex align-items-center justify-content-center m-2">
+            <app-generar></app-generar>
+        </div>
+    </div>
+</p-dialog>

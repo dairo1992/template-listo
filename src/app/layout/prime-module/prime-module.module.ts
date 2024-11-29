@@ -36,6 +36,8 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { ChipModule } from 'primeng/chip';
+import { BadgeModule } from 'primeng/badge';
 
 @NgModule({
     declarations: [],
@@ -81,6 +83,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
         SplitButtonModule,
         ColorPickerModule,
         InputSwitchModule,
+        ChipModule,
+        BadgeModule
     ],
 })
 export class PrimeModule {}

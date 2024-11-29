@@ -118,7 +118,7 @@ import { NotfoundComponent } from './views/notfound/notfound.component';
                                     data: ['pi pi-megaphone'],
                                     loadComponent: () =>
                                         import(
-                                            './views/gestion_turnos/reportes/reportes.component'
+                                            './views/gestion_turnos/gestionar/gestionar.component'
                                         ),
                                 },
                             ],
