@@ -26,7 +26,7 @@ export class AuthserviceService {
         this.http.post(`${url}/auth/login`, usuario).subscribe({
             next: async (usuario: Usuario | null) => {
                 if (usuario != null) {
-                    this.service.obtenerRutas(usuario.id);
+                    await this.storage.almacenarRutas(usuario.rutas);
                     await this.storage.almacenarToken(usuario.token);
                     this.storage.almacenarDatosUsuario(usuario);
                     this._isLoading.set(false);

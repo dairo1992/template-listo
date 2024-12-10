@@ -1,5 +1,6 @@
 import { Empresa } from './empresa.interface';
 import { Modulo } from './modulo.interface';
+import { Ruta } from './routes.interface';
 import { Servicio } from './servicio.interface';
 
 export interface Usuario {
@@ -16,6 +17,7 @@ export interface Usuario {
     tipo_usuario: string;
     prioritario: number;
     token: string;
+    rutas: Ruta[];
 }
 
 export interface Config {

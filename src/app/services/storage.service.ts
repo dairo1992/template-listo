@@ -58,6 +58,7 @@ export class AlmacenService {
             cryptoKey
         ).toString();
         this.storage.set('usuario', dataEncrypted);
+        this.almacenarRutaActual('/home');
     }
 
     almacenarRutaActual(ruta: string) {
@@ -115,8 +116,9 @@ export class AlmacenService {
         return null;
     }
 
-    almacenarRutas(rutas: Ruta[]) {
+    async almacenarRutas(rutas: Ruta[]): Promise<boolean> {
         this.storage.set('rutas', rutas);
+        return true;
     }
 
     obtenerRutas() {
