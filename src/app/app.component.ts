@@ -9,16 +9,16 @@ import { Router } from '@angular/router';
 })
 export class AppComponent implements OnInit {
     private storageService = inject(AlmacenService);
-    constructor(private primengConfig: PrimeNGConfig, private router: Router) {}
+    constructor(private primengConfig: PrimeNGConfig, private router: Router) { }
 
     ngOnInit() {
         this.primengConfig.ripple = true;
         let currentUser = this.storageService.obtenerDatosUsuario();
-        console.log(currentUser);
-        
         let currentURL = this.storageService.obtenerRutaActual();
         if (currentUser) {
             this.router.navigateByUrl(`${currentURL}`);
+        } else {
+            this.router.navigateByUrl('/');
         }
         // this.thService.obtenerAreas();
         // this.thService.obtenerSedes();

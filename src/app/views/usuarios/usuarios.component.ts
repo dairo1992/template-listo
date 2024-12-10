@@ -58,10 +58,11 @@ export default class UsuariosComponent {
 
     constructor() {
         this.currentUser = this.service.currentUser();
-        this.service.obtenerUsuarios(this.currentUser.id);
-        this.empresaService.obtenerEmpresas(this.currentUser.tipo_usuario == 'SUPER_ADMIN' ? 0 : this.currentUser.id);
-        this.sedeService.obtenerSedes(this.currentUser.id ?? 0);
-        this.modulosService.obtenerModulos(this.currentUser.id ?? 0);
+        const id_user = this.currentUser.tipo_usuario == 'SUPER_ADMIN' ? 0 : this.currentUser.id;
+        this.service.obtenerUsuarios(id_user);
+        this.empresaService.obtenerEmpresas(id_user);
+        this.sedeService.obtenerSedes(id_user);
+        this.modulosService.obtenerModulos(id_user);
         this.setDropdownOptions();
         this.formUsuario = new FormGroup({
             id: new FormControl(0, Validators.required),
@@ -195,6 +196,7 @@ export default class UsuariosComponent {
         this.menuUser = [];
         this.service.obt_modulos(usuario.id).subscribe({
             next: (response: any) => {
+                this.modals.config = true;
                 response.menu.map((m: any, i: number) => {
                     this.menuFull.push({
                         key: `${i + 1}`,
@@ -227,7 +229,6 @@ export default class UsuariosComponent {
             // error: (error) => (this.jsonMenu = { menu: [], usuarioMenu: [] }),
         });
         this.usuarioSelected = usuario;
-        this.modals.config = true;
         this.modals.modalTitle = `CONFIGURACION DE USUARIO`;
     }
 

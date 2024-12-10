@@ -30,9 +30,7 @@ export class AuthserviceService {
                     await this.storage.almacenarToken(usuario.token);
                     this.storage.almacenarDatosUsuario(usuario);
                     this._isLoading.set(false);
-                    setTimeout(() => {
-                        this.router.navigateByUrl('/home');
-                    }, 1000);
+                    this.router.navigateByUrl('/home');
                 }
                 this.messageService.add({
                     severity: usuario != null ? 'success' : 'error',

@@ -18,13 +18,14 @@ export class UsuarioService {
     private http = inject(HttpClient);
     private empresas = inject(EmpresaService);
 
-    constructor(private messageService: MessageService) {}
+    constructor(private messageService: MessageService) { }
 
     setUsuario(usuario: Usuario | null) {
         this._currentUser.set(usuario);
     }
 
     obtenerUsuarios(id: number): void {
+        this._isLoading.set(true);
         this.http.get<Usuario[]>(`${url}/usuarios/${id}`).subscribe({
             next: (data) => {
                 this._isLoading.set(false);
@@ -33,7 +34,6 @@ export class UsuarioService {
             error: (err) => {
                 this._isLoading.set(false);
                 this._lista_usuarios.set([]);
-                this._isLoading.set(false);
                 this.messageService.add({
                     severity: 'error',
                     summary: '!NOTIFICACION¡',
@@ -44,12 +44,14 @@ export class UsuarioService {
     }
 
     nuevaUsuario(usuario: Usuario): void {
+        this._isLoading.set(true);
         this.http.post(`${url}/usuarios/register`, usuario).subscribe({
             next: (value: Usuario) => {
                 this._lista_usuarios.set([
                     ...(this.lista_usuarios() || []),
                     value,
                 ]);
+                this._isLoading.set(false);
                 this.messageService.add({
                     severity: 'success',
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
@@ -67,6 +69,7 @@ export class UsuarioService {
     }
 
     actualizarUsuario(id: number, usuario: any): void {
+        this._isLoading.set(true);
         this.http.patch(`${url}/usuarios/${id}`, usuario).subscribe({
             next: (value: any) => {
                 const i = this.lista_usuarios().findIndex((e) => e.id == id);
@@ -79,6 +82,7 @@ export class UsuarioService {
                     usuarios.push(usuario);
                     return usuarios;
                 });
+                this._isLoading.set(false);
                 this.messageService.add({
                     severity: 'success',
                     summary: '!NOTIFICACION¡',
@@ -97,6 +101,7 @@ export class UsuarioService {
     }
 
     uiEstado(usuario: Usuario): void {
+        this._isLoading.set(true);
         this.http.delete(`${url}/usuarios/${usuario.id}`).subscribe({
             next: (value: Usuario) => {
                 this._lista_usuarios.update((empresas) => {
@@ -104,6 +109,7 @@ export class UsuarioService {
                         usuario.estado == 'A' ? 'I' : 'A';
                     return empresas;
                 });
+                this._isLoading.set(false);
                 this.messageService.add({
                     severity: 'success',
                     summary: '!NOTIFICACION¡',
@@ -122,6 +128,7 @@ export class UsuarioService {
     }
 
     cambiarPassword(password: any, id: number) {
+        this._isLoading.set(true);
         this.http
             .post(`${url}/usuarios/password`, {
                 password: password.password,
@@ -129,8 +136,7 @@ export class UsuarioService {
             })
             .subscribe({
                 next: (response: any) => {
-                    console.log(response);
-
+                    this._isLoading.set(false);
                     this.messageService.add({
                         severity: response.STATUS ? 'success' : 'error',
                         summary: '!NOTIFICACION¡',
@@ -153,9 +159,10 @@ export class UsuarioService {
     }
 
     actualizarmodulos(id: number, modulos: any) {
+        this._isLoading.set(true);
         this.http.post(`${url}/usuarios/menu/${id}`, modulos).subscribe({
             next: (value: Usuario) => {
-                console.log(value);
+                this._isLoading.set(false);
                 this.messageService.add({
                     severity: 'success',
                     summary: '!NOTIFICACION¡',
@@ -174,8 +181,10 @@ export class UsuarioService {
     }
 
     configurarTurno(config: any) {
+        this._isLoading.set(true);
         this.http.post(`${url}/usuarios/config`, config).subscribe({
             next: (response: any) => {
+                this._isLoading.set(false);
                 this.messageService.add({
                     severity: response.STATUS ? 'success' : 'error',
                     summary: '!NOTIFICACION¡',

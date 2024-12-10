@@ -2,7 +2,7 @@
 <div class="flex flex-row flex-wrap">
     <div class="flex align-items-center justify-content-center w-4 border-round">
         <div class="card layout-main  min-h-full">
-           <form [formGroup]="servicioForm" #formDirective="ngForm" (ngSubmit)="nuevoServicio()">
+            <form [formGroup]="servicioForm" #formDirective="ngForm" (ngSubmit)="nuevoServicio()">
                 <div class="flex flex-column flex-wrap">
                     @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
                     <div class="p-formgrid grid">
@@ -87,12 +87,13 @@
                         </div>
                         <p-colorPicker styleClass="w-full" appendTo="body" formControlName="color" />
                     </div>
-                    <div class="flex flex-row flex-wrap">
+                    <div class="flex flex-row flex-wrap align-items-center justify-content-center">
+                        @if(servicioForm.value.id > 0){
                         <div class="flex align-items-center justify-content-center m-2"><p-button
-                                class="flex align-items-center justify-content-center" label="Guardar"
-                                icon="pi pi-check" [loading]="service.isLoading()" [disabled]="!servicioForm.valid"
-                                (onClick)="servicioForm.value.id > 0 ? actualizarServicio(servicioForm.value) : nuevoServicio()" />
+                                class="flex align-items-center justify-content-center" label="Cancelar"
+                                icon="pi pi-times" severity="danger" (onClick)="limpiarForm()" />
                         </div>
+                        }
                         <div class="flex align-items-center justify-content-center m-2"><p-button
                                 class="flex align-items-center justify-content-center" label="Guardar"
                                 icon="pi pi-check" [loading]="service.isLoading()" [disabled]="!servicioForm.valid"
@@ -167,9 +168,9 @@
                                     (click)="uiEstado(servicio)"></p-button>
                                 <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading"
                                     severity="info" [outlined]="true" (click)="setServicio(servicio)"></p-button>
-                                <p-button pRipple icon="pi pi-spin pi-cog" [rounded]="true" [disabled]="loading"
+                                <!-- <p-button pRipple icon="pi pi-spin pi-cog" [rounded]="true" [disabled]="loading"
                                     severity="info" [outlined]="true"
-                                    (click)="op.toggle($event); selectServicio(servicio)"></p-button>
+                                    (click)="op.toggle($event); selectServicio(servicio)"></p-button> -->
                             </div>
                         </td>
                     </tr>
@@ -180,7 +181,7 @@
     </div>
 </div>
 
-<p-overlayPanel #op>
+<!-- <p-overlayPanel #op>
     <div class="flex align-items-center justify-content-center font-bold border-round m-2">
         <strong>CONFIGURAR MODULO</strong>
     </div>
@@ -196,7 +197,7 @@
         <p-button class="flex align-items-center justify-content-center" label="Configurar" icon="pi pi-check"
             [loading]="service.isLoading()" (onClick)="config_modulo_servicio(modulo); op.toggle($event)" />
     </div>
-</p-overlayPanel>
+</p-overlayPanel> -->
 
 <p-dialog header="SELECCIONAR ICONO" [(visible)]="modalIcon" [modal]="true"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"

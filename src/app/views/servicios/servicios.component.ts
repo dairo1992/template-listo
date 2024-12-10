@@ -47,6 +47,14 @@ export default class ServiciosComponent {
         this.showPanel = false;
         this.icons = icons;
         this.iconsTemp = icons;
+        this.limpiarForm();
+        if (this.usuarioService.currentUser().tipo_usuario != 'SUPER_ADMIN') {
+            this.servicioForm.controls['empresa_id'].disable();
+            this.listaSedesByEmpresa(this.usuarioService.currentUser().empresa.id);
+        }
+    }
+
+    limpiarForm() {
         this.servicioForm = new FormGroup({
             id: new FormControl(0, Validators.required),
             nombre: new FormControl('', Validators.required),
@@ -58,23 +66,11 @@ export default class ServiciosComponent {
             empresa_id: new FormControl(this.usuarioService.currentUser().empresa.id),
             sede_id: new FormControl(0),
         });
-        if (this.usuarioService.currentUser().tipo_usuario != 'SUPER_ADMIN') {
-            this.servicioForm.controls['empresa_id'].disable();
-            this.listaSedesByEmpresa(this.usuarioService.currentUser().empresa.id);
-        }
     }
 
     nuevoServicio(): void {
         this.service.nuevoServicio(this.servicioForm.value);
-        this.servicioForm.reset({
-            id: 0,
-            nombre: '',
-            modulo: 0,
-            descripcion: '',
-            color: '',
-            icono: '',
-            estado: 'A',
-        });
+        this.limpiarForm();
     }
 
     listaSedesByEmpresa(id_empresa: number, accion = 'N') {
@@ -110,7 +106,7 @@ export default class ServiciosComponent {
     }
 
     setServicio(servicio: Servicio): void {
-        this.listaSedesByEmpresa(servicio.modulo.sede.empresa_id,'E');
+        this.listaSedesByEmpresa(servicio.modulo.sede.empresa_id, 'E');
         this.listaModulosBySede(servicio.modulo.id, 'E');
         const servicioTemp = {
             id: servicio.id,
@@ -128,14 +124,7 @@ export default class ServiciosComponent {
 
     actualizarServicio(servicio: Servicio): void {
         this.service.actualizarServicio(servicio.id, servicio);
-        this.servicioForm.reset({
-            id: 0,
-            nombre: '',
-            modulo: 0,
-            descripcion: '',
-            color: '',
-            estado: 'A',
-        });
+        this.limpiarForm();
     }
 
     uiEstado(servicio: Servicio): void {
