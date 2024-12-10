@@ -1,6 +1,11 @@
 <ul class="layout-menu">
+    @if(service.isLoading()){
+    <div class="flex flex-wrap justify-content-center" style="max-width: 100vw">
+        <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+            animationDuration=".5s" />
+    </div>
+    }
     @for (item of rutas; track $index) {
     <li app-menuitem *ngIf="!item.separator" [item]="item" [index]="(i+1)" [root]="true"></li>
-    <!-- <li>{{item | json}}</li> -->
     }
 </ul>

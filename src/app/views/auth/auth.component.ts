@@ -25,10 +25,9 @@ import { AlmacenService } from 'src/app/services/storage.service';
     `,
 })
 export default class AuthComponent implements OnInit {
-    loading: boolean = false;
     formAuth: FormGroup;
     public storageService = inject(AlmacenService);
-    private authService = inject(AuthserviceService);
+    public authService = inject(AuthserviceService);
     public empresaService = inject(EmpresaService);
     constructor() {
         this.empresaService.obtenerEmpresas(0);

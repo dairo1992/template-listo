@@ -18,18 +18,20 @@ export class SedesService {
     public sede = computed(() => this._sede());
     private http = inject(HttpClient);
     private storageService = inject(AlmacenService);
-    constructor(private messageService: MessageService) {}
+    constructor(private messageService: MessageService) { }
 
     obtenerSedes(id: number): void {
+        this._isLoading.set(true);
         this.http.get<Sede[]>(`${url}/sedes/${id}`).subscribe({
             next: (data) => {
                 this._lista_sedes.set(data);
                 this._isLoading.set(false);
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this._lista_sedes.set([]);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -38,8 +40,10 @@ export class SedesService {
     }
 
     nuevaSede(sede: Sede): void {
+        this._isLoading.set(true);
         this.http.post(`${url}/sedes`, sede).subscribe({
             next: (value: Sede) => {
+                this._isLoading.set(false);
                 this._lista_sedes.set([...(this.lista_sedes() || []), value]);
                 this.messageService.add({
                     severity: 'success',
@@ -47,8 +51,9 @@ export class SedesService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -57,8 +62,10 @@ export class SedesService {
     }
 
     actualizarSede(id: number, sede: Sede): void {
+        this._isLoading.set(true);
         this.http.patch(`${url}/sedes/${id}`, sede).subscribe({
             next: (value: Sede) => {
+                this._isLoading.set(false);
                 const i = this.lista_sedes().findIndex((e) => e.id == sede.id);
                 this._lista_sedes.update((empresas) => {
                     empresas.splice(i);
@@ -72,8 +79,9 @@ export class SedesService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -82,8 +90,10 @@ export class SedesService {
     }
 
     uiEstado(sede: Sede): void {
+        this._isLoading.set(true);
         this.http.delete(`${url}/sedes/${sede.id}`).subscribe({
             next: (value: Sede) => {
+                this._isLoading.set(false);
                 this._lista_sedes.update((empresas) => {
                     empresas.find((e) => e.id == sede.id).estado =
                         sede.estado == 'A' ? 'I' : 'A';
@@ -96,8 +106,9 @@ export class SedesService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -106,14 +117,20 @@ export class SedesService {
     }
 
     obtenersede(id: number): void {
+        this._isLoading.set(true);
         this.http.get(`${url}/sedes/${id}`).subscribe({
-            next: (sede) => this._sede.update((sede) => sede),
-            error: (err) =>
+            next: (sede) => {
+                this._isLoading.set(false);
+                this._sede.update((sede) => sede)
+            },
+            error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
-                }),
+                })
+            }
         });
     }
 }

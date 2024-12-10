@@ -22,7 +22,8 @@ export default class EmpresasComponent implements OnInit {
     modalTitle: string = 'REGISTRAR EMPRESA';
     empresaForm!: FormGroup;
     constructor() {
-        this.service.obtenerEmpresas(this.usuarioservice.currentUser().id);
+        const id = this.usuarioservice.currentUser().tipo_usuario == 'SUPER_ADMIN' ? 0 : this.usuarioservice.currentUser().id;
+        this.service.obtenerEmpresas(id);
     }
     ngOnInit(): void {
         this.empresaForm = new FormGroup({

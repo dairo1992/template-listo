@@ -59,7 +59,7 @@ export default class UsuariosComponent {
     constructor() {
         this.currentUser = this.service.currentUser();
         this.service.obtenerUsuarios(this.currentUser.id);
-        this.empresaService.obtenerEmpresas(this.currentUser.id);
+        this.empresaService.obtenerEmpresas(this.currentUser.tipo_usuario == 'SUPER_ADMIN' ? 0 : this.currentUser.id);
         this.sedeService.obtenerSedes(this.currentUser.id ?? 0);
         this.modulosService.obtenerModulos(this.currentUser.id ?? 0);
         this.setDropdownOptions();

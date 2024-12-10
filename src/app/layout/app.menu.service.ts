@@ -12,8 +12,8 @@ export class MenuService {
     private http = inject(HttpClient);
     private menuSource = new Subject<MenuChangeEvent>();
     private resetSource = new Subject();
-    // private _rutas = signal<Routes[]>([]);
-    // public rutas = computed(() => this._rutas());
+    public _isLoading = signal<boolean>(true);
+    public isLoading = computed(() => this._isLoading());
 
     menuSource$ = this.menuSource.asObservable();
     resetSource$ = this.resetSource.asObservable();
@@ -27,6 +27,7 @@ export class MenuService {
     }
 
     obtenerRutas(id_user: number) {
+        this._isLoading.set(true);
         return this.http.get<Routes[]>(`${url}/auth/menu/${id_user}`);
     }
 }

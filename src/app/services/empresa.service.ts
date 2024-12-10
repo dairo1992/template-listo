@@ -13,18 +13,21 @@ export class EmpresaService {
     public isLoading = computed(() => this._isLoading());
     private _isLoading = signal<boolean>(true);
     private http = inject(HttpClient);
-    constructor(private messageService: MessageService) {}
+    constructor(private messageService: MessageService) { }
 
     obtenerEmpresas(id: number): void {
+        this._isLoading.set(true);
         this.http.get<Empresa[]>(`${url}/empresas/${id}`).subscribe({
             next: (data) => {
+                this._isLoading.set(false);
                 this._lista_empresas.set(data);
                 this._isLoading.set(false);
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this._lista_empresas.set([]);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -33,8 +36,10 @@ export class EmpresaService {
     }
 
     nuevaEmpresa(empresa: Empresa): void {
+        this._isLoading.set(true);
         this.http.post(`${url}/empresas`, empresa).subscribe({
             next: (nuevaEmpresa: Empresa) => {
+                this._isLoading.set(false);
                 this._lista_empresas.set([
                     ...(this._lista_empresas() || []),
                     nuevaEmpresa,
@@ -45,8 +50,9 @@ export class EmpresaService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -55,8 +61,10 @@ export class EmpresaService {
     }
 
     actualizarEmpresa(id: number, empresa: Empresa): void {
+        this._isLoading.set(true);
         this.http.patch(`${url}/empresas/${id}`, empresa).subscribe({
             next: (value: Empresa) => {
+                this._isLoading.set(false);
                 const i = this.lista_empresas().findIndex(
                     (e) => e.id == empresa.id
                 );
@@ -72,8 +80,9 @@ export class EmpresaService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -82,8 +91,10 @@ export class EmpresaService {
     }
 
     uiEstado(empresa: Empresa): void {
+        this._isLoading.set(true);
         this.http.delete(`${url}/empresas/${empresa.id}`).subscribe({
             next: (value: any) => {
+                this._isLoading.set(false);
                 if (value.STATUS) {
                     this._lista_empresas.update((empresas: any) => {
                         empresas.find((e) => e.id == empresa.id).estado =
@@ -92,14 +103,15 @@ export class EmpresaService {
                     });
                 }
                 this.messageService.add({
-                    severity: value.STATUS ? 'success' : 'warn',
+                    severity: value.STATUS ? 'success' : 'error',
                     summary: '!NOTIFICACION¡',
                     detail: value.MSG,
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });

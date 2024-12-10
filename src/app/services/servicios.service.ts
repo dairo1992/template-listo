@@ -15,18 +15,20 @@ export class ServiciosService {
     public lista_servicios = computed(() => this._lista_servicios());
     private http = inject(HttpClient);
     private storage = inject(AlmacenService);
-    constructor(private messageService: MessageService) {}
+    constructor(private messageService: MessageService) { }
 
     obtenerServicios(id: number) {
+        this._isLoading.set(true);
         this.http.get<Servicio[]>(`${url}/servicios/${id}`).subscribe({
             next: (data) => {
                 this._lista_servicios.set(data);
                 this._isLoading.set(false);
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this._lista_servicios.set([]);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -35,20 +37,23 @@ export class ServiciosService {
     }
 
     nuevoServicio(servicio: Servicio): void {
+        this._isLoading.set(true);
         this.http.post(`${url}/servicios`, servicio).subscribe({
             next: (value: Servicio) => {
                 this._lista_servicios.set([
                     ...(this.lista_servicios() || []),
                     value,
                 ]);
+                this._isLoading.set(false);
                 this.messageService.add({
                     severity: 'success',
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -60,6 +65,7 @@ export class ServiciosService {
         this._isLoading.set(true);
         this.http.patch(`${url}/servicios/${id}`, servicio).subscribe({
             next: (value: Servicio) => {
+                this._isLoading.set(false);
                 const i = this.lista_servicios().findIndex(
                     (e) => e.id == servicio.id
                 );
@@ -76,8 +82,9 @@ export class ServiciosService {
                 this._isLoading.update((x) => (x = false));
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -86,6 +93,7 @@ export class ServiciosService {
     }
 
     uiEstado(servicio: Servicio): void {
+        this._isLoading.set(true);
         this.http.delete(`${url}/servicios/${servicio.id}`).subscribe({
             next: (value: Servicio) => {
                 this._lista_servicios.update((servicios) => {
@@ -93,6 +101,7 @@ export class ServiciosService {
                         servicio.estado == 'A' ? 'I' : 'A';
                     return servicios;
                 });
+                this._isLoading.set(false);
                 this.messageService.add({
                     severity: 'success',
                     summary: '!NOTIFICACION¡',
@@ -100,8 +109,9 @@ export class ServiciosService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -110,10 +120,12 @@ export class ServiciosService {
     }
 
     config_modulo_servicio(modulo_id: number, servicio_id: number) {
+        this._isLoading.set(true);
         this.http
             .post(`${url}/servicios/config`, { modulo_id, servicio_id })
             .subscribe({
                 next: (value: Servicio) => {
+                    this._isLoading.set(false);
                     this.messageService.add({
                         severity: 'success',
                         summary: '!NOTIFICACION¡',
@@ -121,8 +133,9 @@ export class ServiciosService {
                     });
                 },
                 error: (err) => {
+                    this._isLoading.set(false);
                     this.messageService.add({
-                        severity: 'warn',
+                        severity: 'error',
                         summary: '!NOTIFICACION¡',
                         detail: err.error,
                     });

@@ -11,7 +11,7 @@ export class UtilitiesService {
     private _tipos_documento = signal<[]>([]);
     public tipos_documento = computed(() => this._tipos_documento());
     private http = inject(HttpClient);
-    constructor(private messageService: MessageService) {}
+    constructor(private messageService: MessageService) { }
 
     getStatus(status: string) {
         switch (status) {
@@ -26,7 +26,23 @@ export class UtilitiesService {
             case 'E': //EN CURSO
                 return { color: 'Primary', nombre: 'EN VISITA' };
             default: //DEFAULT
-                return { color: 'warning', nombre: 'INDEFINIDO' };
+                return { color: 'erroring', nombre: 'INDEFINIDO' };
+        }
+    }
+
+    getTurnoStatus(status: string) {
+        switch (status) {
+            case 'esperando': //ACTIVO
+                return { color: 'info', nombre: 'EN ESPERA' };
+            case 'en_atencion': //INACTIVO
+                return { color: 'help', nombre: 'EN MODULO' };
+            case 'atendido': //PENDIENTE
+                return { color: 'success', nombre: 'ATENDIDO' };
+            case 'anulado': //FINALIZADO
+                return { color: 'danger', nombre: 'ANULADO' };
+
+            default: //DEFAULT
+                return { color: 'erroring', nombre: 'INDEFINIDO' };
         }
     }
 
@@ -44,13 +60,6 @@ export class UtilitiesService {
         const encryptedData = iv
             .concat(dataEncrypted.ciphertext)
             .toString(CryptoJS.enc.Base64);
-        console.log({ iv, cryptoKey });
-
-        console.log({
-            cifrado: encryptedData,
-            original: JSON.parse(data),
-            parse: data,
-        });
         return encryptedData;
     }
 

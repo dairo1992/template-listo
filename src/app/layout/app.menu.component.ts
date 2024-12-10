@@ -24,13 +24,14 @@ export class AppMenuComponent implements OnInit {
     model: any[] = [];
     rutas = [];
     rutas_temp = [];
-    private service = inject(MenuService);
+    public service = inject(MenuService);
     private usuarioService = inject(UsuarioService);
 
     constructor(public layoutService: LayoutService, private routes: Router) {
         this.service
             .obtenerRutas(this.usuarioService.currentUser().id)
             .subscribe((rutas) => {
+                this.service._isLoading.set(false);
                 this.rutas = rutas;
             });
     }

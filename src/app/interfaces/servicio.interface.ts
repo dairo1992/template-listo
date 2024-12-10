@@ -2,7 +2,7 @@ import { Modulo } from './modulo.interface';
 
 export interface Servicio {
     id: number;
-    icon: string;
+    icono: string;
     color: string;
     estado: string;
     modulo: Modulo;

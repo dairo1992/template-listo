@@ -15,22 +15,20 @@ export class ModuloService {
     public lista_modulos = computed(() => this._lista_modulos());
     private lista_sedes = inject(SedesService).lista_sedes;
     private http = inject(HttpClient);
-    constructor(private messageService: MessageService) {}
+    constructor(private messageService: MessageService) { }
 
     obtenerModulos(id: number): void {
+        this._isLoading.set(true);
         this.http.get<Modulo[]>(`${url}/modulos/${id}`).subscribe({
             next: (data) => {
-                // const lista = data.map<Modulo>((m) => {
-                //     m.
-                //     return m;
-                // });
                 this._lista_modulos.set(data);
                 this._isLoading.set(false);
             },
             error: (err) => {
                 this._lista_modulos.set([]);
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -39,6 +37,7 @@ export class ModuloService {
     }
 
     nuevoModulo(modulo: Modulo): void {
+        this._isLoading.set(true);
         this.http.post(`${url}/modulos`, modulo).subscribe({
             next: (value: Modulo) => {
                 const sede = this.lista_sedes().find(
@@ -49,14 +48,16 @@ export class ModuloService {
                     ...(this.lista_modulos() || []),
                     value,
                 ]);
+                this._isLoading.set(false);
                 this.messageService.add({
                     severity: 'success',
                     summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -65,6 +66,7 @@ export class ModuloService {
     }
 
     actualizarModulo(id: number, modulo: Modulo): void {
+        this._isLoading.set(true);
         this.http.patch(`${url}/modulos/${id}`, modulo).subscribe({
             next: (value: any) => {
                 const i = this.lista_modulos().findIndex(
@@ -79,15 +81,17 @@ export class ModuloService {
                     empresas.push(modulo);
                     return empresas;
                 });
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: value.STATUS ? 'success' : 'warn',
+                    severity: value.STATUS ? 'success' : 'error',
                     summary: '!NOTIFICACION¡',
                     detail: value.MSG,
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -96,11 +100,13 @@ export class ModuloService {
     }
 
     uiEstado(sede: Modulo): void {
+        this._isLoading.set(true);
         this.http.delete(`${url}/modulos/${sede.id}`).subscribe({
             next: (value: Modulo) => {
                 this._lista_modulos.update((empresas) => {
                     empresas.find((e) => e.id == sede.id).estado =
                         sede.estado == 'A' ? 'I' : 'A';
+                    this._isLoading.set(false);
                     return empresas;
                 });
                 this.messageService.add({
@@ -110,8 +116,9 @@ export class ModuloService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -120,9 +127,10 @@ export class ModuloService {
     }
 
     uiMenu(json: any) {
-        // implementando guardado de nuevos menus y modulos (incompleta)
+        this._isLoading.set(true);
         this.http.post(`${url}/auth/gestion_menu`, json).subscribe({
             next: (value) => {
+                this._isLoading.set(false);
                 this.messageService.add({
                     severity: 'success',
                     summary: '!NOTIFICACION¡',
@@ -130,10 +138,9 @@ export class ModuloService {
                 });
             },
             error: (err) => {
-                console.log(err);
-
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });

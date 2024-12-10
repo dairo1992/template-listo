@@ -20,8 +20,8 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 export default class ModulosComponent {
     public service = inject(ModuloService);
     private _sedes_Service = inject(SedesService);
-    public listaEmpresas = inject(EmpresaService).lista_empresas;
-    private usuarioService = inject(UsuarioService);
+    public empresaService = inject(EmpresaService);
+    public usuarioService = inject(UsuarioService);
     listaSedesFilter: Sede[] = [];
     public getStatus = inject(UtilitiesService).getStatus;
     modalNuevaSede: boolean = false;
@@ -29,8 +29,10 @@ export default class ModulosComponent {
     moduloForm!: FormGroup;
 
     constructor() {
-        this.service.obtenerModulos(this.usuarioService.currentUser().id);
-        this._sedes_Service.obtenerSedes(this.usuarioService.currentUser().id);
+        const id = this.usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN' ? 0 : this.usuarioService.currentUser().id;
+        this.service.obtenerModulos(id);
+        this._sedes_Service.obtenerSedes(id);
+        this.empresaService.obtenerEmpresas(id);
     }
     ngOnInit(): void {
         this.moduloForm = new FormGroup({
@@ -40,6 +42,7 @@ export default class ModulosComponent {
             created_at: new FormControl(''),
             sede: new FormControl(''),
             sede_id: new FormControl([Validators.required]),
+            empresa_id: new FormControl(this.usuarioService.currentUser().empresa.id),
         });
     }
 
@@ -49,7 +52,7 @@ export default class ModulosComponent {
     }
 
     setModulo(modulo: Modulo): void {
-        this.listaSedesByEmpresa('E');
+        this.listaSedesByEmpresa(modulo.sede.empresa_id);
         this.moduloForm.setValue(modulo);
         this.modalTitle = `MODIFICAR ${modulo.nombre}`;
         this.modalNuevaSede = true;
@@ -76,7 +79,7 @@ export default class ModulosComponent {
         });
     }
 
-    listaSedesByEmpresa(accion: string = 'N') {
+    listaSedesByEmpresa(id_empresa: number, accion = 'N') {
         const usuario = this.usuarioService.currentUser();
         this.listaSedesFilter = this._sedes_Service
             .lista_sedes()
@@ -84,7 +87,7 @@ export default class ModulosComponent {
                 if (accion === 'N' && usuario.tipo_usuario === 'SUPER_ADMIN') {
                     return sede;
                 } else {
-                    if (sede.empresa_id == usuario.empresa.id) {
+                    if (sede.empresa_id == id_empresa) {
                         return sede;
                     }
                     return null;

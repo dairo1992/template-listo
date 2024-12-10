@@ -1,21 +1,42 @@
 <p-toast />
-
 <div class="flex flex-row flex-wrap">
     <div class="flex align-items-center justify-content-center w-4 border-round">
         <div class="card layout-main  min-h-full">
-            <div class="flex flex-column flex-wrap">
-                <div
-                    class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
-                    <strong>REGISTRO</strong>
-                </div>
-            </div>
-            <form [formGroup]="servicioForm" #formDirective="ngForm" (ngSubmit)="nuevoServicio()">
+           <form [formGroup]="servicioForm" #formDirective="ngForm" (ngSubmit)="nuevoServicio()">
                 <div class="flex flex-column flex-wrap">
+                    @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
+                    <div class="p-formgrid grid">
+                        <div class="field col"><label htmlfor="empresa_id">EMPRESA</label>
+                            <p-dropdown styleClass="w-full" [options]="empresasService.lista_empresas()"
+                                formControlName="empresa_id" [optionLabel]="'nombre'" [optionValue]="'id'"
+                                (onChange)="listaSedesByEmpresa(servicioForm.value.empresa_id, 'E')" />
+                            @if(servicioForm.get('empresa_id').invalid && (servicioForm.get('empresa_id').dirty ||
+                            servicioForm.get('empresa_id').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                    <div class="p-formgrid grid">
+                        <div class="field col"><label htmlfor="sede_id">SEDE</label>
+                            <p-dropdown styleClass="w-full" [options]="listaSedesFilter" formControlName="sede_id"
+                                [optionLabel]="'nombre'" [optionValue]="'id'"
+                                (onChange)="listaModulosBySede(servicioForm.value.sede_id, 'E')" />
+                            @if(servicioForm.get('sede_id').invalid && (servicioForm.get('sede_id').dirty ||
+                            servicioForm.get('sede_id').touched)){
+                            <div>
+                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
                     <div class="p-formgrid grid">
                         <div class="field col">
                             <label htmlfor="modulo">MODULO</label>
-                            <p-dropdown styleClass="w-full" [options]="moduloService.lista_modulos()"
-                                formControlName="modulo" [optionLabel]="'nombre'" [optionValue]="'id'" />
+                            <p-dropdown styleClass="w-full" [options]="listaModulosFilter" formControlName="modulo"
+                                [optionLabel]="'nombre'" [optionValue]="'id'" />
                             @if(servicioForm.get('modulo').invalid &&
                             (servicioForm.get('modulo').dirty ||
                             servicioForm.get('modulo').touched)){
@@ -64,11 +85,20 @@
                         <div class="field col">
                             <label htmlfor="color">COLOR</label>
                         </div>
-                        <p-colorPicker styleClass="w-full" appendTo="body" formControlName="color_servicio" />
+                        <p-colorPicker styleClass="w-full" appendTo="body" formControlName="color" />
                     </div>
-                    <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
-                        [loading]="service.isLoading()" [disabled]="!servicioForm.valid"
-                        (onClick)="servicioForm.value.id > 0 ? actualizarServicio(servicioForm.value) : nuevoServicio()" />
+                    <div class="flex flex-row flex-wrap">
+                        <div class="flex align-items-center justify-content-center m-2"><p-button
+                                class="flex align-items-center justify-content-center" label="Guardar"
+                                icon="pi pi-check" [loading]="service.isLoading()" [disabled]="!servicioForm.valid"
+                                (onClick)="servicioForm.value.id > 0 ? actualizarServicio(servicioForm.value) : nuevoServicio()" />
+                        </div>
+                        <div class="flex align-items-center justify-content-center m-2"><p-button
+                                class="flex align-items-center justify-content-center" label="Guardar"
+                                icon="pi pi-check" [loading]="service.isLoading()" [disabled]="!servicioForm.valid"
+                                (onClick)="servicioForm.value.id > 0 ? actualizarServicio(servicioForm.value) : nuevoServicio()" />
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -81,6 +111,13 @@
                     <strong>SERVICIOS REGISTRADOS</strong>
                 </div>
             </div>
+            @if(service.isLoading()){
+            <div class="flex flex-wrap justify-content-center" style="max-width: 100vw">
+                <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+                    animationDuration=".5s" />
+            </div>
+            }
+            @else{
             <p-table #table_servicios [value]="service.lista_servicios()"
                 styleClass="p-datatable-striped p-datatable-gridlines" [globalFilterFields]="['NOMBRE']"
                 [paginator]="true" [rows]="4" [rowsPerPageOptions]="[5, 10, 20]" appendTo="body">
@@ -115,7 +152,7 @@
                                 <i  class="flex align-items-center justify-content-center" [class]="servicio.icon" style="font-size: 2rem"></i>
                             </div> -->
                             <p-tag [style]="{'background-color': servicio.color}" styleClass="w-full h-3rem">
-                                <i class="flex align-items-center justify-content-center" [class]="servicio.icon"
+                                <i class="flex align-items-center justify-content-center" [class]="servicio.icono"
                                     style="font-size: 2rem; color: rgb(62, 58, 58);"></i>
                             </p-tag>
                         </td>
@@ -138,6 +175,7 @@
                     </tr>
                 </ng-template>
             </p-table>
+            }
         </div>
     </div>
 </div>

@@ -14,6 +14,8 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.primengConfig.ripple = true;
         let currentUser = this.storageService.obtenerDatosUsuario();
+        console.log(currentUser);
+        
         let currentURL = this.storageService.obtenerRutaActual();
         if (currentUser) {
             this.router.navigateByUrl(`${currentURL}`);

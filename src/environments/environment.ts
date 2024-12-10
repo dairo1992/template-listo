@@ -10,8 +10,10 @@ export const environment = {
 // DEVELOPER
 // export const url = 'http://localhost:5500';
 // API NEST
-export const url = 'http://localhost:5500';
+export const url = 'https://api-digiturno.ingdairo.com';
+// export const url = 'http://localhost:5500';
 export const cryptoKey = 'Restomaikovf87';
+
 
 /*
  * For easier debugging in development mode, you can import the following file

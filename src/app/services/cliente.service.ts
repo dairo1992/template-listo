@@ -5,6 +5,7 @@ import { url } from 'src/environments/environment';
 import { Cliente } from '../interfaces/cliente.interface';
 import { Observable } from 'rxjs';
 import { formatDate } from '@angular/common';
+import { UsuarioService } from './usuario.service';
 
 @Injectable({
     providedIn: 'root',
@@ -17,14 +18,16 @@ export class ClienteService {
     public _cliente = signal<Cliente>(null);
     public cliente = computed(() => this._cliente());
     private http = inject(HttpClient);
-
-    constructor(private messageService: MessageService) {}
+    private usuarioService = inject(UsuarioService);
+    constructor(private messageService: MessageService) { }
 
     setLoading(value: boolean) {
         this._isLoading.set(value);
     }
 
-    obtenerClientes(empresa_id: number) {
+    obtenerClientes() {
+        const empresa_id = this.usuarioService.currentUser().empresa.id ?? 0;
+        // const empresa_id = this.usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN' ? 0 : this.usuarioService.currentUser().empresa.id;
         this.http.get<Cliente[]>(`${url}/clientes/${empresa_id}`).subscribe({
             next: (data) => {
                 this._isLoading.set(false);
@@ -54,7 +57,7 @@ export class ClienteService {
             'yyyy-MM-dd',
             'en-US'
         );
-        return this.http.post<Cliente>(`${url}/clientes`, cliente);
+        return this.http.post<Cliente>(`${url}/clientes/nuevo-cliente`, cliente);
     }
 
     // actualizarUsuario(id: number, usuario: any): void {

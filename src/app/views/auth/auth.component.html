@@ -8,12 +8,11 @@
                     <div class="text-900 text-3xl font-medium mb-3">INICIO DE SESSION</div>
                 </div>
                 <p-toast></p-toast>
-                @if(!loading){
                 <form [formGroup]="formAuth">
                     <div>
                         <label for="empresa" class="block text-900 text-xl font-medium mb-2">EMPRESA</label>
-                        <p-dropdown styleClass="w-full mb-2" [options]="empresaService.lista_empresas()" formControlName="EMPRESA"
-                            [optionLabel]="'nombre'" [optionValue]="'id'" />
+                        <p-dropdown styleClass="w-full mb-2" [options]="empresaService.lista_empresas()"
+                            formControlName="EMPRESA" [optionLabel]="'nombre'" [optionValue]="'id'" />
 
                         <label for="usuario" class="block text-900 text-xl font-medium mb-2">USUARIO</label>
                         <p-inputNumber id="usuario" class="w-full md:w-30rem mb-5" inputId="integeronly"
@@ -37,10 +36,10 @@
                             [disabled]="!formAuth.valid"></button>
                     </div>
                 </form>
-                }
-                @else{
-                <div class="card flex justify-content-center">
-                    <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
+                @if(authService.isLoading()){
+                <div class="flex flex-wrap justify-content-center" style="max-width: 100vw">
+                    <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+                        animationDuration=".5s" />
                 </div>
                 }
             </div>

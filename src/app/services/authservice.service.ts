@@ -11,7 +11,7 @@ import { Usuario } from '../interfaces/usuario.interface';
     providedIn: 'root',
 })
 export class AuthserviceService {
-    private _isLoading = signal<boolean>(true);
+    private _isLoading = signal<boolean>(false);
     public isLoading = computed(() => this._isLoading());
     private http = inject(HttpClient);
     private storage = inject(AlmacenService);
@@ -19,24 +19,30 @@ export class AuthserviceService {
     constructor(
         private router: Router,
         private messageService: MessageService
-    ) {}
+    ) { }
 
     login(usuario: any) {
+        this._isLoading.set(true);
         this.http.post(`${url}/auth/login`, usuario).subscribe({
-            next: async (usuario: Usuario) => {
-                await this.storage.almacenarToken(usuario.token);
-                this.storage.almacenarDatosUsuario(usuario);
-                this.service.obtenerRutas(usuario.id);
-                this.router.navigateByUrl('/home');
+            next: async (usuario: Usuario | null) => {
+                if (usuario != null) {
+                    this.service.obtenerRutas(usuario.id);
+                    await this.storage.almacenarToken(usuario.token);
+                    this.storage.almacenarDatosUsuario(usuario);
+                    this._isLoading.set(false);
+                    setTimeout(() => {
+                        this.router.navigateByUrl('/home');
+                    }, 1000);
+                }
                 this.messageService.add({
-                    severity: 'success',
-                    summary: 'BIENVENIDO',
-                    detail: `${usuario.nombre.toUpperCase()}`,
+                    severity: usuario != null ? 'success' : 'error',
+                    summary: usuario != null ? 'BIENVENIDO' : 'NOTIFICACION',
+                    detail: usuario != null ? `${usuario.nombre.toUpperCase()}` : 'USUARIO NO ENCONTRADO',
                 });
             },
             error: (err) => {
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -52,5 +58,6 @@ export class AuthserviceService {
             summary: 'Error',
             detail: 'Token Expirado',
         });
+        this._isLoading.set(false);
     }
 }

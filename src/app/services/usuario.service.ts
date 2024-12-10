@@ -31,10 +31,11 @@ export class UsuarioService {
                 this._lista_usuarios.set(data);
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this._lista_usuarios.set([]);
                 this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -55,8 +56,9 @@ export class UsuarioService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -84,8 +86,9 @@ export class UsuarioService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -108,8 +111,9 @@ export class UsuarioService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -134,8 +138,9 @@ export class UsuarioService {
                     });
                 },
                 error: (err) => {
+                    this._isLoading.set(false);
                     this.messageService.add({
-                        severity: 'warn',
+                        severity: 'error',
                         summary: '!NOTIFICACION¡',
                         detail: err.error,
                     });
@@ -158,8 +163,9 @@ export class UsuarioService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });
@@ -177,8 +183,9 @@ export class UsuarioService {
                 });
             },
             error: (err) => {
+                this._isLoading.set(false);
                 this.messageService.add({
-                    severity: 'warn',
+                    severity: 'error',
                     summary: '!NOTIFICACION¡',
                     detail: err.error,
                 });

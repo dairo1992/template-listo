@@ -11,11 +11,12 @@ import { TurnosService } from 'src/app/services/turnos.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TicktTurnoComponent } from '../../ticket-turno/tickt-turno.component';
+import ClientesComponent from "../../clientes/clientes.component";
 
 @Component({
     selector: 'app-generar',
     standalone: true,
-    imports: [PrimeModule, TicktTurnoComponent],
+    imports: [PrimeModule, TicktTurnoComponent, ClientesComponent],
     templateUrl: './generar.component.html',
     styleUrl: './generar.component.scss',
 })
@@ -37,6 +38,13 @@ export default class GenerarComponent implements OnInit {
     turnoGenerado: any = null;
     modalImprimir: boolean = false;
     constructor() {
+        this.limpiarForm();
+    }
+    ngOnInit(): void {
+        this.utilityService.obtenerTiposDocumento();
+    }
+
+    limpiarForm(): void {
         this.consultaForm = new FormGroup({
             tipo_documento: new FormControl(Validators.required),
             documento: new FormControl(0, Validators.required),
@@ -50,7 +58,7 @@ export default class GenerarComponent implements OnInit {
             apellido: new FormControl('', Validators.required),
             telefono: new FormControl(Validators.required),
             email: new FormControl('', Validators.email),
-            fecha_nacimiento: new FormControl(Validators.required),
+            fecha_nacimiento: new FormControl('', Validators.required),
             observaciones: new FormControl(''),
             empresa_id: new FormControl(0, Validators.required),
         });
@@ -71,15 +79,10 @@ export default class GenerarComponent implements OnInit {
             cliente_id: new FormControl(Validators.required),
         });
     }
-    ngOnInit(): void {
-        this.utilityService.obtenerTiposDocumento();
-    }
 
     consultarCliente() {
         const empresa_id = this.usuarioService.currentUser().empresa.id ?? 0;
         this.consultaForm.controls['empresa_id'].setValue(empresa_id);
-        this.formCliente.controls['empresa_id'].setValue(empresa_id);
-        this.formCliente.reset();
         this.clienteService
             .consultarCliente(this.consultaForm.value)
             .subscribe({
@@ -96,6 +99,9 @@ export default class GenerarComponent implements OnInit {
                     } else {
                         this.formCliente.get('tipo_documento')?.enable();
                         this.formCliente.controls['id'].setValue(0);
+                        this.formCliente.controls['empresa_id'].setValue(empresa_id);
+                        this.formCliente.controls['tipo_documento'].setValue(this.consultaForm.value.tipo_documento);
+                        this.formCliente.controls['documento'].setValue(this.consultaForm.value.documento);
                     }
                 },
                 error: (err) => {
@@ -118,6 +124,7 @@ export default class GenerarComponent implements OnInit {
             this.clienteService.nuevoCliente(this.formCliente.value).subscribe({
                 next: (value: Cliente) => {
                     this.paso = 3;
+                    this.formCliente.setValue(value);
                     this.clienteService._cliente.set(value);
                     this.clienteService._lista_clientes.set([
                         ...(this.clienteService.lista_clientes() || []),
@@ -175,6 +182,11 @@ export default class GenerarComponent implements OnInit {
         this.turnoForm.setValue(turno);
         this.Service.generarTurno(this.turnoForm.value).subscribe({
             next: (response: any) => {
+                if (response.STATUS) {
+                    this.Service.obtenerTurnosCant(
+                        this.usuarioService.currentUser().id);
+                }
+                this.limpiarForm();
                 this.messageService.add({
                     key: 'turno',
                     sticky: true,

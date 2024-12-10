@@ -28,10 +28,9 @@ export default class SedesComponent implements OnInit {
 
     constructor() {
         this.currentUser = this.usuarioService.currentUser();
-        this.service.obtenerSedes(this.currentUser.id);
-        this.empresasService.obtenerEmpresas(
-            this.usuarioService.currentUser().id
-        );
+        const id = this.currentUser.tipo_usuario == 'SUPER_ADMIN' ? 0 : this.currentUser.id;
+        this.service.obtenerSedes(id);
+        this.empresasService.obtenerEmpresas(id);
     }
     ngOnInit(): void {
         this.sedeForm = new FormGroup({

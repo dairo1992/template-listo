@@ -31,11 +31,9 @@ export default class ClientesComponent {
     };
 
     constructor(private route: ActivatedRoute, private router: Router) {
-        this.clienteService.obtenerClientes(
-            this.usuarioService.currentUser().empresa.id ?? 0
-        );
+        this.clienteService.obtenerClientes();
         this.empresaService.obtenerEmpresas(
-            this.usuarioService.currentUser().id
+            this.usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN' ? 0 : this.usuarioService.currentUser().id
         );
         this.formCliente = new FormGroup({
             id: new FormControl(0, Validators.required),
@@ -97,5 +95,5 @@ export default class ClientesComponent {
         }
     }
 
-    actualizarCliente() {}
+    actualizarCliente() { }
 }

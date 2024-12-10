@@ -1,67 +1,153 @@
+<p-toast />
 <div class="flex flex-column">
     <div class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">GESTIONAR
         TURNOS</div>
 </div>
 <div class="flex flex-column md:flex-row">
     <div
-        class="flex align-items-center justify-content-center w-5 md:min-w-max h-25rem border-double border-primary-500 border-3 border-round m-2">
-        <p-button [outlined]="true">
-            <div class="flex flex-column">
-                <div class="flex align-items-center justify-content-center font-bold border-round m-2"><strong>
-                        <h2 style="color: var(--primary-color)">SIGUIENTE TURNO</h2>
-                    </strong></div>
-                <div
-                    class="flex align-items-center justify-content-center h-5rem bg-primary font-bold border-round m-2">
-                    <i class="pi pi-arrow-circle-right" style="color: var(--surface-0);font-size: 4rem"></i>
+        class="flex align-items-center justify-content-center w-5 md:min-w-max border-double border-primary-500 border-3 border-round m-2">
+        <div class="flex flex-column">
+            @if(turnosService.currentTurno().STATUS){
+            <div class="flex align-items-center justify-content-center m-2">
+                <div class="flex flex-column">
+                    <div class="flex align-items-center justify-content-center font-bold border-round m-2">
+                        <strong>DATOS DEL TURNO</strong>
+                    </div>
+                    <div class="flex align-items-center justify-content-center">
+                        <div class="p-fluid">
+                            <div class="p-formgrid grid">
+                                <div class="field col">
+                                    <input id="nombre" type="text" class="p-inputtext p-component p-element"
+                                        [value]="turnosService.currentTurno().DATA.nombre | uppercase">
+                                </div>
+                            </div>
+                            <div class="p-formgrid grid">
+                                <div class="field col">
+                                    <input id="tipoDoc" type="text" class="p-inputtext p-component p-element"
+                                        [value]="turnosService.currentTurno().DATA.documento">
+                                </div>
+                                <div class="field col">
+                                    <input id="servicio" type="text" class="p-inputtext p-component p-element"
+                                        [value]="turnosService.currentTurno().DATA.servicio">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
+                        <h4 style="color: white;">{{turnosService.currentTurno().DATA.turno}}</h4>
+                    </div>
                 </div>
             </div>
-        </p-button>
+            }
+            <div class="flex align-items-center justify-content-center m-2">
+                <div class="ml-2">
+                    <p-button [outlined]="true" (click)="pausarTurno()">
+                        <div class="flex flex-column">
+                            <div class="flex align-items-center justify-content-center font-bold border-round m-2"><strong>
+                                    <h2 style="color: var(--primary-color)">{{turnosService.currentTurno().STATUS ?
+                                        'FINALIZAR TURNO' : 'SIGUIENTE TURNO'}}</h2>
+                                </strong></div>
+                            <div
+                                class="flex align-items-center justify-content-center bg-blue-400 h-5rem font-bold border-round m-2">
+                                <i class="pi pi-arrow-circle-right" style="color: var(--surface-0);font-size: 4rem"></i>
+                            </div>
+                        </div>
+                    </p-button>
+                </div>
+                <div class="ml-2">
+                <p-button [outlined]="true"
+                    (click)="turnosService.currentTurno().STATUS ? finalizarTurno() : llamarTurno()">
+                    <div class="flex flex-column">
+                        <div class="flex align-items-center justify-content-center font-bold border-round m-2"><strong>
+                                <h2 style="color: var(--primary-color)">{{turnosService.currentTurno().STATUS ?
+                                    'FINALIZAR TURNO' : 'SIGUIENTE TURNO'}}</h2>
+                            </strong></div>
+                        <div class="flex align-items-center justify-content-center h-5rem font-bold border-round m-2"
+                            [class]="!turnosService.currentTurno().STATUS ? 'bg-primary':'bg-red-500'">
+                            <i class="pi pi-arrow-circle-right" style="color: var(--surface-0);font-size: 4rem"></i>
+                        </div>
+                    </div>
+                </p-button>
+            </div>
+            </div>
+        </div>
+
+
     </div>
     <div
-        class="flex align-items-center justify-content-center w-7 md:min-w-max h-25rem border-double border-primary-500 border-3 border-round m-2">
+        class="flex align-items-center justify-content-center w-7 md:min-w-max border-double border-primary-500 border-3 border-round m-2">
         <div class="flex flex-column align-items-center justify-content-center">
+            <strong>TOTALES</strong>
             <div class="flex align-items-center justify-content-center m-2">
                 <div class="flex flex-row flex-wrap w-full">
                     <div class="flex align-items-center justify-content-center w-12rem m-3">
                         <div
-                            class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round">
+                            class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round bg-blue-500">
                             <span class="m-2" style="color: var(--primary-color)">ACTIVOS</span>
-                            <i class="pi pi-circle text-3xl" style="color: var(--primary-color)" pBadge value="2"></i>
+                            <i class="pi pi-circle text-3xl" style="color: var(--primary-color)" pBadge
+                                [value]="turnosService.resumen().ACTIVOS"></i>
                         </div>
                     </div>
                     <div class="flex align-items-center justify-content-center w-12rem m-2">
                         <div
-                            class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round">
+                            class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round bg-green-500">
                             <span class="m-2" style="color: var(--primary-color)">ATENDIDOS</span>
                             <i class="pi pi-check-circle text-3xl" style="color: var(--primary-color)" pBadge
-                                value="2"></i>
+                                [value]="turnosService.resumen().ATENDIDOS"></i>
                         </div>
                     </div>
                     <div class="flex align-items-center justify-content-center w-11rem m-2">
                         <div
-                            class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round">
+                            class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round bg-orange-500">
                             <span class="m-2" style="color: var(--primary-color)">TOTAL</span>
-                            <i class="pi pi-hashtag text-3xl" style="color: var(--primary-color)" pBadge value="9"></i>
+                            <i class="pi pi-hashtag text-3xl" style="color: var(--primary-color)" pBadge
+                                [value]="turnosService.resumen().TOTAL"></i>
                         </div>
                     </div>
                 </div>
             </div>
-            <div
-                class="flex align-items-center justify-content-center w-6 border-double border-primary-500 border-3 border-round m-2">
-                <div class="flex flex-column">
-                    <div class="flex align-items-center justify-content-center m-2"><i class="pi pi-user"
-                            style="color: var(--primary-color); font-size: 7rem;"></i></div>
-                    <div class="flex align-items-center justify-content-center font-bold m-1">
-                        <span style="color: var(--primary-color)">{{currentUser.nombre | uppercase}}
-                            {{currentUser.apellido | uppercase}}</span>
-                    </div>
-                    <div class="flex align-items-center justify-content-center font-bold m-1">
-                        <span style="color: var(--primary-color)">SEDE: {{currentUser.empresa.sede.nombre|
-                            uppercase}}</span>
-                    </div>
-                    <div class="flex align-items-center justify-content-center font-bold m-1">
-                        <span style="color: var(--primary-color)">MODULO: {{currentUser.modulo.nombre|
-                            uppercase}}</span>
+            <div class="flex flex-row flex-wrap">
+                <div class="flex align-items-center justify-content-center border-round max-h-14rem overflow-auto m-2">
+                    <p-table #servicios_usuario [value]="turnosService.resumen().TURNOS"
+                        styleClass="p-datatable-striped p-datatable-gridlines">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>SERVICIO</th>
+                                <th>ACTIVOS</th>
+                                <th>ATENDIDOS</th>
+                                <th>TOTAL</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-servicio>
+                            <tr>
+                                <td>{{servicio.nombre}}</td>
+                                <td>{{servicio.activos}}</td>
+                                <td>{{servicio.atendidos}}</td>
+                                <td>{{servicio.total}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="flex align-items-center justify-content-center font-bold border-round m-2">
+                    <div
+                        class="flex align-items-center justify-content-center w-full border-double border-primary-500 border-3 border-round m-2">
+                        <div class="flex flex-column">
+                            <div class="flex align-items-center justify-content-center m-2"><i class="pi pi-user"
+                                    style="color: var(--primary-color); font-size: 7rem;"></i></div>
+                            <div class="flex align-items-center justify-content-center font-bold m-1">
+                                <span style="color: var(--primary-color)">{{currentUser.nombre | uppercase}}
+                                    {{currentUser.apellido | uppercase}}</span>
+                            </div>
+                            <div class="flex align-items-center justify-content-center font-bold m-1">
+                                <span style="color: var(--primary-color)">SEDE: {{currentUser.empresa.sede.nombre|
+                                    uppercase}}</span>
+                            </div>
+                            <div class="flex align-items-center justify-content-center font-bold m-1">
+                                <span style="color: var(--primary-color)">MODULO: {{currentUser.modulo.nombre|
+                                    uppercase}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -70,7 +156,7 @@
 </div>
 <div class="flex flex-row flex-wrap align-items-center justify-content-center">
     <div class="flex align-items-center justify-content-center W-6 font-bold border-round m-2">
-        <p-button [outlined]="true" label="VER TURNOS" />
+        <p-button [outlined]="true" label="VER TURNOS" (click)="consultarTurnos()" />
     </div>
     <div class="flex align-items-center justify-content-center W-6 font-bold border-round m-2">
         <p-button [outlined]="true" label="GENERAR TURNO" (click)="modalGenerarTurno = true" />
@@ -84,11 +170,49 @@
         </div>
     </div>
 </p-dialog>
-<p-dialog header="TURNOS ACTIVOS" [draggable]="false" [modal]="true" [(visible)]="modalListaTurno"
-    [style]="{ width: '50vw' }" [resizable]="false" (onHide)="modalGenerarTurno = false">
-    <div class="flex flex-column">
-        <div class="flex align-items-center justify-content-center m-2">
-            <app-generar></app-generar>
-        </div>
-    </div>
+
+<p-dialog header="TURNOS ACTIVOS" [modal]="true" [draggable]="false" [maximizable]="true" appendTo="body"
+    [(visible)]="modalListaTurno" [style]="{width: '75vw'}" [contentStyle]="{height: '300px'}">
+    <p-table [value]="turnosService.lista_turnos()" [scrollable]="true" scrollHeight="flex"
+        [tableStyle]="{'min-width': '50rem'}" styleClass="p-datatable-striped p-datatable-gridlines">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>CLIENTE</th>
+                <th>SERVICIO</th>
+                <th>TURNO_FORMATEADO</th>
+                <th>PRIORITARIO</th>
+                <th>ESTADO</th>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-turno>
+            <tr>
+                <td>
+                    {{turno.cliente.nombre}} {{turno.cliente.apellido}}
+                </td>
+                <td>
+                    {{turno.servicio.nombre}}
+                </td>
+                <td>
+                    <div class="flex flex-row flex-wrap align-items-center justify-content-center">
+                        <div class="align-items-center justify-content-center border-3 border-round p-2 mr-1"
+                            [style]="{'background-color': turno.servicio.color}">
+                            <strong class="m-1">{{turno.turno_formateado}}</strong>
+                            <i class="text-3xl" [class]="turno.servicio.icon"></i>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    {{turno.prioridad == 0 ? "SI": "NO"}}
+                </td>
+                <td><p-tag [value]="utilitiService.getTurnoStatus(turno.estado).nombre"
+                        [severity]="utilitiService.getTurnoStatus(turno.estado).color" /></td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton pRipple icon="pi pi-times" (click)="modalListaTurno=false" label="CERRAR"
+            class="p-button-text">
+        </button>
+    </ng-template>
 </p-dialog>

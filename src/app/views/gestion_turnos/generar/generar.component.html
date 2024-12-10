@@ -180,7 +180,7 @@
                         [style]="{'background-color': servicio.color}" (click)="generarTurno(servicio)">
                         <div class="flex flex-column">
                             <div class="flex align-items-center justify-content-center border-round m-2">
-                                <i class="flex align-items-center justify-content-center" [class]="servicio.icon"
+                                <i class="flex align-items-center justify-content-center" [class]="servicio.icono"
                                     style="font-size: 6rem; color: white;">
                                 </i>
                             </div>
@@ -202,7 +202,7 @@
                 @if(paso === 2){
                 <div class="flex align-items-center justify-content-center m-2">
                     <p-button class="flex align-items-center justify-content-center" label="CONTINUAR"
-                        icon="pi pi-check" [loading]="clienteService.isLoading()" [disabled]="!formCliente.valid"
+                        icon="pi pi-check" [loading]="clienteService.isLoading()" [disabled]="formCliente.invalid"
                         (onClick)="nuevoCliente()" />
                 </div>
                 }
