@@ -12,6 +12,7 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TicktTurnoComponent } from '../../ticket-turno/tickt-turno.component';
 import ClientesComponent from "../../clientes/clientes.component";
+import { AlertaSwal } from 'src/app/components/swal-alert';
 
 @Component({
     selector: 'app-generar',
@@ -37,8 +38,10 @@ export default class GenerarComponent implements OnInit {
     servicioSeleccionado: any = null;
     turnoGenerado: any = null;
     modalImprimir: boolean = false;
+    alert: AlertaSwal;
     constructor() {
         this.limpiarForm();
+        this.alert = new AlertaSwal();
     }
     ngOnInit(): void {
         this.utilityService.obtenerTiposDocumento();
@@ -81,6 +84,7 @@ export default class GenerarComponent implements OnInit {
     }
 
     consultarCliente() {
+        this.alert.loading();
         const empresa_id = this.usuarioService.currentUser().empresa.id ?? 0;
         this.consultaForm.controls['empresa_id'].setValue(empresa_id);
         this.clienteService
@@ -88,7 +92,7 @@ export default class GenerarComponent implements OnInit {
             .subscribe({
                 next: (resp: any) => {
                     this.paso = 2;
-                    this.clienteService.setLoading(false);
+                    // this.clienteService.setLoading(false);
                     if (resp.STATUS) {
                         const cliente: Cliente = resp.MSG;
                         cliente.fecha_nacimiento = new Date(
@@ -103,8 +107,10 @@ export default class GenerarComponent implements OnInit {
                         this.formCliente.controls['tipo_documento'].setValue(this.consultaForm.value.tipo_documento);
                         this.formCliente.controls['documento'].setValue(this.consultaForm.value.documento);
                     }
+                    this.alert.close();
                 },
                 error: (err) => {
+                    this.alert.close();
                     this.messageService.add({
                         severity: 'warn',
                         summary: '!NOTIFICACION¡',
@@ -115,11 +121,13 @@ export default class GenerarComponent implements OnInit {
     }
 
     nuevoCliente() {
+        this.alert.loading();
         this.ServicioService.obtenerServicios(
             this.usuarioService.currentUser().id
-        );
+        ).subscribe((data) => this.ServicioService._lista_servicios.set(data));
         if (this.formCliente.value.id > 0) {
             this.paso = 3;
+            this.alert.close();
         } else {
             this.clienteService.nuevoCliente(this.formCliente.value).subscribe({
                 next: (value: Cliente) => {
@@ -134,8 +142,10 @@ export default class GenerarComponent implements OnInit {
                         severity: 'success',
                         summary: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
                     });
+                    this.alert.close();
                 },
                 error: (err) => {
+                    this.alert.close();
                     this.messageService.add({
                         severity: 'warn',
                         summary: '!NOTIFICACION¡',
@@ -165,6 +175,7 @@ export default class GenerarComponent implements OnInit {
     }
 
     generarTurno(servicio: Servicio) {
+        this.alert.loading();
         this.servicioSeleccionado = servicio;
         const turno = {
             id: 0,
@@ -195,9 +206,11 @@ export default class GenerarComponent implements OnInit {
                     detail: response.DATA,
                     data: response.TURNO_ID,
                 });
+                this.alert.close();
                 // this.visible = true;
             },
             error: (err) => {
+                this.alert.close();
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',
@@ -208,10 +221,12 @@ export default class GenerarComponent implements OnInit {
     }
 
     imprimirTurno(id_turno: number) {
+        this.alert.loading();
         this.modalImprimir = true;
         this.turnoGenerado = null;
         this.Service.imprimirTurno(id_turno).subscribe({
             next: (response: any) => {
+                this.alert.close();
                 if (response.STATUS) {
                     this.turnoGenerado = response.MSG;
                 } else {
@@ -223,6 +238,7 @@ export default class GenerarComponent implements OnInit {
                 }
             },
             error: (err) => {
+                this.alert.close();
                 this.messageService.add({
                     severity: 'warn',
                     summary: '!NOTIFICACION¡',

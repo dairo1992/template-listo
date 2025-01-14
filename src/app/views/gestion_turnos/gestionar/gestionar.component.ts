@@ -22,12 +22,6 @@ export default class GestionarComponent {
     public turnosService = inject(TurnosService);
     public utilitiService = inject(UtilitiesService);
     public storageService = inject(AlmacenService);
-    // resumen = {
-    //     ACTIVOS: 0,
-    //     ATENDIDOS: 0,
-    //     TOTAL: 0
-    // };
-    // servicios_asignados = [];
 
     constructor() {
         // const resumen = {
@@ -86,7 +80,7 @@ export default class GestionarComponent {
         this.turnosService.finalizarTurno(this.turnosService.currentTurno().DATA.turno_id, this.currentUser.id);
     }
 
-    pausarTurno(){
-        
+    pausarTurno() {
+
     }
 }

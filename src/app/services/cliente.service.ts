@@ -6,43 +6,31 @@ import { Cliente } from '../interfaces/cliente.interface';
 import { Observable } from 'rxjs';
 import { formatDate } from '@angular/common';
 import { UsuarioService } from './usuario.service';
+import { AlertaSwal } from '../components/swal-alert';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ClienteService {
-    private _isLoading = signal<boolean>(true);
-    public isLoading = computed(() => this._isLoading());
+    // private _isLoading = signal<boolean>(true);
+    // public isLoading = computed(() => this._isLoading());
     public _lista_clientes = signal<Cliente[]>([]);
     public lista_clientes = computed(() => this._lista_clientes());
     public _cliente = signal<Cliente>(null);
     public cliente = computed(() => this._cliente());
     private http = inject(HttpClient);
     private usuarioService = inject(UsuarioService);
-    constructor(private messageService: MessageService) { }
-
-    setLoading(value: boolean) {
-        this._isLoading.set(value);
+    private alert: AlertaSwal;
+    constructor(private messageService: MessageService) {
+        this.alert = new AlertaSwal();
     }
 
-    obtenerClientes() {
-        const empresa_id = this.usuarioService.currentUser().empresa.id ?? 0;
-        // const empresa_id = this.usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN' ? 0 : this.usuarioService.currentUser().empresa.id;
-        this.http.get<Cliente[]>(`${url}/clientes/${empresa_id}`).subscribe({
-            next: (data) => {
-                this._isLoading.set(false);
-                this._lista_clientes.set(data);
-            },
-            error: (err) => {
-                this._lista_clientes.set([]);
-                this._isLoading.set(false);
-                this.messageService.add({
-                    severity: 'warn',
-                    summary: '!NOTIFICACION¡',
-                    detail: err.error,
-                });
-            },
-        });
+    // setLoading(value: boolean) {
+    //     // this._isLoading.set(value);
+    // }
+
+    obtenerClientes(empresa_id: number) {
+        return this.http.get<Cliente[]>(`${url}/clientes/${empresa_id}`);
     }
 
     consultarCliente(query: any): Observable<Cliente> {

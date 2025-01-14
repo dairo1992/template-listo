@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AlertaSwal } from 'src/app/components/swal-alert';
 import { Modulo } from 'src/app/interfaces/modulo.interface';
 import { Sede } from 'src/app/interfaces/sede.interface';
 import { Usuario } from 'src/app/interfaces/usuario.interface';
@@ -19,7 +20,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 })
 export default class ModulosComponent {
     public service = inject(ModuloService);
-    private _sedes_Service = inject(SedesService);
+    public _sedes_Service = inject(SedesService);
     public empresaService = inject(EmpresaService);
     public usuarioService = inject(UsuarioService);
     listaSedesFilter: Sede[] = [];
@@ -27,12 +28,15 @@ export default class ModulosComponent {
     modalNuevaSede: boolean = false;
     modalTitle: string = 'REGISTRAR MODULO';
     moduloForm!: FormGroup;
+    private alert: AlertaSwal;
 
     constructor() {
-        const id = this.usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN' ? 0 : this.usuarioService.currentUser().id;
-        this.service.obtenerModulos(id);
-        this._sedes_Service.obtenerSedes(id);
-        this.empresaService.obtenerEmpresas(id);
+        this.alert = new AlertaSwal();
+        const id = this.usuarioService.currentUser().id;
+        this.obtenermodulos(id);
+        if (this.usuarioService.currentUser().tipo_usuario != 'SUPER_ADMIN') {
+            this.listaSedesByEmpresa(this.usuarioService.currentUser().empresa.id);
+        }
     }
     ngOnInit(): void {
         this.moduloForm = new FormGroup({
@@ -46,25 +50,89 @@ export default class ModulosComponent {
         });
     }
 
+    obtenermodulos(id_user: number): void {
+        this.service.obtenerModulos(id_user).subscribe({
+            next: (data) => {
+                this.service._lista_modulos.set(data);
+                this.alert.close();
+            },
+            error: (err) => {
+                this.alert.close();
+            },
+        });
+    }
+
     nuevoModulo(): void {
-        this.service.nuevoModulo(this.moduloForm.value);
-        this.modalNuevaSede = false;
+        this.alert.loading();
+        this.service.nuevoModulo(this.moduloForm.value).subscribe({
+            next: (value: Modulo) => {
+                const sede = this._sedes_Service.lista_sedes().find(
+                    (m) => m.id == this.moduloForm.value.sede_id
+                );
+                value.sede = sede;
+                this.service._lista_modulos.set([
+                    ...(this.service.lista_modulos() || []),
+                    value,
+                ]);
+                this.alert.close();
+                this.modalNuevaSede = false;
+            },
+            error: (err) => {
+                this.alert.close();
+            },
+        });
+
     }
 
     setModulo(modulo: Modulo): void {
+        const m = { ...modulo, empresa_id: modulo.sede.empresa_id };
         this.listaSedesByEmpresa(modulo.sede.empresa_id);
-        this.moduloForm.setValue(modulo);
+        this.moduloForm.setValue(m);
         this.modalTitle = `MODIFICAR ${modulo.nombre}`;
         this.modalNuevaSede = true;
     }
 
     actualizarModulo(sede: Modulo): void {
-        this.service.actualizarModulo(sede.id, sede);
-        this.modalNuevaSede = false;
+        this.alert.loading();
+        this.service.actualizarModulo(sede.id, sede).subscribe({
+            next: (value: any) => {
+                const i = this.service.lista_modulos().findIndex(
+                    (e) => e.id == this.moduloForm.value.id
+                );
+                this.service._lista_modulos.update((empresas) => {
+                    empresas.splice(i);
+                    const sed = this._sedes_Service.lista_sedes().find(
+                        (s) => s.id == this.moduloForm.value.sede_id
+                    );
+                    this.moduloForm.value.sede = sed;
+                    empresas.push(this.moduloForm.value);
+                    return empresas;
+                });
+                this.alert.close();
+                this.modalNuevaSede = false;
+            },
+            error: (err) => {
+                this.alert.close();
+            },
+        });
+
     }
 
     uiEstado(sede: Modulo): void {
-        this.service.uiEstado(sede);
+        this.alert.loading();
+        this.service.uiEstado(sede).subscribe({
+            next: (value: Modulo) => {
+                this.service._lista_modulos.update((empresas) => {
+                    empresas.find((e) => e.id == sede.id).estado =
+                        sede.estado == 'A' ? 'I' : 'A';
+                    this.alert.close();
+                    return empresas;
+                });
+            },
+            error: (err) => {
+                this.alert.close();
+            },
+        });
     }
 
     close(): void {

@@ -1,6 +1,7 @@
 import { Component, Inject, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { AlertaSwal } from 'src/app/components/swal-alert';
 import { Sede } from 'src/app/interfaces/sede.interface';
 import { Usuario } from 'src/app/interfaces/usuario.interface';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
@@ -25,12 +26,12 @@ export default class SedesComponent implements OnInit {
     modalTitle: string = 'REGISTRAR SEDE';
     sedeForm!: FormGroup;
     currentUser: Usuario;
+    private alert: AlertaSwal = new AlertaSwal();
 
     constructor() {
         this.currentUser = this.usuarioService.currentUser();
-        const id = this.currentUser.tipo_usuario == 'SUPER_ADMIN' ? 0 : this.currentUser.id;
-        this.service.obtenerSedes(id);
-        this.empresasService.obtenerEmpresas(id);
+        this.obtenerSedes(this.currentUser.id);
+        // this.empresasService.obtenerEmpresas(id);
     }
     ngOnInit(): void {
         this.sedeForm = new FormGroup({
@@ -44,14 +45,39 @@ export default class SedesComponent implements OnInit {
         });
     }
 
-    nuevaEmpresa(): void {
+    obtenerSedes(id_user: number): void {
+        this.alert.loading();
+        this.service.obtenerSedes(id_user).subscribe({
+            next: (data) => {
+                this.service._lista_sedes.set(data);
+                this.alert.close();
+            },
+            error: (err) => {
+                this.alert.close();
+            },
+        });
+    }
+
+    nuevaSede(): void {
+        this.alert.loading();
         if (this.currentUser.tipo_usuario != 'SUPER_ADMIN') {
             this.sedeForm.controls['empresa_id'].setValue(
                 this.currentUser.empresa.id
             );
         }
-        this.service.nuevaSede(this.sedeForm.value);
-        this.modalNuevaSede = false;
+        this.service.nuevaSede(this.sedeForm.value)
+            .subscribe({
+                next: (value: Sede) => {
+                    this.service._lista_sedes.set([...(this.service.lista_sedes() || []), value]);
+                    this.modalNuevaSede = false;
+                    this.alert.close();
+                },
+                error: (err) => {
+                    this.alert.close();
+                    this.modalNuevaSede = false;
+                },
+            });
+
     }
 
     setEmpresa(sede: Sede): void {
@@ -61,12 +87,39 @@ export default class SedesComponent implements OnInit {
     }
 
     actualizarEmpresa(sede: Sede): void {
-        this.service.actualizarSede(sede.id, sede);
-        this.modalNuevaSede = false;
+        this.alert.loading();
+        this.service.actualizarSede(sede.id, sede).subscribe({
+            next: (value: Sede) => {
+                const i = this.service.lista_sedes().findIndex((e) => e.id == sede.id);
+                this.service._lista_sedes.update((empresas) => {
+                    empresas.splice(i);
+                    empresas.push(sede);
+                    return empresas;
+                });
+                this.modalNuevaSede = false;
+                this.alert.close();
+            },
+            error: (err) => {
+                this.alert.close();
+            },
+        });
     }
 
     uiEstado(sede: Sede): void {
-        this.service.uiEstado(sede);
+        this.alert.loading();
+        this.service.uiEstado(sede).subscribe({
+            next: (value: Sede) => {
+                this.service._lista_sedes.update((empresas) => {
+                    empresas.find((e) => e.id == sede.id).estado =
+                        sede.estado == 'A' ? 'I' : 'A';
+                    return empresas;
+                });
+                this.alert.close();
+            },
+            error: (err) => {
+                this.alert.close();
+            },
+        });
     }
 
     close(): void {

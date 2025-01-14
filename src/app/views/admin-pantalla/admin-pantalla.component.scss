@@ -1,0 +1,5 @@
+.p-galleria-thumbnail img {
+    width: 100%;
+    height: 80px; /* Altura fija para miniaturas */
+    object-fit: cover; /* Ajusta la imagen al contenedor */
+}

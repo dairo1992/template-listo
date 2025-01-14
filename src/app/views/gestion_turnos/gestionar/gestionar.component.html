@@ -18,17 +18,17 @@
                             <div class="p-formgrid grid">
                                 <div class="field col">
                                     <input id="nombre" type="text" class="p-inputtext p-component p-element"
-                                        [value]="turnosService.currentTurno().DATA.nombre | uppercase">
+                                        [value]="turnosService.currentTurno().DATA.nombre | uppercase" readonly>
                                 </div>
                             </div>
                             <div class="p-formgrid grid">
                                 <div class="field col">
                                     <input id="tipoDoc" type="text" class="p-inputtext p-component p-element"
-                                        [value]="turnosService.currentTurno().DATA.documento">
+                                        [value]="turnosService.currentTurno().DATA.documento" readonly>
                                 </div>
                                 <div class="field col">
                                     <input id="servicio" type="text" class="p-inputtext p-component p-element"
-                                        [value]="turnosService.currentTurno().DATA.servicio">
+                                        [value]="turnosService.currentTurno().DATA.servicio" readonly>
                                 </div>
                             </div>
                         </div>
@@ -41,40 +41,63 @@
             </div>
             }
             <div class="flex align-items-center justify-content-center m-2">
-                <div class="ml-2">
-                    <p-button [outlined]="true" (click)="pausarTurno()">
-                        <div class="flex flex-column">
-                            <div class="flex align-items-center justify-content-center font-bold border-round m-2"><strong>
-                                    <h2 style="color: var(--primary-color)">{{turnosService.currentTurno().STATUS ?
-                                        'FINALIZAR TURNO' : 'SIGUIENTE TURNO'}}</h2>
-                                </strong></div>
-                            <div
-                                class="flex align-items-center justify-content-center bg-blue-400 h-5rem font-bold border-round m-2">
-                                <i class="pi pi-arrow-circle-right" style="color: var(--surface-0);font-size: 4rem"></i>
+                <div class="flex flex-column">
+                    <div class="ml-2">
+                        <p-button [outlined]="true"
+                            (click)="turnosService.currentTurno().STATUS ? finalizarTurno() : llamarTurno()">
+                            <div class="flex flex-column">
+                                <div class="flex align-items-center justify-content-center font-bold border-round m-2">
+                                    <strong>
+                                        <h2 style="color: var(--primary-color)">{{turnosService.currentTurno().STATUS ?
+                                            'FINALIZAR TURNO' : 'SIGUIENTE TURNO'}}</h2>
+                                    </strong>
+                                </div>
+                                <div class="flex align-items-center justify-content-center h-5rem font-bold border-round m-2"
+                                    [class]="!turnosService.currentTurno().STATUS ? 'bg-primary':'bg-red-500'">
+                                    <i class="pi pi-arrow-circle-right" style="color: var(--surface-0);font-size: 4rem"></i>
+                                </div>
+                            </div>
+                        </p-button>
+                    </div>
+                    <!-- <div class="flex align-items-center justify-content-center m-2">
+                        <div class="ml-2">
+                            <p-button [outlined]="true" (click)="pausarTurno()">
+                                <div class="flex flex-column">
+                                    <div
+                                        class="flex align-items-center justify-content-center font-bold border-round m-2">
+                                        <strong>
+                                            <h2 style="color: var(--primary-color)">
+                                                {{turnosService.currentTurno().STATUS ?
+                                                'FINALIZAR TURNO' : 'SIGUIENTE TURNO'}}</h2>
+                                        </strong>
+                                    </div>
+                                    <div
+                                        class="flex align-items-center justify-content-center bg-blue-400 h-5rem font-bold border-round m-2">
+                                        <i class="pi pi-arrow-circle-right"
+                                            style="color: var(--surface-0);font-size: 4rem"></i>
+                                    </div>
+                                </div>
+                            </p-button>
+                        </div>
+                    </div> -->
+                    <div class="flex align-items-center justify-content-center m-2">
+                        <div class="flex flex-row flex-wrap">
+                            <div class="flex align-items-center justify-content-center m-2">
+                                <p-button label="Volver a llamar" severity="info" />
+                            </div>
+                            <div class="flex align-items-center justify-content-center m-2">
+                                <p-button label="Redireccionar" severity="help" />
+                            </div>
+                            <div class="flex align-items-center justify-content-center m-2">
+                                <p-button label="Ausente" severity="contrast" />
                             </div>
                         </div>
-                    </p-button>
-                </div>
-                <div class="ml-2">
-                <p-button [outlined]="true"
-                    (click)="turnosService.currentTurno().STATUS ? finalizarTurno() : llamarTurno()">
-                    <div class="flex flex-column">
-                        <div class="flex align-items-center justify-content-center font-bold border-round m-2"><strong>
-                                <h2 style="color: var(--primary-color)">{{turnosService.currentTurno().STATUS ?
-                                    'FINALIZAR TURNO' : 'SIGUIENTE TURNO'}}</h2>
-                            </strong></div>
-                        <div class="flex align-items-center justify-content-center h-5rem font-bold border-round m-2"
-                            [class]="!turnosService.currentTurno().STATUS ? 'bg-primary':'bg-red-500'">
-                            <i class="pi pi-arrow-circle-right" style="color: var(--surface-0);font-size: 4rem"></i>
-                        </div>
                     </div>
-                </p-button>
-            </div>
+                </div>
             </div>
         </div>
-
-
     </div>
+
     <div
         class="flex align-items-center justify-content-center w-7 md:min-w-max border-double border-primary-500 border-3 border-round m-2">
         <div class="flex flex-column align-items-center justify-content-center">
@@ -140,12 +163,12 @@
                                     {{currentUser.apellido | uppercase}}</span>
                             </div>
                             <div class="flex align-items-center justify-content-center font-bold m-1">
-                                <span style="color: var(--primary-color)">SEDE: {{currentUser.empresa.sede.nombre|
+                                <span style="color: var(--primary-color)">SEDE: {{currentUser.empresa.sede.nombre |
                                     uppercase}}</span>
                             </div>
                             <div class="flex align-items-center justify-content-center font-bold m-1">
-                                <span style="color: var(--primary-color)">MODULO: {{currentUser.modulo.nombre|
-                                    uppercase}}</span>
+                                <span style="color: var(--primary-color)">MODULO: {{currentUser.modulo.nombre
+                                    |uppercase}}</span>
                             </div>
                         </div>
                     </div>

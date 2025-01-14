@@ -1,0 +1,39 @@
+[
+  {
+    "label": "Estado",
+    "icon": "pi pi-check-circle",
+    "function": "uiEstado"
+  },
+  {
+    "separator": true
+  },
+  {
+    "label": "Editar",
+    "icon": "pi pi-user-edit",
+    "function": "setUsuario"
+  },
+  {
+    "separator": true
+  },
+  {
+    "label": "Config Menu",
+    "icon": "pi pi-wrench",
+    "function": "configUsuario"
+  },
+  {
+    "separator": true
+  },
+  {
+    "label": "Cambiar Contraseña",
+    "icon": "pi pi-key",
+    "function": "changePassword"
+  },
+  {
+    "separator": true
+  },
+  {
+    "label": "Config Turnos",
+    "icon": "pi pi-bookmark",
+    "function": "configTurnos"
+  }
+]

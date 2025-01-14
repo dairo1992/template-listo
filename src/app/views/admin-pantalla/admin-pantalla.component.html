@@ -1,0 +1,58 @@
+<p-toast />
+<div class="flex flex-column flex-wrap">
+    <div class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
+        <strong>PUBLICIDAD PANTALLA</strong>
+    </div>
+</div>
+<div class="grid">
+    <div class="col-12">
+        <div class="card layout-main" style="height: 25vh; max-height: 40vh; overflow: auto;">
+            <p-fileUpload #fileUpload name="demo" [multiple]="true" [maxFileSize]="20000000" [mode]="'advanced'"
+                accept="image/*" [showCancelButton]="true" [showUploadButton]="true" chooseLabel="Seleccionar"
+                uploadLabel="Cargar" [customUpload]="true" (uploadHandler)="cargarArchivos($event)"
+                (onSelect)="vistaPrevia($event)" (onClear)="files = []">
+                <ng-template pTemplate="toolbar">
+                </ng-template>
+
+                <ng-template pTemplate="content">
+                    <div class="flex flex-row flex-wrap">
+                        <div *ngFor="let file of files" class="flex align-items-center justify-content-center m-2">
+                            <img [src]="file.objectURL" [alt]="file.name" class="preview-image mr-4"
+                                style=" width: 10rem !important;" />
+                            <p-button icon="pi pi-times" aria-label="Eliminar" (click)="removeFile(file)" />
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="file">
+                </ng-template>
+            </p-fileUpload>
+
+
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card layout-main" style="height: 40vh; max-height: 40vh; overflow: auto;">
+            @if(imagenes.length > 0){
+            <div class="grid">
+                @for (imagen of imagenes; track $index) {
+                <div class="col-4">
+                    <div class="text-center p-3 border-round-sm w-12 h-10rem font-bold">
+                        <img [src]="imagen.thumbnailImageSrc" [alt]="imagen.alt"
+                            style="cursor: pointer; width: 100%; height: 100%; object-fit: fill;"
+                            (click)="imageClick($index)" />
+                    </div>
+                </div>
+                }
+            </div>
+            }
+            <p-galleria [(value)]="imagenes" [(visible)]="displayCustom" [(activeIndex)]="activeIndex"
+                [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '850px' }" [numVisible]="7"
+                [circular]="true" [fullScreen]="true" [showItemNavigators]="true" [showThumbnails]="false">
+                <ng-template pTemplate="item" let-item>
+                    <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
+                </ng-template>
+            </p-galleria>
+        </div>
+    </div>
+</div>

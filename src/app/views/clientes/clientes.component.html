@@ -1,11 +1,11 @@
 <p-toast />
-@if(clienteService.isLoading()){
+<!-- @if(clienteService.isLoading()){
 <div class="flex flex-wrap justify-content-center" style="max-width: 100vw">
     <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
         animationDuration=".5s" />
 </div>
-}
-@else{
+} -->
+<!-- @else{ -->
 <p-table #table_clientes [value]="clienteService.lista_clientes()"
     styleClass="p-datatable-striped p-datatable-gridlines" [globalFilterFields]="['nombre','documento', 'apellido']"
     [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 20]">
@@ -36,7 +36,7 @@
             <th>EMAIL</th>
             <th>TELEFONO</th>
             <th>FECHA NACIMIENTO</th>
-            <th>ACCION</th>
+            <!-- <th>ACCION</th> -->
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-cliente>
@@ -46,14 +46,14 @@
             <td>{{cliente.email}}</td>
             <td>{{cliente.telefono}}</td>
             <td>{{cliente.fecha_nacimiento}}</td>
-            <td>
+            <!-- <td>
                 <p-splitButton icon="pi pi-cog" [model]="items" (onDropdownClick)="setRow(usuario)" outlined
                     appendTo="body" />
-            </td>
+            </td> -->
         </tr>
     </ng-template>
 </p-table>
-}
+<!-- } -->
 <!-- NUEVO CLIENTE -->
 <p-dialog [header]="modals.modalTitle" [(visible)]="modals.nuevoCliente" [modal]="true" (onHide)="close()"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
@@ -130,7 +130,7 @@
             </div>
             <div class="p-formgrid grid">
                 <div class="field col"><label htmlfor="fecha_nacimiento">FECHA NACIMIENTO</label>
-                    <p-calendar formControlName="fecha_nacimiento" appendTo="body" />
+                    <p-calendar formControlName="fecha_nacimiento" appendTo="body" [maxDate]="maxDate" />
                     @if(formCliente.get('fecha_nacimiento').invalid &&
                     (formCliente.get('fecha_nacimiento').dirty ||
                     formCliente.get('fecha_nacimiento').touched)){
@@ -155,6 +155,5 @@
         </form>
     </div>
     <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
-        [loading]="clienteService.isLoading()" [disabled]="!formCliente.valid"
-        (onClick)="formCliente.value.id > 0 ? actualizarCliente() : nuevoCliente()" />
+        [disabled]="!formCliente.valid" (onClick)="formCliente.value.id > 0 ? actualizarCliente() : nuevoCliente()" />
 </p-dialog>

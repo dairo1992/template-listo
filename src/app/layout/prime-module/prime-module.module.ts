@@ -38,6 +38,7 @@ import { ColorPickerModule } from 'primeng/colorpicker';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { ChipModule } from 'primeng/chip';
 import { BadgeModule } from 'primeng/badge';
+import { GalleriaModule } from 'primeng/galleria';
 
 @NgModule({
     declarations: [],
@@ -84,7 +85,9 @@ import { BadgeModule } from 'primeng/badge';
         ColorPickerModule,
         InputSwitchModule,
         ChipModule,
-        BadgeModule
+        BadgeModule,
+        GalleriaModule,
+
     ],
 })
-export class PrimeModule {}
+export class PrimeModule { }

@@ -11,7 +11,9 @@ export class UtilitiesService {
     private _tipos_documento = signal<[]>([]);
     public tipos_documento = computed(() => this._tipos_documento());
     private http = inject(HttpClient);
-    constructor(private messageService: MessageService) { }
+    constructor(private messageService: MessageService) {
+        this.obtenerTiposDocumento();
+    }
 
     getStatus(status: string) {
         switch (status) {

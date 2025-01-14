@@ -6,6 +6,7 @@ import { ModuloService } from 'src/app/services/modulo.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { icons } from 'src/environments/environment';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { AlertaSwal } from 'src/app/components/swal-alert';
 
 @Component({
     selector: 'app-menu',
@@ -32,10 +33,12 @@ export default class MenuComponent implements OnInit {
         icon: '',
         routerLink: '',
     };
+    private alert: AlertaSwal;
     constructor(
         private clipboard: Clipboard,
         private messageService: MessageService
     ) {
+        this.alert = new AlertaSwal();
         this.limpiarForm();
         this.icons = icons;
         this.iconsTemp = icons;
@@ -44,25 +47,33 @@ export default class MenuComponent implements OnInit {
             title: 'prueba',
             data: ['pi pi-fw pi-home'],
         };
-        this.usuariosService
-            .obt_modulos(this.usuariosService.currentUser().id)
-            .subscribe({
-                next: (menus: any) => {
-                    this.menus = menus.menu.filter(
-                        (m) => m.label != 'Dashboard'
-                    );
-                },
-            });
+
         // this.activeItem = this.items[0];
     }
 
     ngOnInit() {
+        this.obtenerMenu();
         this.items = [
             { id: '0', label: 'CREAR MENU', icon: '' },
             { id: '1', label: 'CREAR MODULO', icon: '' },
         ];
 
         this.activeItem = this.items[0];
+    }
+
+    obtenerMenu() {
+        this.alert.loading();
+        this.usuariosService
+            .obt_modulos(this.usuariosService.currentUser().id)
+            .subscribe({
+                next: (menus: any) => {
+                    this.alert.close();
+                    this.menus = menus.menu.filter(
+                        (m) => m.label != 'Dashboard'
+                    );
+                },
+                error: (err) => this.alert.close()
+            });
     }
 
     limpiarForm() {

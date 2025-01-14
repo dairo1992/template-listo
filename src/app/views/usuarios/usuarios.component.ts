@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MenuItem, TreeNode } from 'primeng/api';
+import { AlertaSwal } from 'src/app/components/swal-alert';
 import { Modulo } from 'src/app/interfaces/modulo.interface';
 import { Usuario } from 'src/app/interfaces/usuario.interface';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
@@ -9,6 +10,7 @@ import { ModuloService } from 'src/app/services/modulo.service';
 import { SedesService } from 'src/app/services/sedes.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+
 
 @Component({
     selector: 'app-usuarios',
@@ -26,6 +28,8 @@ export default class UsuariosComponent {
     public modulosService = inject(ModuloService);
     public todosTiposUsuario = ['ADMIN', 'EMPLEADO', 'SUPER_ADMIN'];
     public tiposUsuario = [];
+    listaSedesFilter = [];
+    listaModulosFilter = [];
     public usuarioSelected: Usuario = null;
     currentUser: Usuario;
     public menuUser: TreeNode[] = [];
@@ -54,16 +58,26 @@ export default class UsuariosComponent {
         usuario_id: null,
         prioritarios: null,
     };
-    listaModulosFilter: Modulo[] = [];
+    private alert: AlertaSwal;
 
     constructor() {
+        this.alert = new AlertaSwal();
         this.currentUser = this.service.currentUser();
-        const id_user = this.currentUser.tipo_usuario == 'SUPER_ADMIN' ? 0 : this.currentUser.id;
-        this.service.obtenerUsuarios(id_user);
+        const id_user = this.currentUser.id;
+        this.obtenerUsuarios(id_user);
         this.empresaService.obtenerEmpresas(id_user);
         this.sedeService.obtenerSedes(id_user);
         this.modulosService.obtenerModulos(id_user);
         this.setDropdownOptions();
+        this.empresaService.obtenerEmpresas(
+            id_user
+        ).subscribe((data) => this.empresaService._lista_empresas.set(data));
+        this.sedeService.obtenerSedes(
+            id_user
+        ).subscribe((data) => this.sedeService._lista_sedes.set(data));
+        this.modulosService.obtenerModulos(
+            id_user
+        ).subscribe((data) => this.modulosService._lista_modulos.set(data));
         this.formUsuario = new FormGroup({
             id: new FormControl(0, Validators.required),
             nombre: new FormControl('', Validators.required),
@@ -125,6 +139,25 @@ export default class UsuariosComponent {
         ];
     }
 
+    obtenerUsuarios(id_user: number): void {
+        this.alert.loading();
+        this.service.obtenerUsuarios(id_user).subscribe({
+            next: (data) => {
+                this.alert.close();
+                this.service._lista_usuarios.set(data);
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+    }
+
     setDropdownOptions(): void {
         if (this.service.currentUser().tipo_usuario === 'SUPER_ADMIN') {
             this.tiposUsuario = this.todosTiposUsuario; // Mostrar todas las opciones si el usuario es SUPER_ADMIN
@@ -173,25 +206,105 @@ export default class UsuariosComponent {
     }
 
     nuevoUsuario(): void {
+        this.alert.loading();
         if (this.currentUser.tipo_usuario != 'SUPER_ADMIN') {
             this.formUsuario.controls['empresa_id'].setValue(
                 this.service.currentUser().empresa.id
             );
         }
-        this.service.nuevaUsuario(this.formUsuario.value);
-        this.modals.nuevoUsuario = false;
+        this.service.nuevaUsuario(this.formUsuario.value).subscribe({
+            next: (value: Usuario) => {
+                this.service._lista_usuarios.set([
+                    ...(this.service.lista_usuarios() || []),
+                    value,
+                ]);
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
+                this.modals.nuevoUsuario = false;
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+
     }
 
     actualizarUsuario(usuario: Usuario): void {
-        this.service.actualizarUsuario(usuario.id, usuario);
-        this.modals.nuevoUsuario = false;
+        this.service.actualizarUsuario(usuario.id, usuario).subscribe({
+            next: (value: any) => {
+                const i = this.service.lista_usuarios().findIndex((e) => e.id == usuario.id);
+                this.service._lista_usuarios.update((usuarios) => {
+                    const emp = this.empresaService
+                        .lista_empresas()
+                        .find((e) => e.id == this.service.lista_usuarios()[i].empresa.id);
+                    usuarios.splice(i, 1);
+                    usuario.empresa = emp;
+                    usuarios.push(usuario);
+                    return usuarios;
+                });
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: value.MSG,
+                    showConfirmButton: true,
+                });
+                this.modals.nuevoUsuario = false;
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+
     }
 
     uiEstado(usuario: Usuario): void {
-        this.service.uiEstado(usuario);
+        this.service.uiEstado(usuario).subscribe({
+            next: (value: Usuario) => {
+                this.service._lista_usuarios.update((empresas) => {
+                    empresas.find((e) => e.id == usuario.id).estado =
+                        usuario.estado == 'A' ? 'I' : 'A';
+                    return empresas;
+                });
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `ACTUALIZADO CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
     }
 
     configUsuario(usuario: Usuario) {
+        this.alert.loading("Obteniendo modulos");
         this.menuFull = [];
         this.menuUser = [];
         this.service.obt_modulos(usuario.id).subscribe({
@@ -210,6 +323,7 @@ export default class UsuariosComponent {
                             };
                         }),
                     });
+                    this.alert.close();
                 });
                 response.usuarioMenu.map((m: any, i: number) => {
                     this.menuUser.push({
@@ -226,7 +340,9 @@ export default class UsuariosComponent {
                     });
                 });
             },
-            // error: (error) => (this.jsonMenu = { menu: [], usuarioMenu: [] }),
+            error: (error) => {
+                this.alert.close();
+            },
         });
         this.usuarioSelected = usuario;
         this.modals.modalTitle = `CONFIGURACION DE USUARIO`;
@@ -254,7 +370,7 @@ export default class UsuariosComponent {
                     });
                 } else {
                     let ic = this.menuUser[i].children.findIndex(
-                        (c) => c.key == s.key
+                        (c) => c.label == s.label
                     );
                     if (ic == -1) {
                         this.menuUser[i].children.push({
@@ -315,10 +431,30 @@ export default class UsuariosComponent {
     }
 
     guardarModulos() {
+        this.modals.config = false;
         this.service.actualizarmodulos(
             this.usuarioSelected.id,
             this.treeNodeToRuta(this.menuUser)
-        );
+        ).subscribe({
+            next: (value: Usuario) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `ACTUALIZADO CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
     }
 
     treeNodeToRuta(rutas: TreeNode[]) {
@@ -348,12 +484,32 @@ export default class UsuariosComponent {
         this.service.cambiarPassword(
             this.resetPassword,
             this.usuarioSelected.id
-        );
-        this.modals.password = false;
-        this.resetPassword = {
-            password: '',
-            confirmar_password: '',
-        };
+        ).subscribe({
+            next: (response: any) => {
+                this.modals.password = false;
+                this.resetPassword = {
+                    password: '',
+                    confirmar_password: '',
+                };
+                this.alert.showMessage({
+                    position: "center",
+                    icon: response.STATUS ? 'success' : 'error',
+                    title: "!NOTIFICACION¡",
+                    text: response.MSG,
+                    showConfirmButton: true,
+                });
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+
     }
 
     config_turno() {
@@ -364,12 +520,61 @@ export default class UsuariosComponent {
                 detail: 'DEBE ELEGIR UN MODULO',
             });
         }
-        this.service.configurarTurno(this.config_turnos);
+        this.modals.config_turnos = false;
+        this.service.configurarTurno(this.config_turnos).subscribe({
+            next: (response: any) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: response.STATUS ? 'success' : 'error',
+                    title: "!NOTIFICACION¡",
+                    text: response.MSG,
+                    showConfirmButton: true,
+                });
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
     }
 
-    filterModulos(event: any) {
+    listaSedesByEmpresa(id_empresa: number, accion = 'N') {
+        console.log(this.sedeService
+            .lista_sedes());
+
+        const usuario = this.currentUser;
+        this.listaSedesFilter = this.sedeService
+            .lista_sedes()
+            .filter((sede) => {
+                if (accion === 'N' && usuario.tipo_usuario === 'SUPER_ADMIN') {
+                    return sede;
+                } else {
+                    if (sede.empresa_id == id_empresa) {
+                        return sede;
+                    }
+                    return null;
+                }
+            });
+    }
+
+    listaModulosBySede(id_sede: number, accion = 'N') {
+        const usuario = this.currentUser;
         this.listaModulosFilter = this.modulosService
             .lista_modulos()
-            .filter((m) => m.sede.id == event.value);
+            .filter((modulo) => {
+                if (accion === 'N' && usuario.tipo_usuario === 'SUPER_ADMIN') {
+                    return modulo;
+                } else {
+                    if (modulo.sede_id == id_sede) {
+                        return modulo;
+                    }
+                    return null;
+                }
+            });
     }
 }

@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AlertaSwal } from 'src/app/components/swal-alert';
 import { Modulo } from 'src/app/interfaces/modulo.interface';
 import { Sede } from 'src/app/interfaces/sede.interface';
 import { Servicio } from 'src/app/interfaces/servicio.interface';
@@ -19,11 +20,11 @@ import { icons } from 'src/environments/environment';
     templateUrl: './servicios.component.html',
     styleUrl: './servicios.component.scss',
 })
-export default class ServiciosComponent {
+export default class ServiciosComponent implements OnInit {
     public service = inject(ServiciosService);
     public moduloService = inject(ModuloService);
     public empresasService = inject(EmpresaService);
-    private sedesService = inject(SedesService);
+    public sedesService = inject(SedesService);
     public getStatus = inject(UtilitiesService).getStatus;
     public usuarioService = inject(UsuarioService);
     servicioForm!: FormGroup;
@@ -37,21 +38,44 @@ export default class ServiciosComponent {
     query: string;
     listaSedesFilter: Sede[] = [];
     listaModulosFilter: Modulo[] = [];
+    private alert: AlertaSwal = new AlertaSwal();
 
     constructor() {
-        const id_user = this.usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN' ? 0 : this.usuarioService.currentUser().id;
-        this.service.obtenerServicios(id_user);
-        this.moduloService.obtenerModulos(id_user);
-        this.empresasService.obtenerEmpresas(id_user);
-        this.sedesService.obtenerSedes(id_user);
+        const id_user = this.usuarioService.currentUser().id;
+        this.obtenerServicios(id_user);
+        // this.sedesService.obtenerSedes(id_user);
+        // this.moduloService.obtenerModulos(id_user);
+        // this.empresasService.obtenerEmpresas(id_user);
         this.showPanel = false;
         this.icons = icons;
         this.iconsTemp = icons;
         this.limpiarForm();
+    }
+
+    ngOnInit(): void {
         if (this.usuarioService.currentUser().tipo_usuario != 'SUPER_ADMIN') {
             this.servicioForm.controls['empresa_id'].disable();
-            this.listaSedesByEmpresa(this.usuarioService.currentUser().empresa.id);
         }
+
+    }
+
+    obtenerServicios(id_user: number): void {
+        this.alert.loading();
+        this.service.obtenerServicios(id_user).subscribe({
+            next: (data) => {
+                this.service._lista_servicios.set(data);
+                this.alert.close();
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
     }
 
     limpiarForm() {
@@ -69,8 +93,33 @@ export default class ServiciosComponent {
     }
 
     nuevoServicio(): void {
-        this.service.nuevoServicio(this.servicioForm.value);
-        this.limpiarForm();
+        this.alert.loading();
+        this.service.nuevoServicio(this.servicioForm.value).subscribe({
+            next: (value: Servicio) => {
+                this.service._lista_servicios.set([
+                    ...(this.service.lista_servicios() || []),
+                    value,
+                ]);
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
+                this.limpiarForm();
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+
     }
 
     listaSedesByEmpresa(id_empresa: number, accion = 'N') {
@@ -87,6 +136,8 @@ export default class ServiciosComponent {
                     return null;
                 }
             });
+        console.log(this.listaSedesFilter);
+
     }
 
     listaModulosBySede(id_sede: number, accion = 'N') {
@@ -100,9 +151,17 @@ export default class ServiciosComponent {
                     if (modulo.sede_id == id_sede) {
                         return modulo;
                     }
-                    return null;
                 }
+                return null;
             });
+        return null;
+    }
+
+    setModulo(modulo: Modulo): void {
+        this.listaSedesByEmpresa(modulo.sede.empresa_id);
+        // this.moduloForm.setValue(modulo);
+        // this.modalTitle = `MODIFICAR ${modulo.nombre}`;
+        // this.modalNuevaSede = true;
     }
 
     setServicio(servicio: Servicio): void {
@@ -123,12 +182,64 @@ export default class ServiciosComponent {
     }
 
     actualizarServicio(servicio: Servicio): void {
-        this.service.actualizarServicio(servicio.id, servicio);
-        this.limpiarForm();
+        this.alert.loading();
+        this.service.actualizarServicio(servicio.id, servicio).subscribe({
+            next: (value: Servicio) => {
+                const i = this.service.lista_servicios().findIndex(
+                    (e) => e.id == servicio.id
+                );
+                this.service._lista_servicios.update((empresas) => {
+                    empresas.splice(i);
+                    empresas.push(servicio);
+                    return empresas;
+                });
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `ACTUALIZADO CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
+                this.limpiarForm();
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
     }
 
     uiEstado(servicio: Servicio): void {
-        this.service.uiEstado(servicio);
+        this.service.uiEstado(servicio).subscribe({
+            next: (value: Servicio) => {
+                this.service._lista_servicios.update((servicios) => {
+                    servicios.find((e) => e.id == servicio.id).estado =
+                        servicio.estado == 'A' ? 'I' : 'A';
+                    return servicios;
+                });
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `ACTUALIZADO CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
     }
 
     selectServicio(servicio: Servicio) {
@@ -136,8 +247,28 @@ export default class ServiciosComponent {
     }
 
     config_modulo_servicio(modulo: number): void {
-        this.service.config_modulo_servicio(modulo, this.servicio_id);
-        this.showPanel = true;
+        this.service.config_modulo_servicio(modulo, this.servicio_id).subscribe({
+            next: (value: Servicio) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `CONFIGURACION REALIZADA CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
+                this.showPanel = true;
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+
     }
 
     SelectIcon(icon: string) {

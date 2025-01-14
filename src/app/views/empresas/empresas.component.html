@@ -4,13 +4,8 @@
         <strong>EMPRESAS REGISTRADAS</strong>
     </div>
 </div>
-@if(service.isLoading()){
-<div class="flex flex-wrap justify-content-center" style="max-width: 100vw">
-    <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
-        animationDuration=".5s" />
-</div>
-}
-@else{
+
+
 <p-table #table_usuarios [value]="service.lista_empresas()" styleClass="p-datatable-striped p-datatable-gridlines"
     [tableStyle]="{'min-width': '50rem'}" [globalFilterFields]="['NOMBRE','NIT']" [paginator]="true" [rows]="5"
     [rowsPerPageOptions]="[5, 10, 20]">
@@ -55,7 +50,7 @@
         </tr>
     </ng-template>
 </p-table>
-}
+
 <p-dialog [header]="modalTitle" [(visible)]="modalNuevaEmpresa" [modal]="true" (onHide)="close()"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
     [resizable]="false">
@@ -96,6 +91,6 @@
         </form>
     </div>
     <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
-        [loading]="service.isLoading()" [disabled]="!empresaForm.valid"
+        [loading]="loading" [disabled]="!empresaForm.valid"
         (onClick)="empresaForm.value.id > 0 ? actualizarEmpresa(empresaForm.value) : nuevaEmpresa()" />
 </p-dialog>

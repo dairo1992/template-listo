@@ -2,6 +2,8 @@ import { formatDate } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertaSwal } from 'src/app/components/swal-alert';
+import { Cliente } from 'src/app/interfaces/cliente.interface';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { EmpresaService } from 'src/app/services/empresa.service';
@@ -16,7 +18,9 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
     styleUrl: './clientes.component.scss',
 })
 export default class ClientesComponent {
+    maxDate: Date = new Date();
     params: any;
+    private alert: AlertaSwal = new AlertaSwal();
     formCliente!: FormGroup;
     clienteService = inject(ClienteService);
     usuarioService = inject(UsuarioService);
@@ -31,10 +35,7 @@ export default class ClientesComponent {
     };
 
     constructor(private route: ActivatedRoute, private router: Router) {
-        this.clienteService.obtenerClientes();
-        this.empresaService.obtenerEmpresas(
-            this.usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN' ? 0 : this.usuarioService.currentUser().id
-        );
+        this.obtenerClientes();
         this.formCliente = new FormGroup({
             id: new FormControl(0, Validators.required),
             tipo_documento: new FormControl(Validators.required),
@@ -60,6 +61,24 @@ export default class ClientesComponent {
     //     }
     // }
 
+    obtenerClientes() {
+        this.clienteService.obtenerClientes(this.usuarioService.currentUser().empresa.id ?? 0).subscribe({
+            next: (data) => {
+                this.alert.close();
+                this.clienteService._lista_clientes.set(data);
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+    }
+
     close(modal: string = ''): void {
         this.modals.modalTitle = 'REGISTRAR NUEVO USUARIO';
         this.modals.nuevoCliente = false;
@@ -78,21 +97,43 @@ export default class ClientesComponent {
     }
 
     nuevoCliente() {
+        this.alert.loading();
         const fecha = this.formCliente.value.fecha_nacimiento;
         const fecha_f = formatDate(new Date(fecha), 'yyyy-MM-dd', 'en-US');
         this.formCliente.controls['fecha_nacimiento'].setValue(fecha_f);
-        this.formCliente.controls['empresa_id'].setValue(
-            this.usuarioService.currentUser().empresa.id ?? 0
-        );
-        this.clienteService.nuevoCliente(this.formCliente.value);
-        if (this.params['accion'] != null) {
-            this.router.navigate(['/home/nuevo-turno'], {
-                queryParams: {
-                    accion: 'generar-turno',
-                    cliente: JSON.stringify(this.formCliente.value),
-                },
-            });
-        }
+        this.clienteService.nuevoCliente(this.formCliente.value).subscribe({
+            next: (value: Cliente) => {
+                this.clienteService._lista_clientes.set([
+                    ...(this.clienteService.lista_clientes() || []),
+                    value,
+                ]);
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
+                this.modals.nuevoCliente = false;
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+        // if (this.params['accion'] != null) {
+        //     this.router.navigate(['/home/nuevo-turno'], {
+        //         queryParams: {
+        //             accion: 'generar-turno',
+        //             cliente: JSON.stringify(this.formCliente.value),
+        //         },
+        //     });
+        // }
     }
 
     actualizarCliente() { }

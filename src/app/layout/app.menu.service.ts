@@ -25,6 +25,8 @@ export class MenuService {
     }
 
     reset() {
+        console.log("fsd");
+        
         this.resetSource.next(true);
     }
 

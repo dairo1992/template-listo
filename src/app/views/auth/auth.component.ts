@@ -30,7 +30,7 @@ export default class AuthComponent implements OnInit {
     public authService = inject(AuthserviceService);
     public empresaService = inject(EmpresaService);
     constructor() {
-        this.empresaService.obtenerEmpresas(0);
+        this.obtenerEmpresas(0);
         this.formAuth = new FormGroup({
             EMPRESA: new FormControl(0),
             USUARIO: new FormControl(0),
@@ -64,5 +64,16 @@ export default class AuthComponent implements OnInit {
         } else {
             this.storageService.olvidarUsuario();
         }
+    }
+
+    obtenerEmpresas(id_usuario: number): void {
+        this.empresaService.obtenerEmpresas(0).subscribe({
+            next: (empresas) => {
+                this.empresaService._lista_empresas.set(empresas);
+            },
+            error: (err) => {
+                this.empresaService._lista_empresas.set([]);
+            }
+        });
     }
 }

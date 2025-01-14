@@ -58,7 +58,7 @@
                     </div>
                 </form>
             </div>
-            <p-button class="flex align-items-center justify-content-center" label="Consultar" icon="pi pi-search"
+            <p-button class="flex align-items-center justify-content-center" label="CONSULTAR" icon="pi pi-search"
                 [disabled]="!consultaForm.valid" (onClick)="consultarCliente()" />
             }
             <!-- <app-tickt-turno [turno_in]="'DAIRO BARRIOS'"></app-tickt-turno> -->
@@ -150,7 +150,7 @@
                         </div>
                         @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
                         <div class="field col"><label htmlfor="empresa">EMPRESA</label>
-                            <p-dropdown [options]="empresaService.lista_empresas()" formControlName="empresa_id"
+                            <p-dropdown [options]="[]" formControlName="empresa_id"
                                 [optionLabel]="'nombre'" [optionValue]="'id'" [readonly]="formCliente.value.id > 0" />
                             @if(formCliente.get('empresa_id').invalid && (formCliente.get('empresa_id').dirty ||
                             formCliente.get('empresa_id').touched)){
@@ -202,8 +202,7 @@
                 @if(paso === 2){
                 <div class="flex align-items-center justify-content-center m-2">
                     <p-button class="flex align-items-center justify-content-center" label="CONTINUAR"
-                        icon="pi pi-check" [loading]="clienteService.isLoading()" [disabled]="formCliente.invalid"
-                        (onClick)="nuevoCliente()" />
+                        icon="pi pi-check" [disabled]="formCliente.invalid" (onClick)="nuevoCliente()" />
                 </div>
                 }
                 <!-- @if(paso === 3 && turnoForm.value.servicio_id > 0){

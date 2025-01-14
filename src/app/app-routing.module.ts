@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 
 import { AppLayoutComponent } from './layout/app.layout.component';
 import { NotfoundComponent } from './views/notfound/notfound.component';
+import { authGuard } from './guards/authGuard.guard';
+import { autoLoginGuard } from './guards/autoLogin.guard';
 
 @NgModule({
     imports: [
@@ -11,6 +13,7 @@ import { NotfoundComponent } from './views/notfound/notfound.component';
                 {
                     path: 'home',
                     component: AppLayoutComponent,
+                    canActivate: [authGuard],
                     children: [
                         {
                             path: '',
@@ -123,14 +126,37 @@ import { NotfoundComponent } from './views/notfound/notfound.component';
                                 },
                             ],
                         },
+                        {
+                            path: '',
+                            title: 'PANTALLA',
+                            children: [
+                                {
+                                    path: 'admin-pantalla',
+                                    title: 'Admin Pantalla',
+                                    data: ['pi pi-ticket'],
+                                    loadComponent: () =>
+                                        import(
+                                            './views/admin-pantalla/admin-pantalla.component'
+                                        ),
+                                },
+                            ],
+                        },
                     ],
                 },
                 {
+                    path: 'pantalla',
+                    title: 'Pantalla',
+                    canActivate: [authGuard],
+                    loadComponent: () => import('./views/pantalla/pantalla.component'),
+                },
+                {
                     path: '',
+                    canActivate: [autoLoginGuard],
                     loadComponent: () => import('./views/auth/auth.component'),
                 },
+
                 { path: 'notfound', component: NotfoundComponent },
-                { path: '**', redirectTo: '/notfound' },
+                { path: '**', redirectTo: '/notfound', pathMatch: 'full' },
             ],
             {
                 scrollPositionRestoration: 'enabled',
@@ -141,4 +167,4 @@ import { NotfoundComponent } from './views/notfound/notfound.component';
     ],
     exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

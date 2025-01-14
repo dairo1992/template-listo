@@ -1,11 +1,11 @@
 <p-toast />
-@if(service.isLoading()){
+<!-- @if(service.isLoading()){
 <div class="flex flex-wrap justify-content-center" style="max-width: 100vw">
     <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
         animationDuration=".5s" />
 </div>
-}
-@else{
+} -->
+<!-- @else{ -->
 <p-table #table_usuarios [value]="service.lista_usuarios()" styleClass="p-datatable-striped p-datatable-gridlines"
     [globalFilterFields]="['nombre','documento', 'apellido']" [paginator]="true" [rows]="5"
     [rowsPerPageOptions]="[5, 10, 20]">
@@ -65,7 +65,7 @@
     </ng-template>
 </p-table>
 
-}
+<!-- } -->
 <p-dialog [header]="modals.modalTitle" [(visible)]="modals.nuevoUsuario" [modal]="true" (onHide)="close()"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
     [resizable]="false">
@@ -128,7 +128,7 @@
         </form>
     </div>
     <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
-        [loading]="service.isLoading()" [disabled]="!formUsuario.valid"
+        [disabled]="!formUsuario.valid"
         (onClick)="formUsuario.value.id > 0 ? actualizarUsuario(formUsuario.value) : nuevoUsuario()" />
 </p-dialog>
 
@@ -184,7 +184,7 @@
             </div>
         </div>
         <div class="flex align-items-center justify-content-center  border-round m-2">
-            <p-button label="GUARDAR" [outlined]="true" icon="pi pi-trash" (click)="guardarModulos()" />
+            <p-button label="GUARDAR" [outlined]="true" icon="pi pi-save" (click)="guardarModulos()" />
         </div>
     </div>
     }
@@ -212,11 +212,21 @@
 <!-- CONFIGURACION TURNOS -->
 <p-dialog [header]="modals.modalTitle" [draggable]="false" [modal]="true" [(visible)]="modals.config_turnos"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [resizable]="false">
+    @if(this.currentUser.tipo_usuario =='SUPER_ADMIN'){
+    <div class="flex align-items-center gap-3 mb-3">
+        <label for="username" class="font-semibold w-6rem">EMPRESA</label>
+        <p-dropdown [options]="empresaService.lista_empresas()" id="config_turno_modulo"
+            [(ngModel)]="config_turnos.modulo_id" [optionLabel]="'nombre'" [optionValue]="'id'"
+            placeholder="SELECCIONAR" appendTo="body" (onChange)="listaSedesByEmpresa(config_turnos.modulo_id, 'E')"
+            inputStyleClass="surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </p-dropdown>
+    </div>
+    }
     <div class="flex align-items-center gap-3 mb-3">
         <label for="username" class="font-semibold w-6rem">SEDE</label>
         <p-dropdown [options]="sedeService.lista_sedes()" id="config_turno_modulo" [(ngModel)]="config_turnos.modulo_id"
             [optionLabel]="'nombre'" [optionValue]="'id'" placeholder="SELECCIONAR" appendTo="body"
-            (onChange)="filterModulos($event)"
+            (onChange)="listaModulosBySede(config_turnos.modulo_id, 'E')"
             inputStyleClass="surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
         </p-dropdown>
     </div>
