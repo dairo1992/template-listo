@@ -26,7 +26,7 @@ export default class UsuariosComponent {
     public empresaService = inject(EmpresaService);
     public sedeService = inject(SedesService);
     public modulosService = inject(ModuloService);
-    public todosTiposUsuario = ['ADMIN', 'EMPLEADO', 'SUPER_ADMIN'];
+    public todosTiposUsuario = ['ADMIN', 'EMPLEADO', 'SUPER_ADMIN', 'PANTALLA'];
     public tiposUsuario = [];
     listaSedesFilter = [];
     listaModulosFilter = [];
@@ -54,6 +54,7 @@ export default class UsuariosComponent {
         confirmar_password: '',
     };
     config_turnos = {
+        sede_id: null,
         modulo_id: null,
         usuario_id: null,
         prioritarios: null,
@@ -85,7 +86,8 @@ export default class UsuariosComponent {
             documento: new FormControl('', Validators.required),
             tipo_usuario: new FormControl('', Validators.required),
             estado: new FormControl('A'),
-            empresa_id: new FormControl(null),
+            empresa_id: new FormControl(this.currentUser.empresa.id),
+            sede_id: new FormControl(0, Validators.required),
         });
         this.items = [
             {
@@ -128,10 +130,13 @@ export default class UsuariosComponent {
                 command: () => {
                     this.usuarioSelected = this.rowSelect;
                     this.config_turnos.usuario_id = this.usuarioSelected.id;
-                    this.config_turnos.modulo_id =
-                        this.usuarioSelected.config.modulo_id;
+                    this.config_turnos.sede_id = this.usuarioSelected.sede.id;
                     this.config_turnos.prioritarios =
-                        this.usuarioSelected.config.prioritarios;
+                        this.usuarioSelected.prioritario != null ? this.usuarioSelected.prioritario : 0;
+                    if (this.usuarioSelected.modulo != null) {
+                        this.config_turnos.modulo_id = this.usuarioSelected.modulo.id;
+                    }
+                    this.listaModulosBySede(this.config_turnos.sede_id, 'E');
                     this.modals.modalTitle = `CONFIGURAR TURNOS PARA ${this.rowSelect.nombre.toUpperCase()} `;
                     this.modals.config_turnos = true;
                 },
@@ -178,6 +183,7 @@ export default class UsuariosComponent {
             tipo_usuario: usuario.tipo_usuario,
             estado: usuario.estado,
             empresa_id: usuario.empresa.id,
+            sede_id: usuario.sede.id,
         };
         this.formUsuario.setValue(usuarioTemp);
         this.modals.modalTitle = `MODIFICAR ${usuario.nombre}`;
@@ -228,6 +234,7 @@ export default class UsuariosComponent {
                 this.modals.nuevoUsuario = false;
             },
             error: (err) => {
+                this.modals.nuevoUsuario = false;
                 this.alert.showMessage({
                     position: "center",
                     icon: "error",
@@ -248,8 +255,12 @@ export default class UsuariosComponent {
                     const emp = this.empresaService
                         .lista_empresas()
                         .find((e) => e.id == this.service.lista_usuarios()[i].empresa.id);
+                    const sede = this.sedeService
+                        .lista_sedes()
+                        .find((s) => s.id == this.service.lista_usuarios()[i].sede.id);
                     usuarios.splice(i, 1);
                     usuario.empresa = emp;
+                    usuario.sede = sede;
                     usuarios.push(usuario);
                     return usuarios;
                 });

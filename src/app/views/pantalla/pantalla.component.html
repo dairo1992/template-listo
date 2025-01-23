@@ -1,1 +1,142 @@
-<h1>HOLA MUNDO</h1>
+<div class="layout-wrapper">
+    <div class="layout-pantalla">
+        <div class="card layout-main-pantalla">
+            @if(mensaje != null && mensaje != ''){
+            <div class="flex justify-content-center h-3rem bg-primary font-bold border-round m-1 marquee-container"
+                style="width: 100vw; max-width: calc(100vw - 9rem);">
+                <div class="flex align-items-center justify-content-center text-5xl">
+                    <span class="marquee" [attr.data-content]="mensaje">{{mensaje}} - </span>
+                </div>
+            </div>
+            }
+            <div class="flex flex-column md:flex-row">
+                <div class="flex justify-content-center w-7 border-1 font-bold border-round m-1"
+                    style="height: 100vh; max-height: calc(100vh - 13rem); overflow: auto;">
+                    <!-- <div class="flex flex-column text-center">
+                        @for (turno of turnos; track $index) {
+                        @if (turno.estado == 'esperando' ||turno.estado == 'en_atencion') {
+                        <div id="card-turno"
+                            class="flex align-items-center justify-content-center bg-primary font-bold border-round m-1 p-3"
+                            style="width: 100vw; max-width: calc(100vw - 65rem);">
+                            <div class="flex flex-column">
+                                <div class="flex align-items-center justify-content-center text-6xl">
+                                    {{turno.modulo.nombre | uppercase}}
+                                </div>
+                                <div class="flex align-items-center justify-content-center text-5xl">
+                                    {{turno.cliente.nombre | uppercase}} {{turno.cliente.apellido | uppercase}}
+                                </div>
+                                <div class="flex align-items-center justify-content-center text-5xl">
+                                    {{turno.turno_formateado}}
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        }
+                    </div> -->
+                    <p-table [value]="turnos" styleClass="p-datatable-striped p-datatable-gridlines"
+                        [tableStyle]="{'width': '100vw','max-width': 'calc(100vw - 50vw)'}">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-7xl bg-primary text-white p-4 text-center">
+                                    MODULO</th>
+                                <th class="text-7xl bg-primary text-white p-4 text-center">
+                                    TURNO</th>
+                                <th class="text-7xl bg-primary text-white p-4 text-center">
+                                    USUARIO</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-turno>
+                            @if (turno.estado == 'esperando' ||turno.estado == 'en_atencion') {
+                            <tr>
+                                <td class="p-3 text-5xl text-center">{{turno.modulo.nombre | uppercase}}</td>
+                                <td class="p-3 text-5xl text-center">{{turno.turno_formateado}}</td>
+                                <td class="p-3 text-5xl text-center">{{turno.cliente.nombre | uppercase}}
+                                    {{turno.cliente.apellido |
+                                    uppercase}}</td>
+                            </tr>
+                            }
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="flex flex-column">
+                    <!-- <div class="flex align-items-center justify-content-center w-5 border-1 font-bold border-round m-1"
+                        style="height: 100vh; max-height: calc(100vh - 13rem);">
+                        <div class="flex justify-content-center font-bold border-round m-1"
+                            style="height: 100vh; max-height: calc(100vh - 20rem);">
+                            <p-galleria [(value)]="imagenes" [responsiveOptions]="responsiveOptions"
+                                [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [showThumbnails]="false"
+                                [circular]="true" [autoPlay]="true">
+                                <ng-template pTemplate="item" let-item>
+                                    <img [src]="item.itemImageSrc"
+                                        style="width: 100%; height: 90%; object-fit: contain; max-height: 100%; max-width: 100%;" />
+                                </ng-template>
+                            </p-galleria>
+                        </div>
+                    </div> -->
+                    <div class="flex align-items-center justify-content-center w-12 m-2"
+                        style="height: 100vh; max-height: calc(100vh - 23rem);">
+                        <p-galleria [(value)]="imagenes" [responsiveOptions]="responsiveOptions"
+                            [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [showThumbnails]="false"
+                            [circular]="true" [autoPlay]="true">
+                            <ng-template pTemplate="item" let-item>
+                                <img [src]="item.itemImageSrc"
+                                    style="width: 100%; height: 90%; object-fit: contain; max-height: 100%; max-width: 100%;" />
+                            </ng-template>
+                        </p-galleria>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-primary font-bold border-round m-2"
+                        style="height: 100vh; max-height: calc(100vh - 60rem); width: 100vw; max-width: calc(100vw - 80rem);">
+                        <div class="clock-container">
+                            <div class="date">{{ currentDate }}</div>
+                            <div class="time">{{ currentTime }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p-dialog [modal]="true" [closable]="false" [(visible)]="turnoLlamado" styleClass="color-changing-dialog">
+    @if (turnoLLamadoInfo) {
+    <div class="flex flex-column">
+        <div class="flex align-items-center justify-content-center text-7xl text-white">
+            {{"TURNO "+ turnoLLamadoInfo.turno_formateado}}
+
+        </div>
+        <div class="flex align-items-center justify-content-center text-7xl text-white">
+            {{turnoLLamadoInfo.cliente.nombre | uppercase}}
+        </div>
+        <div class="flex align-items-center justify-content-center text-7xl text-white">
+            {{turnoLLamadoInfo.modulo.nombre | uppercase}}
+        </div>
+    </div>
+    }
+</p-dialog>
+<!-- opc 2 -->
+<!-- <p-dialog [modal]="true" [closable]="false" [(visible)]="turnoLlamado" contentStyleClass="color-changing-content">
+    <div class="flex flex-column color-changing-content">
+      <div class="flex align-items-center justify-content-center text-7xl">
+        TURNO C002
+      </div>
+      <div class="flex align-items-center justify-content-center text-7xl">
+        {{"DAIRO RAFAEL BARRIOS RAMOS"}}
+      </div>
+      <div class="flex align-items-center justify-content-center text-7xl">
+        {{"modulo 1" | uppercase}}
+      </div>
+    </div>
+  </p-dialog> -->
+<!-- opc - 1 -->
+<!-- <p-dialog [modal]="true" [closable]="false" [contentStyleClass]="turnoLlamado ? 'p-dialog-draggable' : 'p-dialog-draggable'" [(visible)]="turnoLlamado">
+    <div class="flex flex-column">
+        <div class="flex align-items-center justify-content-center text-7xl">
+            TURNO C002
+        </div>
+        <div class="flex align-items-center justify-content-center text-7xl">
+            {{"DAIRO RAFAEL BARRIOS RAMOS"}}
+        </div>
+        <div class="flex align-items-center justify-content-center text-7xl">
+            {{"modulo 1" | uppercase}}
+        </div>
+        </div>
+</p-dialog> -->

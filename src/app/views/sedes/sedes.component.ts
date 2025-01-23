@@ -70,10 +70,22 @@ export default class SedesComponent implements OnInit {
                 next: (value: Sede) => {
                     this.service._lista_sedes.set([...(this.service.lista_sedes() || []), value]);
                     this.modalNuevaSede = false;
-                    this.alert.close();
+                    this.alert.showMessage({
+                        position: "center",
+                        icon: "success",
+                        title: "!NOTIFICACION¡",
+                        text: `${value.nombre.toUpperCase()} CREADA CORRECTAMENTE`,
+                        showConfirmButton: true,
+                    });
                 },
                 error: (err) => {
-                    this.alert.close();
+                    this.alert.showMessage({
+                        position: "center",
+                        icon: "error",
+                        title: "!NOTIFICACION¡",
+                        text: err.error,
+                        showConfirmButton: true,
+                    });
                     this.modalNuevaSede = false;
                 },
             });
@@ -89,7 +101,7 @@ export default class SedesComponent implements OnInit {
     actualizarEmpresa(sede: Sede): void {
         this.alert.loading();
         this.service.actualizarSede(sede.id, sede).subscribe({
-            next: (value: Sede) => {
+            next: (value: any) => {
                 const i = this.service.lista_sedes().findIndex((e) => e.id == sede.id);
                 this.service._lista_sedes.update((empresas) => {
                     empresas.splice(i);
@@ -97,7 +109,13 @@ export default class SedesComponent implements OnInit {
                     return empresas;
                 });
                 this.modalNuevaSede = false;
-                this.alert.close();
+                this.alert.showMessage({
+                    position: "center",
+                    icon: value.STATUS ? "success" : "error",
+                    title: "!NOTIFICACION¡",
+                    text: value.MSG,
+                    showConfirmButton: true,
+                });
             },
             error: (err) => {
                 this.alert.close();

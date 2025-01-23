@@ -7,16 +7,15 @@ import { url } from 'src/environments/environment';
 import { MenuService } from '../layout/app.menu.service';
 import { Usuario } from '../interfaces/usuario.interface';
 import { AlertaSwal } from '../components/swal-alert';
+import { SocketService } from './socket.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthserviceService {
-    // private _isLoading = signal<boolean>(false);
-    // public isLoading = computed(() => this._isLoading());
     private http = inject(HttpClient);
     private storage = inject(AlmacenService);
-    private service = inject(MenuService);
+    socketervice = inject(SocketService);
     private alert: AlertaSwal;
     constructor(
         private router: Router,
@@ -35,6 +34,7 @@ export class AuthserviceService {
                     this.storage.almacenarDatosUsuario(usuario);
                     this.alert.close();
                     this.router.navigateByUrl('/home');
+                    this.socketervice.conectarSocket();
                 }
                 this.alert.showMessage({
                     position: "center",
@@ -57,13 +57,9 @@ export class AuthserviceService {
     }
 
     logout(): void {
+        this.socketervice.disconnect();
         this.storage.limpiarStorage();
         this.router.navigateByUrl('/');
-        this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Token Expirado',
-        });
         this.alert.close();
     }
 }

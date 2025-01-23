@@ -35,6 +35,7 @@
             <th>NOMBRE</th>
             <th>TIPO USUARIO</th>
             <th>EMPRESA</th>
+            <th>SEDE</th>
             <th>ESTADO</th>
             <th>ACCION</th>
         </tr>
@@ -45,6 +46,7 @@
             <td>{{usuario.nombre | uppercase}} {{usuario.apellido | uppercase}}</td>
             <td>{{usuario.tipo_usuario}}</td>
             <td>{{(usuario.empresa != null ? usuario.empresa.nombre : '') | uppercase}}</td>
+            <td>{{(usuario.sede != null ? usuario.sede.nombre : '') | uppercase}}</td>
             <td><p-tag [value]="utilitiService.getStatus(usuario.estado).nombre"
                     [severity]="utilitiService.getStatus(usuario.estado).color" />
             <td>
@@ -91,6 +93,18 @@
                     </div>
                     }
                 </div>
+                @if (formUsuario.value.tipo_usuario != 'ADMIN') {
+                <div class="field col"><label htmlfor="tipo_usuario">SEDE</label>
+                    <p-dropdown [options]="sedeService.lista_sedes()" formControlName="sede_id" [optionLabel]="'nombre'"
+                        [optionValue]="'id'" />
+                    @if(formUsuario.get('tipo_usuario').invalid && (formUsuario.get('tipo_usuario').dirty ||
+                    formUsuario.get('tipo_usuario').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+                }
                 @if(currentUser.tipo_usuario == 'SUPER_ADMIN'){
                 <div class="field col"><label htmlfor="empresa">EMPRESA</label>
                     <p-dropdown [options]="empresaService.lista_empresas()" formControlName="empresa_id"
@@ -224,9 +238,9 @@
     }
     <div class="flex align-items-center gap-3 mb-3">
         <label for="username" class="font-semibold w-6rem">SEDE</label>
-        <p-dropdown [options]="sedeService.lista_sedes()" id="config_turno_modulo" [(ngModel)]="config_turnos.modulo_id"
+        <p-dropdown [options]="sedeService.lista_sedes()" id="config_turno_modulo" [(ngModel)]="config_turnos.sede_id"
             [optionLabel]="'nombre'" [optionValue]="'id'" placeholder="SELECCIONAR" appendTo="body"
-            (onChange)="listaModulosBySede(config_turnos.modulo_id, 'E')"
+            (onChange)="listaModulosBySede(config_turnos.sede_id, 'E')" readonly="true"
             inputStyleClass="surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
         </p-dropdown>
     </div>

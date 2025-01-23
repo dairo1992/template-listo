@@ -83,7 +83,7 @@ export default class ServiciosComponent implements OnInit {
             id: new FormControl(0, Validators.required),
             nombre: new FormControl('', Validators.required),
             modulo: new FormControl(0, Validators.required),
-            descripcion: new FormControl(''),
+            // descripcion: new FormControl(''),
             color: new FormControl(),
             icono: new FormControl(''),
             estado: new FormControl('A'),
@@ -171,7 +171,7 @@ export default class ServiciosComponent implements OnInit {
             id: servicio.id,
             nombre: servicio.nombre,
             modulo: servicio.modulo.id,
-            descripcion: servicio.descripcion,
+            // descripcion: servicio.descripcion,
             color: servicio.color,
             icono: servicio.icono,
             estado: servicio.estado,
@@ -181,18 +181,49 @@ export default class ServiciosComponent implements OnInit {
         this.servicioForm.setValue(servicioTemp);
     }
 
-    actualizarServicio(servicio: Servicio): void {
+    actualizarServicio(servicio: any): void {
         this.alert.loading();
         this.service.actualizarServicio(servicio.id, servicio).subscribe({
             next: (value: Servicio) => {
                 const i = this.service.lista_servicios().findIndex(
                     (e) => e.id == servicio.id
                 );
-                this.service._lista_servicios.update((empresas) => {
-                    empresas.splice(i);
-                    empresas.push(servicio);
-                    return empresas;
+                this.service._lista_servicios.update((servicios) => {
+                    const mod = this.moduloService.lista_modulos().find((e) => e.id == servicio.modulo);
+                    const sed = this.sedesService.lista_sedes().find((e) => e.id == servicio.sede_id);
+                    servicios.splice(i, 1);
+                    servicio.modulo = mod;
+                    servicio.modulo.sede = sed;
+                    servicios.push(servicio);
+                    return servicios;
                 });
+
+                // const i = this.service.lista_usuarios().findIndex((e) => e.id == usuario.id);
+                // this.service._lista_usuarios.update((usuarios) => {
+                //     const emp = this.empresaService
+                //         .lista_empresas()
+                //         .find((e) => e.id == this.service.lista_usuarios()[i].empresa.id);
+                //     const sede = this.sedeService
+                //         .lista_sedes()
+                //         .find((s) => s.id == this.service.lista_usuarios()[i].sede.id);
+                //     usuarios.splice(i, 1);
+                //     usuario.empresa = emp;
+                //     usuario.sede = sede;
+                //     usuarios.push(usuario);
+                //     return usuarios;
+                // });
+
+
+
+
+
+
+
+
+
+
+
+
                 this.alert.showMessage({
                     position: "center",
                     icon: "success",

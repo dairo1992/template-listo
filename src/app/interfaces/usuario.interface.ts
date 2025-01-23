@@ -1,30 +1,26 @@
 import { Empresa } from './empresa.interface';
 import { Modulo } from './modulo.interface';
 import { Ruta } from './routes.interface';
+import { Sede } from './sede.interface';
 import { Servicio } from './servicio.interface';
 
 export interface Usuario {
     id: number;
-    config: Config;
+    rutas: Ruta[];
     estado: string;
     modulo: Modulo;
     nombre: string;
     empresa: Empresa;
+    sede: Sede;
     apellido: string;
     password: string;
-    servicio: Servicio[];
     documento: string;
-    tipo_usuario: string;
+    servicios: Servicio;
     prioritario: number;
+    tipo_usuario: string;
     token: string;
-    rutas: Ruta[];
 }
 
-export interface Config {
-    id: number;
-    modulo_id: number;
-    prioritarios: number;
-}
 
 // Converts JSON strings to/from your types
 export class Convert {

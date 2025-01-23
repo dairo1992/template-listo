@@ -114,6 +114,10 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
             return;
         }
 
+        if (this.item.routerLink == "pantalla") {
+            this.router.navigate(['/pantalla']);
+        }
+
         // execute command
         if (this.item.command) {
             this.item.command({ originalEvent: event, item: this.item });
@@ -131,7 +135,7 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
         return this.root ? 'expanded' : (this.active ? 'expanded' : 'collapsed');
     }
 
-    @HostBinding('class.active-menuitem') 
+    @HostBinding('class.active-menuitem')
     get activeClass() {
         return this.active && !this.root;
     }

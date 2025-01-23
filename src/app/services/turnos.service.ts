@@ -14,7 +14,7 @@ import { TurnosByUsuario } from '../interfaces/turnos-usuario.interface';
 export class TurnosService {
     private _isLoading = signal<boolean>(true);
     public isLoading = computed(() => this._isLoading());
-    private _currentTurno = signal<TurnoLlamado>({ STATUS: false, MSG: '', DATA: null });
+    public _currentTurno = signal<TurnoLlamado>({ STATUS: false, MSG: '', DATA: null });
     public currentTurno = computed(() => this._currentTurno());
     private _lista_turnos = signal<TurnosActivos[]>([]);
     public lista_turnos = computed(() => this._lista_turnos());
@@ -118,56 +118,11 @@ export class TurnosService {
     }
 
     llamarTurno(usuario_id: number) {
-        this.http.post<TurnoLlamado>(`${url}/turnos/llamar`, { usuario_id }).subscribe({
-            next: (turno) => {
-                if (turno.STATUS) {
-                    this._currentTurno.set(turno);
-                    this.storage.almacenarDatosTurno(turno);
-                }
-                this._isLoading.set(false);
-                this.messageService.add({
-                    severity: turno.STATUS ? 'success' : 'error',
-                    summary: '!NOTIFICACION¡',
-                    detail: turno.MSG,
-                });
-            },
-            error: (err) => {
-                this._isLoading.set(false);
-                this._currentTurno.set(null);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: '!NOTIFICACION¡',
-                    detail: err.error,
-                });
-            },
-        });
+        return this.http.post<TurnoLlamado>(`${url}/turnos/llamar`, { usuario_id });
     }
 
     finalizarTurno(turno_id: number, usuario_id: number) {
-        this.http.post<any>(`${url}/turnos/finalizar`, { turno_id }).subscribe({
-            next: (turno) => {
-                if (turno.STATUS) {
-                    this._currentTurno.set({ STATUS: false, MSG: '', DATA: null });
-                    this.storage.limpiarItem('turno');
-                    this.obtenerTurnosCant(usuario_id);
-                }
-                this._isLoading.set(false);
-                this.messageService.add({
-                    severity: turno.STATUS ? 'success' : 'error',
-                    summary: '!NOTIFICACION¡',
-                    detail: turno.MSG,
-                });
-            },
-            error: (err) => {
-                this._isLoading.set(false);
-                this._currentTurno.set(null);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: '!NOTIFICACION¡',
-                    detail: err.error,
-                });
-            },
-        });
+        return this.http.post<any>(`${url}/turnos/finalizar`, { turno_id });
     }
 
 }

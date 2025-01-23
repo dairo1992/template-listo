@@ -72,8 +72,14 @@ export default class EmpresasComponent implements OnInit {
                         empresa,
                     ]);
                 }
-                this.alert.close();
                 this.modalNuevaEmpresa = false;
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `${empresa.nombre.toUpperCase()} CREADA CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
             },
             error: (err) => {
                 this.alert.close();

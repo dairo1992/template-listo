@@ -39,7 +39,7 @@ export class AppTopBarComponent {
         this.itemsTopbar = [
             {
                 label: this.currentUser
-                    ? this.currentUser.nombre.toUpperCase()
+                    ? `${this.currentUser.nombre.toUpperCase()} ${this.currentUser.apellido.toUpperCase()}`
                     : 'Optiones',
                 // label: 'Optiones',
                 items: [
@@ -62,7 +62,7 @@ export class AppTopBarComponent {
         ];
     }
 
-    profile() {}
+    profile() { }
 
     logout() {
         this.authService.logout();

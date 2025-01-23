@@ -156,7 +156,7 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                 },
 
                 { path: 'notfound', component: NotfoundComponent },
-                { path: '**', redirectTo: '/notfound', pathMatch: 'full' },
+                // { path: '**', redirectTo: '/notfound', pathMatch: 'full' },
             ],
             {
                 scrollPositionRestoration: 'enabled',

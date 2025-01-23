@@ -11,7 +11,8 @@
                 accept="image/*" [showCancelButton]="true" [showUploadButton]="true" chooseLabel="Seleccionar"
                 uploadLabel="Cargar" [customUpload]="true" (uploadHandler)="cargarArchivos($event)"
                 (onSelect)="vistaPrevia($event)" (onClear)="files = []">
-                <ng-template pTemplate="toolbar">
+                <ng-template pTemplate="toolbar" let-item>
+                    <p-button label="AGREGAR PAUTA" (onClick)="modalPauta = true" />
                 </ng-template>
 
                 <ng-template pTemplate="content">
@@ -56,3 +57,18 @@
         </div>
     </div>
 </div>
+<p-dialog header="CONFIGURACION DE MENSAJE A PANTALLA" [draggable]="false" [resizable]="false" [modal]="true"
+    [(visible)]="modalPauta" [style]="{ width: '50vw' }">
+    <div class="flex align-items-center gap-3 mb-3">
+        <label for="username" class="font-semibold w-6rem">MENSAJE ACTUAL</label>
+        <textarea rows="5" cols="100" pTextarea [(ngModel)]="pautaActual" readonly></textarea>
+    </div>
+    <div class="flex align-items-center gap-3 mb-5">
+        <label for="pauta" class="font-semibold w-6rem">MENSAJE NUEVO</label>
+        <textarea rows="5" cols="100" pTextarea [(ngModel)]="nuevaPauta"></textarea>
+    </div>
+    <div class="flex justify-content-center gap-2">
+        <p-button label="Cancelar" severity="secondary" [outlined]="true" (onClick)="modalPauta= false" />
+        <p-button label="Guardar" [outlined]="true" (click)="agregarPauta()" />
+    </div>
+</p-dialog>

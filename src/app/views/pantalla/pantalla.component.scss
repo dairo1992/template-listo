@@ -1,0 +1,120 @@
+.layout-pantalla {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: space-between;
+  padding: 2rem 2rem 2rem 2rem;
+  transition: margin-left 0.2s;
+}
+
+.layout-main-pantalla {
+  flex: 1 1 auto;
+  overflow: auto;
+  max-height: calc(100vh - 2rem);
+}
+
+.p-galleria-item-wrapper img {
+  width: 100%;
+  height: 400px;
+  /* Ajusta la altura según sea necesario */
+  object-fit: contain;
+  /* Asegura que no se recorten las imágenes */
+}
+
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.marquee {
+  display: inline-block;
+  padding-right: 50px;
+  /* Espacio entre repeticiones */
+  animation: marquee 60s linear infinite;
+  will-change: transform;
+}
+
+.marquee:after {
+  content: attr(data-content);
+  padding-right: 50px;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+// *****************
+:host ::ng-deep {
+  .p-dialog {
+    width: 55vw !important;
+  }
+
+  .color-changing-dialog .p-dialog-content {
+    animation: backgroundChange 5s infinite;
+  }
+
+  .p-dialog-draggable .p-dialog-header {
+    animation: backgroundChange 5s infinite;
+  }
+}
+
+@keyframes backgroundChange {
+  0% {
+    background-color: yellow;
+  }
+
+  25% {
+    background-color: #0000FF;
+  }
+
+  50% {
+    background-color: linear-gradient(0deg, #f77f64);
+  }
+
+  75% {
+    background-color: #FF00FF;
+  }
+
+  100% {
+    background-color: #FF0000;
+  }
+}
+
+.clock-container {
+  font-family: 'Arial', sans-serif;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 300px;
+}
+
+.date {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.time {
+  font-size: 2.5em;
+  font-weight: bold;
+}
+
+.modern-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modern-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

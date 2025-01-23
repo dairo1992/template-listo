@@ -7,6 +7,8 @@ import { TurnosService } from 'src/app/services/turnos.service';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { AlmacenService } from 'src/app/services/storage.service';
+import { SocketService } from 'src/app/services/socket.service';
+import { AlertaSwal } from 'src/app/components/swal-alert';
 
 @Component({
     selector: 'app-gestionar',
@@ -22,8 +24,12 @@ export default class GestionarComponent {
     public turnosService = inject(TurnosService);
     public utilitiService = inject(UtilitiesService);
     public storageService = inject(AlmacenService);
+    private socketService = inject(SocketService);
+    alert: AlertaSwal;
+
 
     constructor() {
+        this.alert = new AlertaSwal();
         // const resumen = {
         //     ACTIVOS: 0,
         //     ATENDIDOS: 0,
@@ -73,11 +79,59 @@ export default class GestionarComponent {
     }
 
     llamarTurno() {
-        this.turnosService.llamarTurno(this.currentUser.id);
+        this.turnosService.llamarTurno(this.currentUser.id).subscribe({
+            next: (turno) => {
+                if (turno.STATUS) {
+                    this.turnosService._currentTurno.set(turno);
+                    this.storageService.almacenarDatosTurno(turno);
+                    this.socketService.emit('llamado', { "empresa_id": this.currentUser.empresa.id, sede_id: this.currentUser.empresa.sede.id, turno_id: turno.DATA.turno_id });
+                }
+
+            },
+            error: (err) => {
+                this.turnosService._currentTurno.set(null);
+            },
+        });
     }
 
     finalizarTurno() {
-        this.turnosService.finalizarTurno(this.turnosService.currentTurno().DATA.turno_id, this.currentUser.id);
+        this.turnosService.finalizarTurno(this.turnosService.currentTurno().DATA.turno_id, this.currentUser.id).subscribe({
+            next: async (turno) => {
+                if (turno.STATUS) {
+                    this.turnosService._currentTurno.set({ STATUS: false, MSG: '', DATA: null });
+                    this.storageService.limpiarItem('turno');
+                    this.turnosService.obtenerTurnosCant(this.currentUser.id);
+                    await this.socketService.emit('lista-turnos', { "empresa_id": this.currentUser.empresa.id, "sede_id": this.currentUser.empresa.sede.id, "usuario_id": this.currentUser.id })
+                }
+                this.alert.showMessage({
+                    position: "center",
+                    icon: turno.STATUS ? 'success' : 'error',
+                    title: "!NOTIFICACION¡",
+                    text: turno.MSG,
+                    showConfirmButton: true,
+                });
+                // this.messageService.add({
+                //     severity: turno.STATUS ? 'success' : 'error',
+                //     summary: '!NOTIFICACION¡',
+                //     detail: turno.MSG,
+                // });
+            },
+            error: (err) => {
+                this.turnosService._currentTurno.set(null);
+                this.alert.showMessage({
+                    position: "center",
+                    icon: 'error',
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+    }
+
+    llamarNuevamente(turno: any) {
+        console.log(turno);
+        this.socketService.emit('llamado', { "empresa_id": this.currentUser.empresa.id, sede_id: this.currentUser.empresa.sede.id, turno_id: turno.turno_id });
     }
 
     pausarTurno() {

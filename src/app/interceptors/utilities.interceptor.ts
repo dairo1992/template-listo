@@ -34,6 +34,7 @@ export class AuthInterceptor implements HttpInterceptor {
             catchError((error: HttpErrorResponse) => {
                 if (error.status === 401) {
                     this.storageService.limpiarItem('currentURL');
+                    this.storageService.limpiarStorage();
                     this.router.navigateByUrl('/');
                 }
                 return throwError(() => error);

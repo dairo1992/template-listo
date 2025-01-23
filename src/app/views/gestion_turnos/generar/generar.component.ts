@@ -13,6 +13,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TicktTurnoComponent } from '../../ticket-turno/tickt-turno.component';
 import ClientesComponent from "../../clientes/clientes.component";
 import { AlertaSwal } from 'src/app/components/swal-alert';
+import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
     selector: 'app-generar',
@@ -30,6 +31,7 @@ export default class GenerarComponent implements OnInit {
     public empresaService = inject(EmpresaService);
     public ServicioService = inject(ServiciosService);
     private messageService = inject(MessageService);
+    private socketService = inject(SocketService);
     paso: number = 1;
     turnoForm!: FormGroup;
     consultaForm!: FormGroup;
@@ -73,6 +75,7 @@ export default class GenerarComponent implements OnInit {
             ),
             servicio_id: new FormControl(Validators.required),
             modulo_id: new FormControl(Validators.required),
+            sede_id: new FormControl(Validators.required),
             estado: new FormControl('A'),
             fecha_creacion: new FormControl(),
             hora_creacion: new FormControl(),
@@ -177,11 +180,13 @@ export default class GenerarComponent implements OnInit {
     generarTurno(servicio: Servicio) {
         this.alert.loading();
         this.servicioSeleccionado = servicio;
+        const currentUser = this.usuarioService.currentUser();
         const turno = {
             id: 0,
             usuario_id: this.usuarioService.currentUser().id,
             servicio_id: servicio.id,
             modulo_id: servicio.modulo.id,
+            sede_id: servicio.modulo.sede.id,
             estado: 'P',
             fecha_creacion: new Date(),
             hora_creacion: new Date(),
@@ -198,6 +203,14 @@ export default class GenerarComponent implements OnInit {
                         this.usuarioService.currentUser().id);
                 }
                 this.limpiarForm();
+                // this.alert.showMessage({
+                //     position: "center",
+                //     icon: response.STATUS ? 'success' : 'error',
+                //     title: "!NOTIFICACION¡",
+                //     text: response.MSG,
+                //     footer: response.DATA,
+                //     showConfirmButton: true,
+                // });
                 this.messageService.add({
                     key: 'turno',
                     sticky: true,
@@ -206,7 +219,10 @@ export default class GenerarComponent implements OnInit {
                     detail: response.DATA,
                     data: response.TURNO_ID,
                 });
-                this.alert.close();
+                if (response.STATUS) {
+                    this.socketService.emit('lista-turnos', { "empresa_id": currentUser.empresa.id, sede_id: currentUser.empresa.sede.id });
+                    this.paso = 1;
+                }
                 // this.visible = true;
             },
             error: (err) => {
@@ -247,4 +263,6 @@ export default class GenerarComponent implements OnInit {
             },
         });
     }
+
+   
 }

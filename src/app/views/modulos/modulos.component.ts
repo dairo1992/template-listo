@@ -74,8 +74,14 @@ export default class ModulosComponent {
                     ...(this.service.lista_modulos() || []),
                     value,
                 ]);
-                this.alert.close();
                 this.modalNuevaSede = false;
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "success",
+                    title: "!NOTIFICACION¡",
+                    text: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                    showConfirmButton: true,
+                });
             },
             error: (err) => {
                 this.alert.close();
@@ -108,8 +114,14 @@ export default class ModulosComponent {
                     empresas.push(this.moduloForm.value);
                     return empresas;
                 });
-                this.alert.close();
                 this.modalNuevaSede = false;
+                this.alert.showMessage({
+                    position: "center",
+                    icon: value.STATUS ? "success" : "error",
+                    title: "!NOTIFICACION¡",
+                    text: value.MSG,
+                    showConfirmButton: true,
+                });
             },
             error: (err) => {
                 this.alert.close();
