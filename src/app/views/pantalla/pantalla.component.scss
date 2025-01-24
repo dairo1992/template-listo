@@ -68,24 +68,17 @@
 
 @keyframes backgroundChange {
   0% {
-    background-color: yellow;
-  }
-
-  25% {
     background-color: #0000FF;
   }
 
   50% {
-    background-color: linear-gradient(0deg, #f77f64);
-  }
-
-  75% {
-    background-color: #FF00FF;
+    background-color: #8c00ff;
   }
 
   100% {
-    background-color: #FF0000;
+    background-color: linear-gradient(0deg, #f77f64);
   }
+
 }
 
 .clock-container {

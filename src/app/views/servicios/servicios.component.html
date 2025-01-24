@@ -32,7 +32,7 @@
                             }
                         </div>
                     </div>
-                    <div class="p-formgrid grid">
+                    <!-- <div class="p-formgrid grid">
                         <div class="field col">
                             <label htmlfor="modulo">MODULO</label>
                             <p-dropdown styleClass="w-full" [options]="listaModulosFilter" formControlName="modulo"
@@ -45,7 +45,7 @@
                             </div>
                             }
                         </div>
-                    </div>
+                    </div> -->
                     <div class="p-formgrid grid">
                         <div class="field col">
                             <label htmlfor="nombre">NOMBRE</label>
@@ -153,6 +153,7 @@
                         <td>
                             <p-tag [value]="getStatus(servicio.estado).nombre"
                                 [severity]="getStatus(servicio.estado).color" />
+                        </td>
                         <td>
                             <div class="flex align-items-center justify-content-center gap-2">
                                 <p-button pRipple [icon]="servicio.estado== 'A' ?'pi pi-trash' : 'pi pi-check'"

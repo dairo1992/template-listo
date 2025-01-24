@@ -212,18 +212,6 @@ export default class ServiciosComponent implements OnInit {
                 //     usuarios.push(usuario);
                 //     return usuarios;
                 // });
-
-
-
-
-
-
-
-
-
-
-
-
                 this.alert.showMessage({
                     position: "center",
                     icon: "success",

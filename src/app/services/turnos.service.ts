@@ -125,4 +125,8 @@ export class TurnosService {
         return this.http.post<any>(`${url}/turnos/finalizar`, { turno_id });
     }
 
+    transferirTurno(turno: any) {
+        return this.http.post<any>(`${url}/turnos/transferir`, turno);
+    }
+
 }

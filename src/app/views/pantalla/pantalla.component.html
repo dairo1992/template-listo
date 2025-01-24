@@ -73,7 +73,7 @@
                             </p-galleria>
                         </div>
                     </div> -->
-                    <div class="flex align-items-center justify-content-center w-12 m-2"
+                    <div class="flex align-items-center justify-content-center border-1 font-bold border-round w-12 m-2"
                         style="height: 100vh; max-height: calc(100vh - 23rem);">
                         <p-galleria [(value)]="imagenes" [responsiveOptions]="responsiveOptions"
                             [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [showThumbnails]="false"
@@ -98,7 +98,7 @@
 </div>
 <p-dialog [modal]="true" [closable]="false" [(visible)]="turnoLlamado" styleClass="color-changing-dialog">
     @if (turnoLLamadoInfo) {
-    <div class="flex flex-column">
+    <!-- <div class="flex flex-column">
         <div class="flex align-items-center justify-content-center text-7xl text-white">
             {{"TURNO "+ turnoLLamadoInfo.turno_formateado}}
 
@@ -109,7 +109,31 @@
         <div class="flex align-items-center justify-content-center text-7xl text-white">
             {{turnoLLamadoInfo.modulo.nombre | uppercase}}
         </div>
-    </div>
+    </div> -->
+    <p-table [value]="[turnoLLamadoInfo]" styleClass="p-datatable-striped p-datatable-gridlines"
+        >
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-7xl bg-primary text-white p-4 text-center">
+                    MODULO</th>
+                <th class="text-7xl bg-primary text-white p-4 text-center">
+                    TURNO</th>
+                <th class="text-7xl bg-primary text-white p-4 text-center">
+                    USUARIO</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-turno>
+            @if (turno.estado == 'esperando' ||turno.estado == 'en_atencion') {
+            <tr>
+                <td class="p-3 text-5xl text-center">{{turno.modulo.nombre | uppercase}}</td>
+                <td class="p-3 text-5xl text-center">{{turno.turno_formateado}}</td>
+                <td class="p-3 text-5xl text-center">{{turno.cliente.nombre | uppercase}}
+                    {{turno.cliente.apellido |
+                    uppercase}}</td>
+            </tr>
+            }
+        </ng-template>
+    </p-table>
     }
 </p-dialog>
 <!-- opc 2 -->

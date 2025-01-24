@@ -9,6 +9,7 @@ export interface Data {
     nombre: string;
     servicio: string;
     turno_id: number;
+    servicio_id: number;
     documento: string;
     tipo_documento: string;
 }

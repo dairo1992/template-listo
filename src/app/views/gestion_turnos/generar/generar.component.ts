@@ -203,6 +203,7 @@ export default class GenerarComponent implements OnInit {
                         this.usuarioService.currentUser().id);
                 }
                 this.limpiarForm();
+                this.alert.close();
                 // this.alert.showMessage({
                 //     position: "center",
                 //     icon: response.STATUS ? 'success' : 'error',
@@ -264,5 +265,5 @@ export default class GenerarComponent implements OnInit {
         });
     }
 
-   
+
 }

@@ -45,6 +45,8 @@
                         (click)="uiEstado(modulo)"></p-button>
                     <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading" severity="info"
                         [outlined]="true" (click)="setModulo(modulo)"></p-button>
+                    <p-button pRipple icon="pi pi-plus" [rounded]="true" [disabled]="loading" severity="sucess"
+                        [outlined]="true" (click)="setModulo(modulo)"></p-button>
                 </div>
             </td>
         </tr>
@@ -59,8 +61,9 @@
             <div class="p-formgrid grid">
                 @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
                 <div class="field col"><label htmlfor="empresa_id">EMPRESA</label>
-                    <p-dropdown [options]="empresaService.lista_empresas()" formControlName="empresa_id" [optionLabel]="'nombre'"
-                        [optionValue]="'id'" (onChange)="listaSedesByEmpresa(moduloForm.value.empresa_id, 'E')" />
+                    <p-dropdown [options]="empresaService.lista_empresas()" formControlName="empresa_id"
+                        [optionLabel]="'nombre'" [optionValue]="'id'"
+                        (onChange)="listaSedesByEmpresa(moduloForm.value.empresa_id, 'E')" />
                     @if(moduloForm.get('empresa_id').invalid && (moduloForm.get('empresa_id').dirty ||
                     moduloForm.get('empresa_id').touched)){
                     <div>

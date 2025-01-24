@@ -104,6 +104,10 @@ export class AlmacenService {
         this.storage.set('turno', dataEncrypted);
     }
 
+    limpiarDatosTurno(): void {
+        this.storage.remove('turno');
+    }
+
     obtenerDatosTurno(): TurnoLlamado {
         const dataEncrypted = this.storage.get('turno');
         if (dataEncrypted) {

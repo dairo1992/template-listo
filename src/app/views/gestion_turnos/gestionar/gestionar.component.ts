@@ -9,22 +9,28 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { AlmacenService } from 'src/app/services/storage.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { AlertaSwal } from 'src/app/components/swal-alert';
+import ServiciosComponent from "../../servicios/servicios.component";
+import { ServiciosService } from 'src/app/services/servicios.service';
+import { Servicio } from 'src/app/interfaces/servicio.interface';
 
 @Component({
     selector: 'app-gestionar',
     standalone: true,
-    imports: [PrimeModule, GenerarComponent],
+    imports: [PrimeModule, GenerarComponent, ServiciosComponent],
     templateUrl: './gestionar.component.html',
     styleUrl: './gestionar.component.scss',
 })
 export default class GestionarComponent {
     modalGenerarTurno: boolean = false;
     modalListaTurno: boolean = false;
+    modalRedirigirTurno: boolean = false;
     public currentUser: Usuario = inject(UsuarioService).currentUser();
     public turnosService = inject(TurnosService);
     public utilitiService = inject(UtilitiesService);
     public storageService = inject(AlmacenService);
     private socketService = inject(SocketService);
+    public serviciosService = inject(ServiciosService);
+    public getStatus = inject(UtilitiesService).getStatus;
     alert: AlertaSwal;
 
 
@@ -36,7 +42,7 @@ export default class GestionarComponent {
         //     TOTAL: 0
         // };
         // const agrupadoPorServicio = {};
-        this.turnosService.obtenerTurnosCant(this.currentUser.id)
+        this.turnosService.obtenerTurnosCant(this.currentUser.id);
         // .subscribe({
         //     next: (value) => {
         //         value.forEach((turno, i) => {
@@ -85,6 +91,14 @@ export default class GestionarComponent {
                     this.turnosService._currentTurno.set(turno);
                     this.storageService.almacenarDatosTurno(turno);
                     this.socketService.emit('llamado', { "empresa_id": this.currentUser.empresa.id, sede_id: this.currentUser.empresa.sede.id, turno_id: turno.DATA.turno_id });
+                } else {
+                    this.alert.showMessage({
+                        position: "center",
+                        icon: turno.STATUS ? 'success' : 'error',
+                        title: "!NOTIFICACION¡",
+                        text: turno.MSG,
+                        showConfirmButton: true,
+                    });
                 }
 
             },
@@ -136,5 +150,61 @@ export default class GestionarComponent {
 
     pausarTurno() {
 
+    }
+
+    obtenerServicios(): void {
+        const id_user = this.currentUser.id;
+        this.alert.loading();
+        this.serviciosService.obtenerServicios(id_user).subscribe({
+            next: (data) => {
+                this.serviciosService._lista_servicios.set(data);
+                this.alert.close();
+                this.modalRedirigirTurno = true;
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
+    }
+
+    transferir(servicio: Servicio) {
+        this.alert.loading();
+        const turno = {
+            turno_id: this.turnosService.currentTurno().DATA.turno_id,
+            servicio_inicial: this.turnosService.currentTurno().DATA.servicio_id,
+            servicio_fin: servicio.id,
+            responsable: this.currentUser.id
+        };
+        this.turnosService.transferirTurno(turno).subscribe({
+            next: (data) => {
+                this.modalRedirigirTurno = false;
+                this.turnosService._currentTurno.set({ STATUS: false, MSG: '', DATA: null });
+                this.turnosService.obtenerTurnosCant(this.currentUser.id)
+                this.storageService.limpiarDatosTurno();
+                this.turnosService.obtenerTurnos(this.currentUser.id);
+                this.alert.showMessage({
+                    position: "center",
+                    icon: data.STATUS ? "success" : "error",
+                    title: "!NOTIFICACION¡",
+                    text: data.MSG,
+                    showConfirmButton: true,
+                });
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
     }
 }
