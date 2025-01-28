@@ -45,8 +45,8 @@
                         (click)="uiEstado(modulo)"></p-button>
                     <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading" severity="info"
                         [outlined]="true" (click)="setModulo(modulo)"></p-button>
-                    <p-button pRipple icon="pi pi-plus" [rounded]="true" [disabled]="loading" severity="sucess"
-                        [outlined]="true" (click)="setModulo(modulo)"></p-button>
+                    <p-button pRipple icon="pi pi-cog" [rounded]="true" [disabled]="loading" severity="sucess"
+                        [outlined]="true" (click)="configModulo(modulo, 'C')"></p-button>
                 </div>
             </td>
         </tr>
@@ -56,7 +56,7 @@
 <p-dialog [header]="modalTitle" [(visible)]="modalNuevaSede" [modal]="true" (onHide)="close()"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
     [resizable]="false">
-    <div class="card p-fluid">
+    <div class="card p-fluid justify-content-center align-items-center">
         <form [formGroup]="moduloForm" #formDirective="ngForm" (ngSubmit)="nuevoModulo()">
             <div class="p-formgrid grid">
                 @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
@@ -96,8 +96,31 @@
                 </div>
             </div>
         </form>
+        <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
+            [disabled]="!moduloForm.valid"
+            (onClick)="moduloForm.value.id > 0 ? actualizarModulo(moduloForm.value) : nuevoModulo()" />
     </div>
-    <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
-        [disabled]="!moduloForm.valid"
-        (onClick)="moduloForm.value.id > 0 ? actualizarModulo(moduloForm.value) : nuevoModulo()" />
+</p-dialog>
+
+<p-dialog [header]="'CONFIGURAR SERVICIOS'" [(visible)]="modalConfig" [modal]="true" (onHide)="close()"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
+    [resizable]="false">
+    <div class="card">
+        <p-pickList [source]="serviciosDisponibles" [target]="serviciosSeleccionados" [dragdrop]="true"
+            [responsive]="true" [sourceStyle]="{ height: '30rem' }" [targetStyle]="{ height: '30rem' }"
+            filterBy="nombre" sourceFilterPlaceholder="Buscar servicio" targetFilterPlaceholder="Buscar servicio"
+            breakpoint="1400px" scrollHeight="30rem">
+            <ng-template let-servicio pTemplate="item">
+                <div class="flex flex-wrap p-1 items-center gap-4 w-full">
+                    <i [class]="servicio.icono" [style.color]="servicio.color" style="font-size: 2rem;"></i>
+                    <div class="flex-1 flex flex-col">
+                        <span class="font-medium text-sm">{{ servicio.nombre | uppercase }}</span>
+                    </div>
+                </div>
+            </ng-template>
+        </p-pickList>
+    </div>
+    <div class="flex justify-content-end mt-4">
+        <p-button label="Guardar" icon="pi pi-check" (onClick)="configModulo(null, 'G')" />
+    </div>
 </p-dialog>

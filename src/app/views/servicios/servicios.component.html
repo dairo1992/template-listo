@@ -1,6 +1,6 @@
 <p-toast />
 <div class="flex flex-row flex-wrap">
-    <div class="flex align-items-center justify-content-center w-4 border-round">
+    <!-- <div class="flex align-items-center justify-content-center w-4 border-round" style="height: 100vh; max-height: calc(100vh - 12rem);">
         <div class="card layout-main  min-h-full">
             <form [formGroup]="servicioForm" #formDirective="ngForm" (ngSubmit)="nuevoServicio()">
                 <div class="flex flex-column flex-wrap">
@@ -22,8 +22,7 @@
                     <div class="p-formgrid grid">
                         <div class="field col"><label htmlfor="sede_id">SEDE</label>
                             <p-dropdown styleClass="w-full" [options]="this.sedesService.lista_sedes()"
-                                formControlName="sede_id" [optionLabel]="'nombre'" [optionValue]="'id'"
-                                (onChange)="listaModulosBySede(servicioForm.value.sede_id, 'E')" />
+                                formControlName="sede_id" [optionLabel]="'nombre'" [optionValue]="'id'" />
                             @if(servicioForm.get('sede_id').invalid && (servicioForm.get('sede_id').dirty ||
                             servicioForm.get('sede_id').touched)){
                             <div>
@@ -32,20 +31,6 @@
                             }
                         </div>
                     </div>
-                    <!-- <div class="p-formgrid grid">
-                        <div class="field col">
-                            <label htmlfor="modulo">MODULO</label>
-                            <p-dropdown styleClass="w-full" [options]="listaModulosFilter" formControlName="modulo"
-                                [optionLabel]="'nombre'" [optionValue]="'id'" />
-                            @if(servicioForm.get('modulo').invalid &&
-                            (servicioForm.get('modulo').dirty ||
-                            servicioForm.get('modulo').touched)){
-                            <div>
-                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
-                            </div>
-                            }
-                        </div>
-                    </div> -->
                     <div class="p-formgrid grid">
                         <div class="field col">
                             <label htmlfor="nombre">NOMBRE</label>
@@ -60,20 +45,6 @@
                             }
                         </div>
                     </div>
-                    <!-- <div class="p-formgrid grid">
-                        <div class="field col">
-                            <label htmlfor="descripcion">DESCRIPCION</label>
-                            <input formControlName="descripcion" id="descripcion" type="text"
-                                class="p-inputtext p-component p-element w-full p-3">
-                            @if(servicioForm.get('descripcion').invalid &&
-                            (servicioForm.get('descripcion').dirty ||
-                            servicioForm.get('descripcion').touched)){
-                            <div>
-                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
-                            </div>
-                            }
-                        </div>
-                    </div> -->
                     <div class="p-formgrid grid">
                         <div class="field col">
                             <label htmlfor="icon">ICONO</label>
@@ -103,8 +74,8 @@
                 </div>
             </form>
         </div>
-    </div>
-    <div class="flex align-items-center justify-content-center border-round w-8 max-h-fit">
+    </div> -->
+    <div class="flex align-items-center justify-content-center border-round w-12" style="height: 100vh; max-height: calc(100vh - 12rem);">
         <div class="card layout-main">
             <div class="flex flex-column flex-wrap">
                 <div
@@ -114,7 +85,7 @@
             </div>
             <p-table #table_servicios [value]="service.lista_servicios()"
                 styleClass="p-datatable-striped p-datatable-gridlines" [globalFilterFields]="['NOMBRE']"
-                [paginator]="true" [rows]="4" [rowsPerPageOptions]="[5, 10, 20]" appendTo="body">
+                [paginator]="true" [rows]="7" [rowsPerPageOptions]="[5, 10, 20]" appendTo="body">
                 <ng-template pTemplate="caption">
                     <div class="flex">
                         <span class="p-input-icon-left ml-auto">
@@ -128,8 +99,8 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th>NOMBRE</th>
-                        <!-- <th>SEDE</th> -->
-                        <th>MODULO</th>
+                        <th>SEDE</th>
+                        <!-- <th>MODULO</th> -->
                         <th>COLOR</th>
                         <th>ESTADO</th>
                         <th>ACCION</th>
@@ -138,8 +109,8 @@
                 <ng-template pTemplate="body" let-servicio>
                     <tr>
                         <td>{{servicio.nombre | uppercase}}</td>
-                        <!-- <td>{{servicio.modulo.sede.nombre | uppercase}}</td> -->
-                        <td>{{servicio.modulo.nombre | uppercase}}</td>
+                        <td>{{servicio.sede.nombre | uppercase}}</td>
+                        <!-- <td>{{servicio.modulo.nombre | uppercase}}</td> -->
                         <!-- <td><i [class]="servicio.icon" style="font-size: 2rem"></i></td> -->
                         <td>
                             <!-- <div class="w-full h-3rem border-round flex flex-wrap" [style]="{'background-color': servicio.color}">
@@ -147,7 +118,7 @@
                             </div> -->
                             <p-tag [style]="{'background-color': servicio.color}" styleClass="w-full h-3rem">
                                 <i class="flex align-items-center justify-content-center" [class]="servicio.icono"
-                                    style="font-size: 2rem; color: rgb(62, 58, 58);"></i>
+                                    style="font-size: 2rem; color: rgb(230, 224, 224);"></i>
                             </p-tag>
                         </td>
                         <td>

@@ -30,23 +30,25 @@
             <th>ACCION</th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-empresa>
+    <ng-template pTemplate="body" let-sede>
+        @if (sede.id != 0) {
         <tr>
-            <td>{{empresa.empresa.nombre | uppercase}}</td>
-            <td>{{empresa.nombre | uppercase}}</td>
-            <td>{{empresa.direccion | uppercase}}</td>
-            <td><p-tag [value]="getStatus(empresa.estado).nombre" [severity]="getStatus(empresa.estado).color" />
-            <td>{{empresa.created_at | date : 'dd-MM-yyyy'}}</td>
+            <td>{{sede.nombre | uppercase}}</td>
+            <td>{{sede.nombre | uppercase}}</td>
+            <td>{{sede.direccion | uppercase}}</td>
+            <td><p-tag [value]="getStatus(sede.estado).nombre" [severity]="getStatus(sede.estado).color" />
+            <td>{{sede.created_at | date : 'dd-MM-yyyy'}}</td>
             <td>
                 <div class="flex align-items-center justify-content-center gap-2">
-                    <p-button pRipple [icon]="empresa.estado== 'A' ?'pi pi-trash' : 'pi pi-check'" [rounded]="true"
-                        [disabled]="loading" [severity]="empresa.estado== 'A' ? 'danger' : 'success'" [outlined]="true"
-                        (click)="uiEstado(empresa)"></p-button>
+                    <p-button pRipple [icon]="sede.estado== 'A' ?'pi pi-trash' : 'pi pi-check'" [rounded]="true"
+                        [disabled]="loading" [severity]="sede.estado== 'A' ? 'danger' : 'success'" [outlined]="true"
+                        (click)="uiEstado(sede)"></p-button>
                     <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading" severity="info"
-                        [outlined]="true" (click)="setEmpresa(empresa)"></p-button>
+                        [outlined]="true" (click)="setEmpresa(sede)"></p-button>
                 </div>
             </td>
         </tr>
+        }
     </ng-template>
 </p-table>
 

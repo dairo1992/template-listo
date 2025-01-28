@@ -18,6 +18,10 @@ export class ServiciosService {
         return this.http.get<Servicio[]>(`${url}/servicios/${id}`)
     }
 
+    obtenerServiciosConfig(empresa_id: number, modulo_id: number, sede_id: number) {
+        return this.http.post<any>(`${url}/servicios/servicios_config`, { empresa_id, modulo_id, sede_id });
+    }
+
     nuevoServicio(servicio: Servicio) {
         return this.http.post(`${url}/servicios`, servicio);
     }

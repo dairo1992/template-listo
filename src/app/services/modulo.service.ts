@@ -22,7 +22,7 @@ export class ModuloService {
     obtenerModulos(id: number) {
         return this.http.get<Modulo[]>(`${url}/modulos/${id}`)
     }
-
+    
     nuevoModulo(modulo: Modulo) {
         return this.http.post(`${url}/modulos`, modulo);
     }
@@ -44,5 +44,9 @@ export class ModuloService {
                 this.alert.close();
             },
         });
+    }
+
+    configModuloServicio(data: any) {
+        return this.http.post(`${url}/modulos/config`, (data));
     }
 }

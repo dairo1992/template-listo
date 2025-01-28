@@ -9,6 +9,7 @@ import { Usuario } from '../interfaces/usuario.interface';
 import { UsuarioService } from './usuario.service';
 import { TurnoLlamado } from '../interfaces/turno-llamado.interface';
 import { Ruta } from '../interfaces/routes.interface';
+import { Password } from 'primeng/password';
 
 @Injectable({
     providedIn: 'root',
@@ -24,15 +25,27 @@ export class AlmacenService {
     ) { }
 
     recordarUsuario(data: any) {
-        this.session.set('usuario', data);
+        this.session.set('usuario', data.USUARIO);
+        const dataEncrypted = CryptoJS.AES.encrypt(
+            JSON.stringify(data.PASSWORD),
+            cryptoKey
+        ).toString();
+        this.session.set('password', dataEncrypted);
     }
 
     olvidarUsuario() {
         this.session.remove('usuario');
     }
 
-    obtenerUsuario(): string | null {
-        return this.session.get('usuario');
+    obtenerUsuario(): any | null {
+        const dataPass = this.session.get('password');
+        const decryptData = CryptoJS.AES.decrypt(
+            dataPass != null ? dataPass : '',
+            cryptoKey
+        ).toString(CryptoJS.enc.Utf8);
+
+        const usu = { usuario: this.session.get('usuario'), password: decryptData != '' ? JSON.parse(decryptData) : '' };
+        return usu;
     }
 
     obtenerToken(): string | null {

@@ -42,9 +42,10 @@ export default class AuthComponent implements OnInit {
     ngOnInit(): void {
         const usuario = this.storageService.obtenerUsuario();
         // const token = this.storageService.obtenerToken();
-        if (usuario) {
+        if (usuario.usuario != null && usuario.password != null) {
             this.formAuth.patchValue({
-                USUARIO: parseInt(usuario),
+                USUARIO: parseInt(usuario.usuario),
+                PASSWORD: usuario.password,
                 RECORDAR: true,
             });
         }
@@ -60,7 +61,7 @@ export default class AuthComponent implements OnInit {
     recordar(): void {
         const status = this.formAuth.value.RECORDAR;
         if (status) {
-            this.storageService.recordarUsuario(this.formAuth.value.USUARIO);
+            this.storageService.recordarUsuario(this.formAuth.value);
         } else {
             this.storageService.olvidarUsuario();
         }

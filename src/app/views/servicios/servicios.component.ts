@@ -6,12 +6,12 @@ import { Sede } from 'src/app/interfaces/sede.interface';
 import { Servicio } from 'src/app/interfaces/servicio.interface';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { EmpresaService } from 'src/app/services/empresa.service';
-import { ModuloService } from 'src/app/services/modulo.service';
 import { SedesService } from 'src/app/services/sedes.service';
 import { ServiciosService } from 'src/app/services/servicios.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { icons } from 'src/environments/environment';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-servicios',
@@ -22,7 +22,6 @@ import { icons } from 'src/environments/environment';
 })
 export default class ServiciosComponent implements OnInit {
     public service = inject(ServiciosService);
-    public moduloService = inject(ModuloService);
     public empresasService = inject(EmpresaService);
     public sedesService = inject(SedesService);
     public getStatus = inject(UtilitiesService).getStatus;
@@ -43,7 +42,7 @@ export default class ServiciosComponent implements OnInit {
     constructor() {
         const id_user = this.usuarioService.currentUser().id;
         this.obtenerServicios(id_user);
-        // this.sedesService.obtenerSedes(id_user);
+        this.obtenerSedes(id_user);
         // this.moduloService.obtenerModulos(id_user);
         // this.empresasService.obtenerEmpresas(id_user);
         this.showPanel = false;
@@ -56,7 +55,36 @@ export default class ServiciosComponent implements OnInit {
         if (this.usuarioService.currentUser().tipo_usuario != 'SUPER_ADMIN') {
             this.servicioForm.controls['empresa_id'].disable();
         }
+    }
 
+    limpiarForm() {
+        this.servicioForm = new FormGroup({
+            id: new FormControl(0, Validators.required),
+            nombre: new FormControl('', Validators.required),
+            color: new FormControl(),
+            icono: new FormControl(''),
+            estado: new FormControl('A'),
+            empresa_id: new FormControl(this.usuarioService.currentUser().empresa.id, Validators.required),
+            sede_id: new FormControl(''),
+        });
+    }
+
+    obtenerSedes(id_user: number) {
+        if (this.sedesService.lista_sedes().length > 0) return;
+        this.sedesService.obtenerSedes(id_user).subscribe({
+            next: (data: any) => {
+                this.sedesService._lista_sedes.set(data);
+            },
+            error: (err) => {
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
+            },
+        });
     }
 
     obtenerServicios(id_user: number): void {
@@ -78,34 +106,22 @@ export default class ServiciosComponent implements OnInit {
         });
     }
 
-    limpiarForm() {
-        this.servicioForm = new FormGroup({
-            id: new FormControl(0, Validators.required),
-            nombre: new FormControl('', Validators.required),
-            modulo: new FormControl(0, Validators.required),
-            // descripcion: new FormControl(''),
-            color: new FormControl(),
-            icono: new FormControl(''),
-            estado: new FormControl('A'),
-            empresa_id: new FormControl(this.usuarioService.currentUser().empresa.id),
-            sede_id: new FormControl(0),
-        });
-    }
-
     nuevoServicio(): void {
         this.alert.loading();
-        this.service.nuevoServicio(this.servicioForm.value).subscribe({
-            next: (value: Servicio) => {
-                this.service._lista_servicios.set([
-                    ...(this.service.lista_servicios() || []),
-                    value,
-                ]);
-                this.alert.showMessage({
+        // this.servicioForm.controls['empresa_id'].setValue(999);
+        const form = { ...this.servicioForm.value, empresa_id: this.usuarioService.currentUser().empresa.id };
+        this.service.nuevoServicio(form).subscribe({
+            next: (value: any) => {
+                Swal.fire({
                     position: "center",
                     icon: "success",
                     title: "!NOTIFICACION¡",
-                    text: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
+                    text: value,
                     showConfirmButton: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.obtenerServicios(this.usuarioService.currentUser().id);
+                    }
                 });
                 this.limpiarForm();
             },
@@ -140,23 +156,6 @@ export default class ServiciosComponent implements OnInit {
 
     }
 
-    listaModulosBySede(id_sede: number, accion = 'N') {
-        const usuario = this.usuarioService.currentUser();
-        this.listaModulosFilter = this.moduloService
-            .lista_modulos()
-            .filter((modulo) => {
-                if (accion === 'N' && usuario.tipo_usuario === 'SUPER_ADMIN') {
-                    return modulo;
-                } else {
-                    if (modulo.sede_id == id_sede) {
-                        return modulo;
-                    }
-                }
-                return null;
-            });
-        return null;
-    }
-
     setModulo(modulo: Modulo): void {
         this.listaSedesByEmpresa(modulo.sede.empresa_id);
         // this.moduloForm.setValue(modulo);
@@ -165,20 +164,19 @@ export default class ServiciosComponent implements OnInit {
     }
 
     setServicio(servicio: Servicio): void {
-        this.listaSedesByEmpresa(servicio.modulo.sede.empresa_id, 'E');
-        this.listaModulosBySede(servicio.modulo.id, 'E');
-        const servicioTemp = {
-            id: servicio.id,
-            nombre: servicio.nombre,
-            modulo: servicio.modulo.id,
-            // descripcion: servicio.descripcion,
-            color: servicio.color,
-            icono: servicio.icono,
-            estado: servicio.estado,
-            empresa_id: servicio.modulo.sede.empresa_id,
-            sede_id: servicio.modulo.sede_id
-        }
-        this.servicioForm.setValue(servicioTemp);
+        // this.listaSedesByEmpresa(servicio.modulo.sede.empresa_id, 'E');
+        // const servicioTemp = {
+        //     id: servicio.id,
+        //     nombre: servicio.nombre,
+        //     modulo: servicio.modulo.id,
+        //     // descripcion: servicio.descripcion,
+        //     color: servicio.color,
+        //     icono: servicio.icono,
+        //     estado: servicio.estado,
+        //     empresa_id: servicio.modulo.sede.empresa_id,
+        //     sede_id: servicio.modulo.sede_id
+        // }
+        // this.servicioForm.setValue(servicioTemp);
     }
 
     actualizarServicio(servicio: any): void {
@@ -189,29 +187,12 @@ export default class ServiciosComponent implements OnInit {
                     (e) => e.id == servicio.id
                 );
                 this.service._lista_servicios.update((servicios) => {
-                    const mod = this.moduloService.lista_modulos().find((e) => e.id == servicio.modulo);
                     const sed = this.sedesService.lista_sedes().find((e) => e.id == servicio.sede_id);
                     servicios.splice(i, 1);
-                    servicio.modulo = mod;
                     servicio.modulo.sede = sed;
                     servicios.push(servicio);
                     return servicios;
                 });
-
-                // const i = this.service.lista_usuarios().findIndex((e) => e.id == usuario.id);
-                // this.service._lista_usuarios.update((usuarios) => {
-                //     const emp = this.empresaService
-                //         .lista_empresas()
-                //         .find((e) => e.id == this.service.lista_usuarios()[i].empresa.id);
-                //     const sede = this.sedeService
-                //         .lista_sedes()
-                //         .find((s) => s.id == this.service.lista_usuarios()[i].sede.id);
-                //     usuarios.splice(i, 1);
-                //     usuario.empresa = emp;
-                //     usuario.sede = sede;
-                //     usuarios.push(usuario);
-                //     return usuarios;
-                // });
                 this.alert.showMessage({
                     position: "center",
                     icon: "success",

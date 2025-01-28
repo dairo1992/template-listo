@@ -2,7 +2,6 @@ import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { AlertaSwal } from 'src/app/components/swal-alert';
-import { Modulo } from 'src/app/interfaces/modulo.interface';
 import { Usuario } from 'src/app/interfaces/usuario.interface';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { EmpresaService } from 'src/app/services/empresa.service';
@@ -80,14 +79,14 @@ export default class UsuariosComponent {
             id_user
         ).subscribe((data) => this.modulosService._lista_modulos.set(data));
         this.formUsuario = new FormGroup({
-            id: new FormControl(0, Validators.required),
+            id: new FormControl(''),
             nombre: new FormControl('', Validators.required),
             apellido: new FormControl('', Validators.required),
             documento: new FormControl('', Validators.required),
             tipo_usuario: new FormControl('', Validators.required),
             estado: new FormControl('A'),
             empresa_id: new FormControl(this.currentUser.empresa.id),
-            sede_id: new FormControl(0, Validators.required),
+            sede_id: new FormControl('', Validators.required),
         });
         this.items = [
             {
@@ -197,13 +196,14 @@ export default class UsuariosComponent {
     close(modal: string = ''): void {
         this.modals.modalTitle = 'REGISTRAR NUEVO USUARIO';
         this.formUsuario.reset({
-            id: 0,
+            id: '',
             nombre: '',
             apellido: '',
             documento: '',
             tipo_usuario: '',
             estado: 'A',
-            empresa_id: 0,
+            empresa_id: '',
+            sede_id: ''
         });
         if (modal == 'config_modulo') {
             this.menuFull = [];
@@ -325,14 +325,14 @@ export default class UsuariosComponent {
                     this.menuFull.push({
                         key: `${i + 1}`,
                         label: m.label,
-                        children: m.items.map((c: any, p: number) => {
+                        children: m.items.filter((c: any) => c.label != 'Empresas').map((c: any, p: number) => {
                             return {
                                 key: `${i}-${p}`,
                                 label: c.label,
                                 data: c.routerLink,
                                 icon: c.icon,
                             };
-                        }),
+                        })
                     });
                     this.alert.close();
                 });

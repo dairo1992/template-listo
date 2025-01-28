@@ -4,7 +4,6 @@ import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import GenerarComponent from '../generar/generar.component';
 import { TurnosService } from 'src/app/services/turnos.service';
-import { WebsocketService } from 'src/app/services/websocket.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { AlmacenService } from 'src/app/services/storage.service';
 import { SocketService } from 'src/app/services/socket.service';

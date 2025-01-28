@@ -1,13 +1,13 @@
 import { Modulo } from './modulo.interface';
+import { Sede } from './sede.interface';
 
 export interface Servicio {
     id: number;
     icono: string;
     color: string;
     estado: string;
-    modulo: Modulo;
     nombre: string;
-    descripcion: string;
+    sede: Sede | null;
 }
 
 export class Convert {
