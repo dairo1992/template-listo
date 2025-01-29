@@ -40,7 +40,6 @@ import { ChipModule } from 'primeng/chip';
 import { BadgeModule } from 'primeng/badge';
 import { GalleriaModule } from 'primeng/galleria';
 import { PickListModule } from 'primeng/picklist';
-import { PickList } from 'primeng/picklist';
 
 @NgModule({
     declarations: [],

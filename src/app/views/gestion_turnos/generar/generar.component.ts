@@ -178,15 +178,25 @@ export default class GenerarComponent implements OnInit {
     }
 
     generarTurno(servicio: Servicio) {
+        const currentUser = this.usuarioService.currentUser();
+        // if (currentUser.modulo.id == null) {
+        //     this.alert.showMessage({
+        //         position: "center",
+        //         icon: 'info',
+        //         title: "!NOTIFICACION¡",
+        //         text: "NO TIENE UN MODULO ASIGNADO",
+        //         showConfirmButton: true,
+        //     });
+        //     return;
+        // }
         this.alert.loading();
         this.servicioSeleccionado = servicio;
-        const currentUser = this.usuarioService.currentUser();
         const turno = {
             id: 0,
-            usuario_id: this.usuarioService.currentUser().id,
+            usuario_id: currentUser.id,
             servicio_id: servicio.id,
-            modulo_id: "servicio.modulo.id",
-            sede_id: servicio.sede.id,
+            modulo_id: null,
+            sede_id: currentUser.empresa.sede.id,
             estado: 'P',
             fecha_creacion: new Date(),
             hora_creacion: new Date(),
@@ -204,14 +214,7 @@ export default class GenerarComponent implements OnInit {
                 }
                 this.limpiarForm();
                 this.alert.close();
-                // this.alert.showMessage({
-                //     position: "center",
-                //     icon: response.STATUS ? 'success' : 'error',
-                //     title: "!NOTIFICACION¡",
-                //     text: response.MSG,
-                //     footer: response.DATA,
-                //     showConfirmButton: true,
-                // });
+
                 this.messageService.add({
                     key: 'turno',
                     sticky: true,

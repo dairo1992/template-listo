@@ -27,6 +27,7 @@ export default class UsuariosComponent {
     public modulosService = inject(ModuloService);
     public todosTiposUsuario = ['ADMIN', 'EMPLEADO', 'SUPER_ADMIN', 'PANTALLA'];
     public tiposUsuario = [];
+    sedes = [];
     listaSedesFilter = [];
     listaModulosFilter = [];
     public usuarioSelected: Usuario = null;
@@ -74,7 +75,7 @@ export default class UsuariosComponent {
         ).subscribe((data) => this.empresaService._lista_empresas.set(data));
         this.sedeService.obtenerSedes(
             id_user
-        ).subscribe((data) => this.sedeService._lista_sedes.set(data));
+        ).subscribe((data) => { this.sedeService._lista_sedes.set(data); this.sedes = this.sedeService.lista_sedes().filter((s) => s.id != 0) });
         this.modulosService.obtenerModulos(
             id_user
         ).subscribe((data) => this.modulosService._lista_modulos.set(data));

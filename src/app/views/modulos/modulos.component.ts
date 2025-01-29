@@ -147,16 +147,28 @@ export default class ModulosComponent {
     uiEstado(sede: Modulo): void {
         this.alert.loading();
         this.service.uiEstado(sede).subscribe({
-            next: (value: Modulo) => {
+            next: (value: any) => {
                 this.service._lista_modulos.update((empresas) => {
                     empresas.find((e) => e.id == sede.id).estado =
                         sede.estado == 'A' ? 'I' : 'A';
-                    this.alert.close();
+                    this.alert.showMessage({
+                        position: "center",
+                        icon: value.STATUS ? "success" : "error",
+                        title: "!NOTIFICACION¡",
+                        text: value.MSG,
+                        showConfirmButton: true,
+                    });
                     return empresas;
                 });
             },
             error: (err) => {
-                this.alert.close();
+                this.alert.showMessage({
+                    position: "center",
+                    icon: "error",
+                    title: "!NOTIFICACION¡",
+                    text: err.error,
+                    showConfirmButton: true,
+                });
             },
         });
     }
@@ -217,19 +229,15 @@ export default class ModulosComponent {
         if (accion == 'G') {
             this.alert.loading();
             const servicios = [];
+            let accion = "";
             if (this.serviciosSeleccionados.length > 0) {
                 this.serviciosSeleccionados.forEach((s) => {
-                    const ser = { sede_id: s.sede.id, servicio_id: s.id, modulo_id: this.moduloSeleccionado.id };
+                    const ser = { sede_id: this.moduloSeleccionado.sede.id, servicio_id: s.id, modulo_id: this.moduloSeleccionado.id };
                     servicios.push(ser);
+                    accion = "N";
                 });
             }
-            else {
-                this.serviciosDisponibles.forEach((s) => {
-                    const ser = { sede_id: s.sede.id, servicio_id: s.id, modulo_id: null };
-                    servicios.push(ser);
-                });
-            }
-            this.service.configModuloServicio(servicios).subscribe({
+            this.service.configModuloServicio(servicios, this.moduloSeleccionado.id).subscribe({
                 next: (value: any) => {
                     this.modalConfig = false;
                     this.alert.showMessage({

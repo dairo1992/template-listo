@@ -1,168 +1,145 @@
-<p-toast />
-<div class="flex flex-row flex-wrap">
-    <div class="flex align-items-center justify-content-center w-4 border-round" style="height: 100vh; max-height: calc(100vh - 12rem);">
-        <div class="card layout-main  min-h-full">
-            <form [formGroup]="servicioForm" #formDirective="ngForm" (ngSubmit)="nuevoServicio()">
-                <div class="flex flex-column flex-wrap">
-                    @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
-                    <div class="p-formgrid grid">
-                        <div class="field col"><label htmlfor="empresa_id">EMPRESA</label>
-                            <p-dropdown styleClass="w-full" [options]="empresasService.lista_empresas()"
-                                formControlName="empresa_id" [optionLabel]="'nombre'" [optionValue]="'id'"
-                                (onChange)="listaSedesByEmpresa(servicioForm.value.empresa_id, 'E')" />
-                            @if(servicioForm.get('empresa_id').invalid && (servicioForm.get('empresa_id').dirty ||
-                            servicioForm.get('empresa_id').touched)){
-                            <div>
-                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
-                            </div>
-                            }
-                        </div>
-                    </div>
-                    }
-                    <div class="p-formgrid grid">
-                        <div class="field col"><label htmlfor="sede_id">SEDE</label>
-                            <p-dropdown styleClass="w-full" [options]="this.sedesService.lista_sedes()"
-                                formControlName="sede_id" [optionLabel]="'nombre'" [optionValue]="'id'" />
-                            @if(servicioForm.get('sede_id').invalid && (servicioForm.get('sede_id').dirty ||
-                            servicioForm.get('sede_id').touched)){
-                            <div>
-                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
-                            </div>
-                            }
-                        </div>
-                    </div>
-                    <div class="p-formgrid grid">
-                        <div class="field col">
-                            <label htmlfor="nombre">NOMBRE</label>
-                            <input formControlName="nombre" id="nombre" type="text"
-                                class="p-inputtext p-component p-element w-full p-3">
-                            @if(servicioForm.get('nombre').invalid &&
-                            (servicioForm.get('nombre').dirty ||
-                            servicioForm.get('nombre').touched)){
-                            <div>
-                                <span style="color: red; font-weight: bold;">Este campo es requerido</span>
-                            </div>
-                            }
-                        </div>
-                    </div>
-                    <div class="p-formgrid grid">
-                        <div class="field col">
-                            <label htmlfor="icon">ICONO</label>
-                            <p-button styleClass="w-full" label="ICONO " [icon]="iconSelect"
-                                (onClick)="modalIcon = !modalIcon"></p-button>
-                        </div>
-                    </div>
-                    <div class="p-formgrid grid">
-                        <div class="field col">
-                            <label htmlfor="color">COLOR</label>
-                        </div>
-                        <p-colorPicker styleClass="w-full" appendTo="body" formControlName="color" />
-                    </div>
-                    <div class="flex flex-row flex-wrap align-items-center justify-content-center">
-                        @if(servicioForm.value.id > 0){
-                        <div class="flex align-items-center justify-content-center m-2"><p-button
-                                class="flex align-items-center justify-content-center" label="Cancelar"
-                                icon="pi pi-times" severity="danger" (onClick)="limpiarForm()" />
-                        </div>
-                        }
-                        <div class="flex align-items-center justify-content-center m-2"><p-button
-                                class="flex align-items-center justify-content-center" label="Guardar"
-                                icon="pi pi-check" [disabled]="!servicioForm.valid"
-                                (onClick)="servicioForm.value.id > 0 ? actualizarServicio(servicioForm.value) : nuevoServicio()" />
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="flex align-items-center justify-content-center border-round w-8" style="height: 100vh; max-height: calc(100vh - 12rem);">
-        <div class="card layout-main">
-            <div class="flex flex-column flex-wrap">
-                <div
-                    class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
-                    <strong>SERVICIOS REGISTRADOS</strong>
-                </div>
-            </div>
-            <p-table #table_servicios [value]="service.lista_servicios()"
-                styleClass="p-datatable-striped p-datatable-gridlines" [globalFilterFields]="['NOMBRE']"
-                [paginator]="true" [rows]="7" [rowsPerPageOptions]="[5, 10, 20]" appendTo="body">
-                <ng-template pTemplate="caption">
-                    <div class="flex">
-                        <span class="p-input-icon-left ml-auto">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" [(ngModel)]="searchValue"
-                                (input)="table_usuarios.filterGlobal($event.target.value, 'contains')"
-                                placeholder="Search keyword" />
-                        </span>
-                    </div>
-                </ng-template>
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>NOMBRE</th>
-                        <th>SEDE</th>
-                        <!-- <th>MODULO</th> -->
-                        <th>COLOR</th>
-                        <th>ESTADO</th>
-                        <th>ACCION</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-servicio>
-                    <tr>
-                        <td>{{servicio.nombre | uppercase}}</td>
-                        <td>{{servicio.sede.nombre | uppercase}}</td>
-                        <!-- <td>{{servicio.modulo.nombre | uppercase}}</td> -->
-                        <!-- <td><i [class]="servicio.icon" style="font-size: 2rem"></i></td> -->
-                        <td>
-                            <!-- <div class="w-full h-3rem border-round flex flex-wrap" [style]="{'background-color': servicio.color}">
-                                <i  class="flex align-items-center justify-content-center" [class]="servicio.icon" style="font-size: 2rem"></i>
-                            </div> -->
-                            <p-tag [style]="{'background-color': servicio.color}" styleClass="w-full h-3rem">
-                                <i class="flex align-items-center justify-content-center" [class]="servicio.icono"
-                                    style="font-size: 2rem; color: rgb(230, 224, 224);"></i>
-                            </p-tag>
-                        </td>
-                        <td>
-                            <p-tag [value]="getStatus(servicio.estado).nombre"
-                                [severity]="getStatus(servicio.estado).color" />
-                        </td>
-                        <td>
-                            <div class="flex align-items-center justify-content-center gap-2">
-                                <p-button pRipple [icon]="servicio.estado== 'A' ?'pi pi-trash' : 'pi pi-check'"
-                                    [rounded]="true" [disabled]="loading"
-                                    [severity]="servicio.estado== 'A' ? 'danger' : 'success'" [outlined]="true"
-                                    (click)="uiEstado(servicio)"></p-button>
-                                <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading"
-                                    severity="info" [outlined]="true" (click)="setServicio(servicio)"></p-button>
-                                <!-- <p-button pRipple icon="pi pi-spin pi-cog" [rounded]="true" [disabled]="loading"
-                                    severity="info" [outlined]="true"
-                                    (click)="op.toggle($event); selectServicio(servicio)"></p-button> -->
-                            </div>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-
-        </div>
+<div class="flex flex-column flex-wrap">
+    <div class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
+        <strong>SERVICIOS REGISTRADOS</strong>
     </div>
 </div>
-
-<!-- <p-overlayPanel #op>
-    <div class="flex align-items-center justify-content-center font-bold border-round m-2">
-        <strong>CONFIGURAR MODULO</strong>
-    </div>
-    <div class="flex justify-content-center">
-        <div class="field">
-            <p-dropdown [options]="moduloService.lista_modulos()" id="config_modulo" [(ngModel)]="modulo"
-                [optionLabel]="'nombre'" [optionValue]="'id'" placeholder="SELECCIONAR"
-                inputStyleClass="surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-            </p-dropdown>
+<p-table #table_servicios [value]="service.lista_servicios()" styleClass="p-datatable-striped p-datatable-gridlines"
+    [globalFilterFields]="['NOMBRE']" [paginator]="true" [rows]="7" [rowsPerPageOptions]="[5, 10, 20]" appendTo="body">
+    <ng-template pTemplate="caption">
+        <div class="flex">
+            <p-button label="Nuevo" [outlined]="true" icon="pi pi-user-plus"
+                (click)="modalNuevoServicio = true; iconSelect =''" />
+            <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" [(ngModel)]="searchValue"
+                    (input)="table_usuarios.filterGlobal($event.target.value, 'contains')"
+                    placeholder="Search keyword" />
+            </span>
         </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>NOMBRE</th>
+            <!-- <th>SEDE</th> -->
+            <!-- <th>MODULO</th> -->
+            <th>COLOR</th>
+            <th>ESTADO</th>
+            <th>ACCION</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-servicio>
+        <tr>
+            <td>{{servicio.nombre | uppercase}}</td>
+            <!-- <td>{{servicio.sede.nombre | uppercase}}</td> -->
+            <!-- <td>{{servicio.modulo.nombre | uppercase}}</td> -->
+            <!-- <td><i [class]="servicio.icon" style="font-size: 2rem"></i></td> -->
+            <td>
+                <!-- <div class="w-full h-3rem border-round flex flex-wrap" [style]="{'background-color': servicio.color}">
+                                <i  class="flex align-items-center justify-content-center" [class]="servicio.icon" style="font-size: 2rem"></i>
+                            </div> -->
+                <p-tag [style]="{'background-color': servicio.color}" styleClass="w-full h-3rem">
+                    <i class="flex align-items-center justify-content-center" [class]="servicio.icono"
+                        style="font-size: 2rem; color: rgb(230, 224, 224);"></i>
+                </p-tag>
+            </td>
+            <td>
+                <p-tag [value]="getStatus(servicio.estado).nombre" [severity]="getStatus(servicio.estado).color"
+                    styleClass="w-full h-3rem" />
+            </td>
+            <td>
+                <div class="flex align-items-center justify-content-center gap-2">
+                    <p-button pRipple [icon]="servicio.estado== 'A' ?'pi pi-trash' : 'pi pi-check'" [rounded]="true"
+                        [disabled]="loading" [severity]="servicio.estado== 'A' ? 'danger' : 'success'" [outlined]="true"
+                        (click)="uiEstado(servicio)"></p-button>
+                    <p-button pRipple icon="pi pi-pencil" [rounded]="true" [disabled]="loading" severity="info"
+                        [outlined]="true" (click)="setServicio(servicio)"></p-button>
+                    <!-- <p-button pRipple icon="pi pi-spin pi-cog" [rounded]="true" [disabled]="loading"
+                                    severity="info" [outlined]="true"
+                                    (click)="op.toggle($event); selectServicio(servicio)"></p-button> -->
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog header="REGISTRAR SERVICIO" [(visible)]="modalNuevoServicio" [modal]="true" (onHide)="limpiarForm()"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '30vw' }" [draggable]="false"
+    [resizable]="false">
+    <div class="card p-fluid justify-content-center align-items-center">
+        <form [formGroup]="servicioForm" #formDirective="ngForm" (ngSubmit)="nuevoServicio()">
+            <div class="flex flex-column flex-wrap">
+                <!-- @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
+                <div class="p-formgrid grid">
+                    <div class="field col"><label htmlfor="empresa_id">EMPRESA</label>
+                        <p-dropdown styleClass="w-full" [options]="empresasService.lista_empresas()"
+                            formControlName="empresa_id" [optionLabel]="'nombre'" [optionValue]="'id'"
+                            (onChange)="listaSedesByEmpresa(servicioForm.value.empresa_id, 'E')" />
+                        @if(servicioForm.get('empresa_id').invalid && (servicioForm.get('empresa_id').dirty ||
+                        servicioForm.get('empresa_id').touched)){
+                        <div>
+                            <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+                <div class="p-formgrid grid">
+                    <div class="field col"><label htmlfor="sede_id">SEDE</label>
+                        <p-dropdown styleClass="w-full" [options]="this.sedesService.lista_sedes()"
+                            formControlName="sede_id" [optionLabel]="'nombre'" [optionValue]="'id'" />
+                        @if(servicioForm.get('sede_id').invalid && (servicioForm.get('sede_id').dirty ||
+                        servicioForm.get('sede_id').touched)){
+                        <div>
+                            <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                        </div>
+                        }
+                    </div>
+                </div> -->
+                <div class="p-formgrid grid">
+                    <div class="field col">
+                        <label htmlfor="nombre">NOMBRE</label>
+                        <input formControlName="nombre" id="nombre" type="text"
+                            class="p-inputtext p-component p-element w-full p-3">
+                        @if(servicioForm.get('nombre').invalid &&
+                        (servicioForm.get('nombre').dirty ||
+                        servicioForm.get('nombre').touched)){
+                        <div>
+                            <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                        </div>
+                        }
+                    </div>
+                </div>
+                <i class="flex justify-content-center" [class]="iconSelect" style="font-size: 4rem"></i>
+                <div class="p-formgrid grid">
+                    <div class="field col">
+                        <label htmlfor="icon">ICONO</label>
+                        <p-button styleClass="w-full" label="SELECCIONAR ICONO "
+                            (onClick)="modalIcon = !modalIcon"></p-button>
+                    </div>
+                </div>
+                <div class="p-formgrid grid">
+                    <div class="field col">
+                        <label htmlfor="color">COLOR</label>
+                    </div>
+                    <p-colorPicker styleClass="w-full" appendTo="body" formControlName="color" />
+                </div>
+                <div class="flex flex-row flex-wrap align-items-center justify-content-center">
+                    @if(servicioForm.value.id > 0){
+                    <div class="flex align-items-center justify-content-center m-2"><p-button
+                            class="flex align-items-center justify-content-center" label="Cancelar" icon="pi pi-times"
+                            severity="danger" (onClick)="limpiarForm()" />
+                    </div>
+                    }
+                    <div class="flex align-items-center justify-content-center m-2"><p-button
+                            class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
+                            [disabled]="!servicioForm.valid"
+                            (onClick)="servicioForm.value.id > 0 ? actualizarServicio(servicioForm.value) : nuevoServicio()" />
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="field">
-        <p-button class="flex align-items-center justify-content-center" label="Configurar" icon="pi pi-check"
-            [loading]="service.isLoading()" (onClick)="config_modulo_servicio(modulo); op.toggle($event)" />
-    </div>
-</p-overlayPanel> -->
+</p-dialog>
 
 <p-dialog header="SELECCIONAR ICONO" [(visible)]="modalIcon" [modal]="true"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"

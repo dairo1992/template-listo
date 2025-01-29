@@ -31,6 +31,7 @@ export default class ServiciosComponent implements OnInit {
     servicio_id: number;
     showPanel: boolean;
     modalIcon: boolean = false;
+    modalNuevoServicio: boolean = false;
     icons = [];
     iconsTemp = [];
     iconSelect: string = '';
@@ -43,8 +44,6 @@ export default class ServiciosComponent implements OnInit {
         const id_user = this.usuarioService.currentUser().id;
         this.obtenerServicios(id_user);
         this.obtenerSedes(id_user);
-        // this.moduloService.obtenerModulos(id_user);
-        // this.empresasService.obtenerEmpresas(id_user);
         this.showPanel = false;
         this.icons = icons;
         this.iconsTemp = icons;
@@ -52,9 +51,9 @@ export default class ServiciosComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        if (this.usuarioService.currentUser().tipo_usuario != 'SUPER_ADMIN') {
-            this.servicioForm.controls['empresa_id'].disable();
-        }
+        // if (this.usuarioService.currentUser().tipo_usuario != 'SUPER_ADMIN') {
+        //     this.servicioForm.controls['empresa_id'].disable();
+        // }
     }
 
     limpiarForm() {
@@ -65,9 +64,9 @@ export default class ServiciosComponent implements OnInit {
             icono: new FormControl(''),
             estado: new FormControl('A'),
             empresa_id: new FormControl(this.usuarioService.currentUser().empresa.id, Validators.required),
-            sede_id: new FormControl(''),
         });
     }
+
 
     obtenerSedes(id_user: number) {
         if (this.sedesService.lista_sedes().length > 0) return;
@@ -108,10 +107,11 @@ export default class ServiciosComponent implements OnInit {
 
     nuevoServicio(): void {
         this.alert.loading();
-        // this.servicioForm.controls['empresa_id'].setValue(999);
-        const form = { ...this.servicioForm.value, empresa_id: this.usuarioService.currentUser().empresa.id };
-        this.service.nuevoServicio(form).subscribe({
+        // this.servicioForm.controls['empresa_id'].setValue(this.usuarioService.currentUser().empresa.id);
+        // const form = { ...this.servicioForm.value, empresa_id: this.usuarioService.currentUser().empresa.id };
+        this.service.nuevoServicio(this.servicioForm.value).subscribe({
             next: (value: any) => {
+                this.modalNuevoServicio = false;
                 Swal.fire({
                     position: "center",
                     icon: "success",
@@ -164,19 +164,19 @@ export default class ServiciosComponent implements OnInit {
     }
 
     setServicio(servicio: Servicio): void {
-        // this.listaSedesByEmpresa(servicio.modulo.sede.empresa_id, 'E');
-        // const servicioTemp = {
-        //     id: servicio.id,
-        //     nombre: servicio.nombre,
-        //     modulo: servicio.modulo.id,
-        //     // descripcion: servicio.descripcion,
-        //     color: servicio.color,
-        //     icono: servicio.icono,
-        //     estado: servicio.estado,
-        //     empresa_id: servicio.modulo.sede.empresa_id,
-        //     sede_id: servicio.modulo.sede_id
-        // }
-        // this.servicioForm.setValue(servicioTemp);
+        const servicioTemp = {
+            id: servicio.id,
+            nombre: servicio.nombre,
+            color: servicio.color,
+            icono: servicio.icono,
+            estado: servicio.estado,
+            empresa_id: servicio.sede.empresa.id,
+        }
+        this.iconSelect = servicio.icono;
+        this.servicioForm.setValue(servicioTemp);
+        this.modalNuevoServicio = true;
+        console.log(this.servicioForm);
+
     }
 
     actualizarServicio(servicio: any): void {

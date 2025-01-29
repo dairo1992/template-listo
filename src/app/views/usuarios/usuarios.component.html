@@ -95,7 +95,7 @@
                 </div>
                 @if (formUsuario.value.tipo_usuario != 'ADMIN') {
                 <div class="field col"><label htmlfor="tipo_usuario">SEDE</label>
-                    <p-dropdown [options]="sedeService.lista_sedes()" formControlName="sede_id" [optionLabel]="'nombre'"
+                    <p-dropdown [options]="sedes" formControlName="sede_id" [optionLabel]="'nombre'"
                         [optionValue]="'id'" />
                     @if(formUsuario.get('tipo_usuario').invalid && (formUsuario.get('tipo_usuario').dirty ||
                     formUsuario.get('tipo_usuario').touched)){
