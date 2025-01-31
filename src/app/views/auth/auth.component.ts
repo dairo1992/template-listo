@@ -58,14 +58,14 @@ export default class AuthComponent implements OnInit {
         this.authService.login(this.formAuth.value);
     }
 
-    recordar(): void {
-        const status = this.formAuth.value.RECORDAR;
-        if (status) {
-            this.storageService.recordarUsuario(this.formAuth.value);
-        } else {
-            this.storageService.olvidarUsuario();
-        }
-    }
+    // recordar(): void {
+    //     const status = this.formAuth.value.RECORDAR;
+    //     if (status) {
+    //         this.storageService.recordarUsuario(this.formAuth.value);
+    //     } else {
+    //         this.storageService.olvidarUsuario();
+    //     }
+    // }
 
     obtenerEmpresas(id_usuario: number): void {
         this.empresaService.obtenerEmpresas(0).subscribe({

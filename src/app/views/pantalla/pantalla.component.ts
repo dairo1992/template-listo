@@ -47,9 +47,11 @@ export default class PantallaComponent implements OnInit, OnDestroy {
         this.socketService.listen<TurnoGenerado[]>("lista-turnos").subscribe({
           next: (turnosResponse) => {
             this.turnos = turnosResponse;
+            console.log(this.turnos);
+
             turnosResponse.forEach(async turno => {
               if (turno.estado == 'en_atencion') {
-                await this.socketService.emit('llamado', { "empresa_id": turno.modulo.sede.empresa.id, "sede_id": turno.modulo.sede.id, "turno_id": turno.id })
+                // await this.socketService.emit('llamado', { "empresa_id": turno.modulo.sede.empresa.id, "sede_id": turno.modulo.sede.id, "turno_id": turno.id })
               }
             });
           },
@@ -76,7 +78,7 @@ export default class PantallaComponent implements OnInit, OnDestroy {
             setTimeout(() => {
               this.turnoLlamado = false;
             }, 8000);
-            this.llamadoTurnoByVoz((this.turnoLLamadoInfo.cliente.nombre + ' ' + this.turnoLLamadoInfo.cliente.apellido), this.turnoLLamadoInfo.turno_formateado, this.turnoLLamadoInfo.modulo.nombre);
+            this.llamadoTurnoByVoz((this.turnoLLamadoInfo.cliente.nombre + ', ' + this.turnoLLamadoInfo.cliente.apellido), this.turnoLLamadoInfo.turnoFormateado, this.turnoLLamadoInfo.moduloAtencion.nombre);
 
           },
           error: (err) => console.log(err)
@@ -92,8 +94,12 @@ export default class PantallaComponent implements OnInit, OnDestroy {
     const bogotaTimeZone = 'America/Bogota';
     this.timeSubscription = interval(1000).subscribe(() => {
       const now = new Date();
-      this.currentDate = formatDate(now, 'EEEE d \'de\' MMMM \'de\' yyyy', 'es-CO', bogotaTimeZone);
-      this.currentTime = formatDate(now, 'hh:mm:ss a', 'es-CO', bogotaTimeZone).replace('a. m.', 'AM').replace('p. m.', 'PM');
+      // Ajusta el locale a 'es-CO'
+      this.currentDate = formatDate(now, "EEEE d 'de' MMMM 'de' yyyy", 'es-CO', 'America/Bogota');
+      // Ajusta el locale a 'es-CO' y el timeZone a 'America/Bogota'
+      this.currentTime = formatDate(now, 'hh:mm:ss a', 'es-CO', 'America/Bogota')
+        .replace('a. m.', 'AM')
+        .replace('p. m.', 'PM');
     });
     const voices = speechSynthesis.getVoices();
     console.log(voices);
@@ -144,7 +150,7 @@ export default class PantallaComponent implements OnInit, OnDestroy {
     const mensaje = new SpeechSynthesisUtterance(`Turno número ${turno}  , ${nombre}, modulo 3`);
     if (speaking) return;
     mensaje.lang = 'es-ES'; // Idioma español
-    mensaje.pitch = 1; // Tono (ajustable entre 0 y 2, donde 1 es natural)
+    mensaje.pitch = 1.5; // Tono (ajustable entre 0 y 2, donde 1 es natural)
     mensaje.rate = 1.0; // Velocidad ligeramente reducida para mayor naturalidad
     mensaje.volume = 1; // Volumen máximo
     const vocesDisponibles = window.speechSynthesis.getVoices();

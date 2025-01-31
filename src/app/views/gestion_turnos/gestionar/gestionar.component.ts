@@ -11,6 +11,8 @@ import { AlertaSwal } from 'src/app/components/swal-alert';
 import ServiciosComponent from "../../servicios/servicios.component";
 import { ServiciosService } from 'src/app/services/servicios.service';
 import { Servicio } from 'src/app/interfaces/servicio.interface';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-gestionar',
@@ -33,49 +35,23 @@ export default class GestionarComponent {
     alert: AlertaSwal;
 
 
-    constructor() {
+    constructor(private router: Router) {
         this.alert = new AlertaSwal();
-        // const resumen = {
-        //     ACTIVOS: 0,
-        //     ATENDIDOS: 0,
-        //     TOTAL: 0
-        // };
-        // const agrupadoPorServicio = {};
+        if (this.currentUser.modulo.id == null) {
+            Swal.fire({
+                position: "center",
+                icon: 'info',
+                title: "!NOTIFICACION¡",
+                text: "NO TIENE UN MODULO ASIGNADO",
+                showConfirmButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.router.navigateByUrl('/home/nuevo-turno');
+                }
+            });
+            return;
+        }
         this.turnosService.obtenerTurnosCant(this.currentUser.id);
-        // .subscribe({
-        //     next: (value) => {
-        //         value.forEach((turno, i) => {
-        //             // Actualizar el resumen general
-        //             if (turno.estado === "esperando" || turno.estado === "en_atencion") {
-        //                 resumen.ACTIVOS += 1;
-        //             } else if (turno.estado === "atendido") {
-        //                 resumen.ATENDIDOS += 1;
-        //             }
-        //             resumen.TOTAL += 1;
-
-        //             // Agrupar por servicio
-        //             const servicio = turno.nombre_servicio;
-        //             if (!agrupadoPorServicio[servicio]) {
-        //                 agrupadoPorServicio[servicio] = {
-        //                     nombre: servicio,
-        //                     total: 0,
-        //                     activos: 0,
-        //                     atendidos: 0
-        //                 };
-        //             }
-
-        //             agrupadoPorServicio[servicio].total += 1;
-
-        //             if (turno.estado === "esperando" || turno.estado === "en_atencion") {
-        //                 agrupadoPorServicio[servicio].activos += 1;
-        //             } else if (turno.estado === "atendido") {
-        //                 agrupadoPorServicio[servicio].atendidos += 1;
-        //             }
-        //         });
-        //         this.resumen = resumen;
-        //         this.servicios_asignados = Object.values(agrupadoPorServicio);
-        //     }
-        // })
     }
 
     consultarTurnos() {
@@ -85,11 +61,13 @@ export default class GestionarComponent {
 
     llamarTurno() {
         this.turnosService.llamarTurno(this.currentUser.id).subscribe({
-            next: (turno) => {
+            next: async (turno) => {
                 if (turno.STATUS) {
+                    const user = this.currentUser;
+                    await this.socketService.emit('lista-turnos', { "empresa_id": user.empresa.id, "sede_id": user.empresa.sede.id, "usuario_id": user.id })
                     this.turnosService._currentTurno.set(turno);
                     this.storageService.almacenarDatosTurno(turno);
-                    this.socketService.emit('llamado', { "empresa_id": this.currentUser.empresa.id, sede_id: this.currentUser.empresa.sede.id, turno_id: turno.DATA.turno_id });
+                    this.socketService.emit('llamado', { "empresa_id": user.empresa.id, sede_id: user.empresa.sede.id, turno_id: turno.DATA.turno_id });
                 } else {
                     this.alert.showMessage({
                         position: "center",
@@ -147,10 +125,6 @@ export default class GestionarComponent {
         this.socketService.emit('llamado', { "empresa_id": this.currentUser.empresa.id, sede_id: this.currentUser.empresa.sede.id, turno_id: turno.turno_id });
     }
 
-    pausarTurno() {
-
-    }
-
     obtenerServicios(): void {
         const id_user = this.currentUser.id;
         this.alert.loading();
@@ -158,7 +132,9 @@ export default class GestionarComponent {
             next: (data) => {
                 this.serviciosService._lista_servicios.set(data);
                 this.alert.close();
+                // if (this.modalGenerarTurno === false) {
                 this.modalRedirigirTurno = true;
+                // }
             },
             error: (err) => {
                 this.alert.showMessage({
@@ -205,5 +181,9 @@ export default class GestionarComponent {
                 });
             },
         });
+    }
+
+    async actualizarPantalla() {
+        await this.socketService.emit('lista-turnos', { "empresa_id": this.currentUser.empresa.id, "sede_id": this.currentUser.empresa.sede.id, "usuario_id": this.currentUser.id })
     }
 }

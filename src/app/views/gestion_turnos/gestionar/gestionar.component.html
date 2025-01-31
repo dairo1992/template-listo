@@ -107,7 +107,7 @@
                     <div class="flex align-items-center justify-content-center w-12rem m-3">
                         <div
                             class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round bg-blue-500">
-                            <span class="m-2" style="color: var(--primary-color)">ACTIVOS</span>
+                            <span class="m-2 text-white">ACTIVOS</span>
                             <i class="pi pi-circle text-3xl" style="color: var(--primary-color)" pBadge
                                 [value]="turnosService.resumen().ACTIVOS"></i>
                         </div>
@@ -115,7 +115,7 @@
                     <div class="flex align-items-center justify-content-center w-12rem m-2">
                         <div
                             class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round bg-green-500">
-                            <span class="m-2" style="color: var(--primary-color)">ATENDIDOS</span>
+                            <span class="m-2 text-white">ATENDIDOS</span>
                             <i class="pi pi-check-circle text-3xl" style="color: var(--primary-color)" pBadge
                                 [value]="turnosService.resumen().ATENDIDOS"></i>
                         </div>
@@ -123,7 +123,7 @@
                     <div class="flex align-items-center justify-content-center w-11rem m-2">
                         <div
                             class="flex align-items-center gap-2 h-3rem w-10 px-1 border-double border-primary-500 border-3 border-round bg-orange-500">
-                            <span class="m-2" style="color: var(--primary-color)">TOTAL</span>
+                            <span class="m-2 text-white">TOTAL</span>
                             <i class="pi pi-hashtag text-3xl" style="color: var(--primary-color)" pBadge
                                 [value]="turnosService.resumen().TOTAL"></i>
                         </div>
@@ -184,15 +184,18 @@
     <div class="flex align-items-center justify-content-center W-6 font-bold border-round m-2">
         <p-button [outlined]="true" label="GENERAR TURNO" (click)="modalGenerarTurno = true" />
     </div>
+    <div class="flex align-items-center justify-content-center W-6 font-bold border-round m-2">
+        <p-button [outlined]="true" label="ACTUALIZAR PANTALLA" (click)="actualizarPantalla()" />
+    </div>
 </div>
 
 <p-dialog header="GENERAR TURNO" [draggable]="false" [modal]="true" [(visible)]="modalGenerarTurno"
     [style]="{ width: '50vw' }" [resizable]="false" (onHide)="modalGenerarTurno = false">
-    <div class="flex flex-column">
-        <div class="flex align-items-center justify-content-center m-2">
+    <!-- <div class="flex flex-column"> -->
+        <!-- <div class="flex align-items-center justify-content-center m-2"> -->
             <app-generar></app-generar>
-        </div>
-    </div>
+        <!-- </div> -->
+    <!-- </div> -->
 </p-dialog>
 
 <p-dialog header="TURNOS ACTIVOS" [modal]="true" [draggable]="false" [maximizable]="true" appendTo="body"
@@ -242,7 +245,7 @@
 </p-dialog>
 
 <p-dialog [draggable]="false" [modal]="true" [(visible)]="modalRedirigirTurno" [style]="{ width: '50vw' }"
-    [resizable]="false" (onHide)="modalGenerarTurno = false">
+    [resizable]="false" (onHide)="modalRedirigirTurno = false">
     <div class="flex flex-column">
         <div class="flex align-items-center justify-content-center m-2">
             <p-table #table_servicios [value]="serviciosService.lista_servicios()"
@@ -252,7 +255,7 @@
                     <tr>
                         <th>NOMBRE</th>
                         <!-- <th>SEDE</th> -->
-                        <th>MODULO</th>
+                        <!-- <th>MODULO</th> -->
                         <th>COLOR</th>
                         <th>ACCION</th>
                     </tr>
@@ -261,7 +264,7 @@
                     @if (servicio.estado != '') {
                     <tr>
                         <td>{{servicio.nombre | uppercase}}</td>
-                        <td>{{servicio.modulo.nombre | uppercase}}</td>
+                        <!-- <td>{{servicio.modulo.nombre | uppercase}}</td> -->
                         <td>
                             <p-tag [style]="{'background-color': servicio.color}" styleClass="w-full h-3rem">
                                 <i class="flex align-items-center justify-content-center" [class]="servicio.icono"

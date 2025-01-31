@@ -16,6 +16,7 @@ export class AuthserviceService {
     private http = inject(HttpClient);
     private storage = inject(AlmacenService);
     socketervice = inject(SocketService);
+    public storageService = inject(AlmacenService);
     private alert: AlertaSwal;
     constructor(
         private router: Router,
@@ -24,14 +25,15 @@ export class AuthserviceService {
         this.alert = new AlertaSwal();
     }
 
-    login(usuario: any) {
+    login(usuarioForm: any) {
         this.alert.loading('Consultando tus credenciales');
-        this.http.post(`${url}/auth/login`, usuario).subscribe({
+        this.http.post(`${url}/auth/login`, usuarioForm).subscribe({
             next: async (usuario: Usuario | null) => {
                 if (usuario != null) {
                     await this.storage.almacenarRutas(usuario.rutas);
                     await this.storage.almacenarToken(usuario.token);
                     this.storage.almacenarDatosUsuario(usuario);
+                    this.recordar(usuarioForm);
                     this.alert.close();
                     this.router.navigateByUrl('/home');
                     this.socketervice.conectarSocket();
@@ -54,6 +56,14 @@ export class AuthserviceService {
                 });
             },
         });
+    }
+
+    recordar(formAuth: any): void {
+        if (formAuth.RECORDAR) {
+            this.storageService.recordarUsuario(formAuth);
+        } else {
+            // this.storageService.olvidarUsuario();
+        }
     }
 
     logout(): void {

@@ -10,7 +10,7 @@
             </div>
             }
             <div class="flex flex-column md:flex-row">
-                <div class="flex justify-content-center w-7 border-1 font-bold border-round m-1"
+                <div class="flex justify-content-center w-full border-1 font-bold border-round m-1"
                     style="height: 100vh; max-height: calc(100vh - 13rem); overflow: auto;">
                     <!-- <div class="flex flex-column text-center">
                         @for (turno of turnos; track $index) {
@@ -38,21 +38,22 @@
                         <ng-template pTemplate="header">
                             <tr>
                                 <th class="text-7xl bg-primary text-white p-4 text-center">
-                                    MODULO</th>
-                                <th class="text-7xl bg-primary text-white p-4 text-center">
                                     TURNO</th>
                                 <th class="text-7xl bg-primary text-white p-4 text-center">
                                     USUARIO</th>
+                                <th class="text-7xl bg-primary text-white p-4 text-center">
+                                    MODULO</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-turno>
                             @if (turno.estado == 'esperando' ||turno.estado == 'en_atencion') {
                             <tr>
-                                <td class="p-3 text-5xl text-center">{{turno.modulo.nombre | uppercase}}</td>
-                                <td class="p-3 text-5xl text-center">{{turno.turno_formateado}}</td>
+                                <td class="p-3 text-5xl text-center">{{turno.turnoFormateado}}</td>
                                 <td class="p-3 text-5xl text-center">{{turno.cliente.nombre | uppercase}}
                                     {{turno.cliente.apellido |
                                     uppercase}}</td>
+                                    <td class="p-3 text-5xl text-center">{{(turno.moduloAtencion != null ?
+                                    turno.moduloAtencion.nombre : "") | uppercase}}</td>
                             </tr>
                             }
                         </ng-template>
@@ -85,7 +86,7 @@
                         </p-galleria>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-primary font-bold border-round m-2"
-                        style="height: 100vh; max-height: calc(100vh - 60rem); width: 100vw; max-width: calc(100vw - 80rem);">
+                        style="height: 100vh; max-height: calc(100vh - 54rem); width: 100vw; max-width: calc(100vw - 74rem);">
                         <div class="clock-container">
                             <div class="date">{{ currentDate }}</div>
                             <div class="time">{{ currentTime }}</div>
@@ -93,6 +94,7 @@
                     </div>
                 </div>
             </div>
+            <!-- <p-button label="OBTENER TURNOS" (onClick)="llamarturnosBtn()" /> -->
         </div>
     </div>
 </div>
@@ -110,8 +112,7 @@
             {{turnoLLamadoInfo.modulo.nombre | uppercase}}
         </div>
     </div> -->
-    <p-table [value]="[turnoLLamadoInfo]" styleClass="p-datatable-striped p-datatable-gridlines"
-        >
+    <p-table [value]="[turnoLLamadoInfo]" styleClass="p-datatable-striped p-datatable-gridlines">
         <ng-template pTemplate="header">
             <tr>
                 <th class="text-7xl bg-primary text-white p-4 text-center">
@@ -123,15 +124,15 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-turno>
-            @if (turno.estado == 'esperando' ||turno.estado == 'en_atencion') {
+            <!-- @if (turno.estado == 'esperando' ||turno.estado == 'en_atencion') { -->
             <tr>
-                <td class="p-3 text-5xl text-center">{{turno.modulo.nombre | uppercase}}</td>
-                <td class="p-3 text-5xl text-center">{{turno.turno_formateado}}</td>
+                <td class="p-3 text-5xl text-center">{{turno.moduloAtencion.nombre | uppercase}}</td>
+                <td class="p-3 text-5xl text-center">{{turno.turnoFormateado}}</td>
                 <td class="p-3 text-5xl text-center">{{turno.cliente.nombre | uppercase}}
                     {{turno.cliente.apellido |
                     uppercase}}</td>
             </tr>
-            }
+            <!-- } -->
         </ng-template>
     </p-table>
     }
