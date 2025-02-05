@@ -1,2 +1,70 @@
-<p-toast/>
-<p>dashboard works!</p>
+<!-- <div class="formgrid grid">
+    <div class="field col-10">
+        <form [formGroup]="formReporte" #formDirective="ngForm" (ngSubmit)="obtenerReporte()">
+            <div class="field col-4">
+                <label htmlfor="fecha_nacimiento">FECHA NACIMIENTO</label>
+                
+            </div>
+            <div class="field col-4">
+                <label htmlfor="fecha_nacimiento">FECHA NACIMIENTO</label>
+                <p-calendar appendTo="body" formControlName="fecha_fin" />
+            </div>
+            <div class="field col-2">
+                <p-button label="BUSCAR" icon="pi pi-search" />
+            </div>
+        </form>
+    </div>
+
+    <div class="field col-2">
+        <p-button label="DESCARGAR" severity="success" icon="pi pi-file-excel" />
+    </div>
+</div> -->
+<div class="flex flex-row flex-wrap w-full mb-3">
+    <div class="flex align-items-center justify-content-center w-9 h-4rem font-bold border-round mr-2">
+        <form [formGroup]="formReporte" #formDirective="ngForm" (ngSubmit)="obtenerReporte()">
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label for="fecha_inicio">FECHA INICIO</label>
+                    <p-calendar appendTo="body" formControlName="fecha_inicio" />
+                </div>
+                <div class="field col">
+                    <label for="fecha_fin">FECHA INICIO</label>
+                    <p-calendar appendTo="body" formControlName="fecha_fin" />
+                </div>
+                <div class="field col">
+                    <p-button label="BUSCAR" icon="pi pi-search" styleClass="mt-4" (onClick)="obtenerReporte()" />
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="flex align-items-center justify-content-center w-2 h-4rem font-bold border-round">
+        <p-button label="DESCARGAR" severity="success" icon="pi pi-file-excel" (onClick)="descargarReporte()" />
+    </div>
+</div>
+<div class="flex flex-column md:flex-row w-full">
+    <div class="flex card align-items-center justify-content-center w-12 h-20rem font-bold border-round mb-3">
+        <p-chart type="bar" [data]="dataBarras" [options]="optionsBarras" width="calc(100vw - 33rem)" height="22rem" />
+    </div>
+</div>
+<div class="flex flex-column md:flex-row w-full">
+    <div class="flex card align-items-center justify-content-center w-6 h-22rem font-bold border-round m-2">
+        <div class="flex flex-column">
+            <div class="flex font-bold border-round">
+                <strong>TURNOS POR SERVICIO</strong>
+            </div>
+            <div class="flex align-items-center justify-content-center font-bold border-round">
+                <p-chart type="pie" [data]="dataDonuts" [options]="optionsDonuts" height="20rem" />
+            </div>
+        </div>
+    </div>
+    <div class="flex card align-items-center justify-content-center w-6 h-22rem font-bold border-round m-2">
+        <div class="flex flex-column">
+            <div class="flex font-bold border-round">
+                <strong>TURNOS POR USUARIO</strong>
+            </div>
+            <div class="flex align-items-center justify-content-center font-bold border-round">
+                <p-chart type="bar" [data]="dataBarraUsuario" [options]="optionsBarraUsuario" />
+            </div>
+        </div>
+    </div>

@@ -95,6 +95,28 @@
                     }
                 </div>
             </div>
+            <div class="p-formgrid grid">
+                <div class="field col"><label htmlfor="cant_no_prioritarios">¿CUANTOS TURNOS NO PRIORITARIOS SERA
+                        CONCECUTIVOS?</label>
+                    <!-- <input formControlName="cant_no_prioritarios" id="cant_no_prioritarios" type="text" class="p-inputtext p-component p-element"> -->
+                    <p-inputNumber formControlName="cant_no_prioritarios" min="1" max="10"
+                        inputId="cant_no_prioritarios" [showButtons]="true" buttonLayout="horizontal"
+                        spinnerMode="vertical">
+                        <ng-template #incrementbuttonicon>
+                            <span class="pi pi-plus"></span>
+                        </ng-template>
+                        <ng-template #decrementbuttonicon>
+                            <span class="pi pi-minus"></span>
+                        </ng-template></p-inputNumber>
+                    @if(moduloForm.get('cant_no_prioritarios').invalid &&
+                    (moduloForm.get('cant_no_prioritarios').dirty ||
+                    moduloForm.get('cant_no_prioritarios').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+            </div>
         </form>
         <p-button class="flex align-items-center justify-content-center" label="Guardar" icon="pi pi-check"
             [disabled]="!moduloForm.valid"

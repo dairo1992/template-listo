@@ -35,6 +35,10 @@
                     <div
                         class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
                         <h4 style="color: white;">{{turnosService.currentTurno().DATA.turno}}</h4>
+                        </div>
+                    <div
+                        class="flex align-items-center justify-content-center h-4rem font-bold border-round m-2" [ngClass]="turnosService.currentTurno().DATA.prioridad == 0 ? 'bg-primary': 'bg-orange-500'">
+                        <h4 style="color: white;">{{turnosService.currentTurno().DATA.prioridad == 1 ? 'TURNO PRIORITARIO':'TURNO NO PRIORITARIO'}}</h4>
                     </div>
                 </div>
             </div>

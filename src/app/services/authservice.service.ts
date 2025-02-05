@@ -12,7 +12,7 @@ import { SocketService } from './socket.service';
 @Injectable({
     providedIn: 'root',
 })
-export class AuthserviceService {
+export class AuthService {
     private http = inject(HttpClient);
     private storage = inject(AlmacenService);
     socketervice = inject(SocketService);
@@ -71,5 +71,9 @@ export class AuthserviceService {
         this.storage.limpiarStorage();
         this.router.navigateByUrl('/');
         this.alert.close();
+    }
+
+    obtenerOrganigrama(empresa_id: number) {
+        return this.http.get(`${url}/auth/organigrama/${empresa_id}`);
     }
 }

@@ -48,11 +48,12 @@ export default class ModulosComponent {
     ngOnInit(): void {
         this.moduloForm = new FormGroup({
             id: new FormControl(Validators.required),
-            nombre: new FormControl(''),
+            nombre: new FormControl('',Validators.required),
             estado: new FormControl('A'),
             created_at: new FormControl(''),
             sede: new FormControl(''),
             sede_id: new FormControl([Validators.required]),
+            cant_no_prioritarios: new FormControl(0, [Validators.required, Validators.min(1)]),
             empresa_id: new FormControl(this.usuarioService.currentUser().empresa.id),
         });
         this.cdr.markForCheck();

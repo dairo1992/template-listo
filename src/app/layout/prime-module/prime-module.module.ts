@@ -40,11 +40,13 @@ import { ChipModule } from 'primeng/chip';
 import { BadgeModule } from 'primeng/badge';
 import { GalleriaModule } from 'primeng/galleria';
 import { PickListModule } from 'primeng/picklist';
+import { OrganizationChartModule } from 'primeng/organizationchart';
 
 @NgModule({
     declarations: [],
     imports: [DatePipe, UpperCasePipe, JsonPipe],
     exports: [
+
         TableModule,
         ProgressBarModule,
         DropdownModule,
@@ -89,6 +91,8 @@ import { PickListModule } from 'primeng/picklist';
         BadgeModule,
         GalleriaModule,
         PickListModule,
+        OrganizationChartModule,
+
     ],
 })
 export class PrimeModule { }

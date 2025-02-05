@@ -12,6 +12,7 @@ export interface Data {
     servicio_id: number;
     documento: string;
     tipo_documento: string;
+    prioridad: number;
 }
 
 // Converts JSON strings to/from your types

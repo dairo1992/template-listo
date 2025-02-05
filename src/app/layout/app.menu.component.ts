@@ -38,27 +38,6 @@ export class AppMenuComponent implements OnInit {
             (r) => r.path != '**' && r.path != 'notfound' && r.path != 'auth'
         );
 
-        // this.rutas_temp[0].children.map((r: any) => {
-        //     this.rutas.push({
-        //         label: r.title,
-        //         items:
-        //             r.children != undefined
-        //                 ? r.children.map((c: any) => {
-        //                       return {
-        //                           label: c.title,
-        //                           icon: c.data[0],
-        //                           routerLink: c.path,
-        //                       };
-        //                   })
-        //                 : [
-        //                       {
-        //                           label: r.title,
-        //                           icon: r.data[0],
-        //                           routerLink: '/',
-        //                       },
-        //                   ],
-        //     });
-        // });
-        // console.log(this.rutas);
     }
+  
 }

@@ -27,6 +27,15 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                             title: 'Administracion',
                             children: [
                                 {
+                                    path: 'organigrama',
+                                    title: 'Organigrama',
+                                    data: ['pi pi-fw pi-sitemap'],
+                                    loadComponent: () =>
+                                        import(
+                                            './views/organigrama/organigrama.component'
+                                        ),
+                                },
+                                {
                                     path: 'empresas',
                                     title: 'Empresas',
                                     data: ['pi pi-fw pi-building'],

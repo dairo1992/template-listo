@@ -6,7 +6,7 @@ import {
     Validators,
 } from '@angular/forms';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
-import { AuthserviceService } from 'src/app/services/authservice.service';
+import { AuthService } from 'src/app/services/authservice.service';
 import { EmpresaService } from 'src/app/services/empresa.service';
 import { AlmacenService } from 'src/app/services/storage.service';
 
@@ -27,7 +27,7 @@ import { AlmacenService } from 'src/app/services/storage.service';
 export default class AuthComponent implements OnInit {
     formAuth: FormGroup;
     public storageService = inject(AlmacenService);
-    public authService = inject(AuthserviceService);
+    public authService = inject(AuthService);
     public empresaService = inject(EmpresaService);
     constructor() {
         this.obtenerEmpresas(0);

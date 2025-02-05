@@ -57,7 +57,6 @@ export default class UsuariosComponent {
         sede_id: null,
         modulo_id: null,
         usuario_id: null,
-        prioritarios: null,
     };
     private alert: AlertaSwal;
 
@@ -131,8 +130,8 @@ export default class UsuariosComponent {
                     this.usuarioSelected = this.rowSelect;
                     this.config_turnos.usuario_id = this.usuarioSelected.id;
                     this.config_turnos.sede_id = this.usuarioSelected.sede.id;
-                    this.config_turnos.prioritarios =
-                        this.usuarioSelected.prioritario != null ? this.usuarioSelected.prioritario : 0;
+                    // this.config_turnos.prioritarios =
+                    //     this.usuarioSelected.prioritario != null ? this.usuarioSelected.prioritario : 0;
                     if (this.usuarioSelected.modulo != null) {
                         this.config_turnos.modulo_id = this.usuarioSelected.modulo.id;
                     }

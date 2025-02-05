@@ -2,7 +2,7 @@ import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from './service/app.layout.service';
 import { MenuService } from './app.menu.service';
-import { AuthserviceService } from '../services/authservice.service';
+import { AuthService } from '../services/authservice.service';
 import { Usuario } from '../interfaces/usuario.interface';
 import { UsuarioService } from '../services/usuario.service';
 
@@ -26,7 +26,7 @@ export class AppTopBarComponent {
 
     constructor(
         public layoutService: LayoutService,
-        private authService: AuthserviceService,
+        private authService: AuthService,
         public menuService: MenuService
     ) {
         this.currentUser = this.usuarioService.currentUser();

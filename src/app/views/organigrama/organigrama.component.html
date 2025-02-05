@@ -1,0 +1,10 @@
+<div class="flex flex-column flex-wrap">
+    <div class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2">
+        <strong>ORGANIGRAMA INSTITUCIONAL</strong>
+    </div>
+</div>
+<div class="card flex justify-center align-items-center w-full">
+    <p-organizationChart [value]="organigrama"
+        [style]="{'width': '100vw', 'max-width': 'calc(100vw - 33rem)', 'height': '100vh', 'max-height': 'calc(100vh - 23rem)'}">
+    </p-organizationChart>
+</div>
