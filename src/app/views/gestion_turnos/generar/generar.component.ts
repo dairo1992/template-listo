@@ -14,6 +14,7 @@ import { TicktTurnoComponent } from '../../ticket-turno/tickt-turno.component';
 import ClientesComponent from "../../clientes/clientes.component";
 import { AlertaSwal } from 'src/app/components/swal-alert';
 import { SocketService } from 'src/app/services/socket.service';
+import { Usuario } from 'src/app/interfaces/usuario.interface';
 
 @Component({
     selector: 'app-generar',
@@ -41,6 +42,7 @@ export default class GenerarComponent implements OnInit {
     turnoGenerado: any = null;
     modalImprimir: boolean = false;
     alert: AlertaSwal;
+    currentUser: Usuario = inject(UsuarioService).currentUser();
     constructor() {
         this.limpiarForm();
         this.alert = new AlertaSwal();

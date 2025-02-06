@@ -26,6 +26,7 @@
             <th>NIT</th>
             <th>NOMBRE</th>
             <th>DIRECCION</th>
+            <th>CORREO ELECTRONICO</th>
             <th>ESTADO</th>
             <th>FECHA CREACION</th>
             <th>ACCION</th>
@@ -36,6 +37,7 @@
             <td>{{empresa.nit}}</td>
             <td>{{empresa.nombre | uppercase}}</td>
             <td>{{empresa.direccion | uppercase}}</td>
+            <td>{{empresa.correo | uppercase}}</td>
             <td><p-tag [value]="getStatus(empresa.estado).nombre" [severity]="getStatus(empresa.estado).color" />
             <td>{{empresa.created_at | date : 'dd-MM-yyyy'}}</td>
             <td>
@@ -82,6 +84,15 @@
                         id="direccion" type="text" class="p-inputtext p-component p-element">
                     @if(empresaForm.get('direccion').invalid && (empresaForm.get('direccion').dirty ||
                     empresaForm.get('direccion').touched)){
+                    <div>
+                        <span style="color: red; font-weight: bold;">Este campo es requerido</span>
+                    </div>
+                    }
+                </div>
+                <div class="field col"><label htmlfor="direccion">CORREO ELECTRONICO</label><input formControlName="correo"
+                        id="correo" type="text" class="p-inputtext p-component p-element">
+                    @if(empresaForm.get('correo').invalid && (empresaForm.get('correo').dirty ||
+                    empresaForm.get('correo').touched)){
                     <div>
                         <span style="color: red; font-weight: bold;">Este campo es requerido</span>
                     </div>

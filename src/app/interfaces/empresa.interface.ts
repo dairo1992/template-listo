@@ -6,8 +6,10 @@ export interface Empresa {
     sede: Sede;
     nombre: string;
     direccion: string;
+    correo: string;
     estado: string;
     created_at: string;
+    imagen: string;
 }
 
 // Converts JSON strings to/from your types

@@ -85,7 +85,7 @@
                     }
                 </div>
                 <div class="field col"><label htmlfor="tipo_usuario">TIPO USUARIO</label>
-                    <p-dropdown [options]="tiposUsuario" formControlName="tipo_usuario" />
+                    <p-dropdown [options]="tiposUsuario" formControlName="tipo_usuario" (onChange)="setSede()" />
                     @if(formUsuario.get('tipo_usuario').invalid && (formUsuario.get('tipo_usuario').dirty ||
                     formUsuario.get('tipo_usuario').touched)){
                     <div>

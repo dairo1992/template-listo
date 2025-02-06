@@ -3,6 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { ReportesService } from 'src/app/services/reportes.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+import { AlertaSwal } from 'src/app/components/swal-alert';
 
 @Component({
     selector: 'app-dashboard',
@@ -14,6 +17,7 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 export default class DashboardComponent implements OnInit {
     private reportesService = inject(ReportesService);
     private usuariosService = inject(UsuarioService);
+    private alert: AlertaSwal = new AlertaSwal();
     formReporte!: FormGroup;
     dataBarras: any;
     dataDonuts: any;
@@ -133,10 +137,36 @@ export default class DashboardComponent implements OnInit {
     }
 
     descargarReporte(form: any = null) {
+        this.alert.loading('GENERANDO ARCHIVO');
         this.reportesService.descargarReporte(form == null ? this.formReporte.value : form).subscribe({
             next: (data: any) => {
-                console.log(data);
-
+                try {
+                    if (data.length > 0) {
+                        const hojaTrabajo: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+                        const libro: XLSX.WorkBook = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(libro, hojaTrabajo, `CONSOLIDADO TURNOS`);
+                        const excelBuffer: any = XLSX.write(libro, { bookType: 'xlsx', type: 'array' });
+                        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+                        FileSaver.saveAs(blob, 'REPORTE DE TURNOS.xlsx');
+                        this.alert.close();
+                    } else {
+                        this.alert.showMessage({
+                            position: "center",
+                            icon: "info",
+                            title: "!NOTIFICACION¡",
+                            text: "NO HAY TURNOS EN ESTE RANGO DE TIEMPO",
+                            showConfirmButton: true,
+                        });
+                    }
+                } catch (error) {
+                    this.alert.showMessage({
+                        position: "center",
+                        icon: "error",
+                        title: "!NOTIFICACION¡",
+                        text: error,
+                        showConfirmButton: true,
+                    });
+                }
             },
         });
     }

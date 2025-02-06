@@ -36,14 +36,7 @@ export class ModuloService {
     }
 
     uiMenu(json: any) {
-        this.http.post(`${url}/auth/gestion_menu`, json).subscribe({
-            next: (value) => {
-                this.alert.close();
-            },
-            error: (err) => {
-                this.alert.close();
-            },
-        });
+        return this.http.post(`${url}/auth/gestion_menu`, json);
     }
 
     configModuloServicio(data: any, modulo_id: number) {

@@ -5,6 +5,8 @@ import { AppLayoutComponent } from './layout/app.layout.component';
 import { NotfoundComponent } from './views/notfound/notfound.component';
 import { authGuard } from './guards/authGuard.guard';
 import { autoLoginGuard } from './guards/autoLogin.guard';
+import { isAdminGuard } from './guards/isAdmin.guard';
+import { isSuperAdminGuard } from './guards/isSuperAdmin.guard';
 
 @NgModule({
     imports: [
@@ -18,6 +20,7 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                         {
                             path: '',
                             title: 'Dashboard',
+                            canActivate: [isAdminGuard],
                             data: ['pi pi-fw pi-home'],
                             loadComponent: () =>
                                 import('./views/dashboard/dashboard.component'),
@@ -27,18 +30,10 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                             title: 'Administracion',
                             children: [
                                 {
-                                    path: 'organigrama',
-                                    title: 'Organigrama',
-                                    data: ['pi pi-fw pi-sitemap'],
-                                    loadComponent: () =>
-                                        import(
-                                            './views/organigrama/organigrama.component'
-                                        ),
-                                },
-                                {
                                     path: 'empresas',
                                     title: 'Empresas',
                                     data: ['pi pi-fw pi-building'],
+                                    canActivate: [isSuperAdminGuard],
                                     loadComponent: () =>
                                         import(
                                             './views/empresas/empresas.component'
@@ -47,6 +42,7 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                                 {
                                     path: 'sedes',
                                     title: 'Sedes',
+                                    canActivate: [isAdminGuard],
                                     data: ['pi pi-fw pi-sitemap'],
                                     loadComponent: () =>
                                         import('./views/sedes/sedes.component'),
@@ -54,6 +50,7 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                                 {
                                     path: 'modulos',
                                     title: 'Modulos',
+                                    canActivate: [isAdminGuard],
                                     data: ['pi pi-fw pi-tag'],
                                     loadComponent: () =>
                                         import(
@@ -63,6 +60,7 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                                 {
                                     path: 'servicios',
                                     title: 'Servicios',
+                                    canActivate: [isAdminGuard],
                                     data: ['pi pi-building'],
                                     loadComponent: () =>
                                         import(
@@ -78,6 +76,7 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                                 {
                                     path: 'usuarios',
                                     title: 'Usuarios',
+                                    canActivate: [isAdminGuard],
                                     data: ['pi pi-users'],
                                     loadComponent: () =>
                                         import(
@@ -96,6 +95,7 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                                 {
                                     path: 'menus',
                                     title: 'Menus',
+                                    canActivate: [isAdminGuard],
                                     data: ['pi pi-bars'],
                                     loadComponent: () =>
                                         import('./views/menu/menu.component'),
@@ -118,6 +118,7 @@ import { autoLoginGuard } from './guards/autoLogin.guard';
                                 {
                                     path: 'reporte-turnos',
                                     title: 'Reporte',
+                                    canActivate: [isAdminGuard],
                                     data: ['pi pi-chart-line'],
                                     loadComponent: () =>
                                         import(

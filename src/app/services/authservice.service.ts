@@ -34,9 +34,23 @@ export class AuthService {
                     await this.storage.almacenarToken(usuario.token);
                     this.storage.almacenarDatosUsuario(usuario);
                     this.recordar(usuarioForm);
-                    this.alert.close();
-                    this.router.navigateByUrl('/home');
-                    this.socketervice.conectarSocket();
+                    switch (usuario.tipo_usuario) {
+                        case 'SUPER_ADMIN':
+                            this.router.navigateByUrl('/home/empresas');
+                            break;
+                        case 'EMPLEADO':
+                            this.router.navigateByUrl('/home/gestion-turno');
+                            break;
+                        case 'TEMP':
+                            this.router.navigateByUrl('/home/usuarios');
+                            break;
+                        case 'PANTALLA':
+                            this.router.navigateByUrl('/pantalla');
+                            break;
+                        default:
+                            this.router.navigateByUrl('/home');
+                            break;
+                    }
                 }
                 this.alert.showMessage({
                     position: "center",

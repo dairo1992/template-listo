@@ -41,8 +41,10 @@ export default class EmpresasComponent implements OnInit {
             ]),
             nombre: new FormControl('', Validators.required),
             direccion: new FormControl(''),
+            correo: new FormControl('', Validators.email),
             estado: new FormControl('A'),
             created_at: new FormControl(''),
+            imagen: new FormControl(''),
         });
     }
 
@@ -63,6 +65,7 @@ export default class EmpresasComponent implements OnInit {
     }
 
     nuevaEmpresa(): void {
+        this.modalNuevaEmpresa = false;
         this.alert.loading();
         this.service.nuevaEmpresa(this.empresaForm.value).subscribe({
             next: (empresa: Empresa) => {
@@ -82,6 +85,7 @@ export default class EmpresasComponent implements OnInit {
                 });
             },
             error: (err) => {
+                this.modalNuevaEmpresa = true;
                 this.alert.close();
                 this.loading = false;
             }
@@ -98,18 +102,25 @@ export default class EmpresasComponent implements OnInit {
     actualizarEmpresa(empresa: Empresa): void {
         this.alert.loading();
         this.service.actualizarEmpresa(empresa.id, empresa).subscribe({
-            next: (value: Empresa) => {
-                this.alert.close();
-                const i = this.service.lista_empresas().findIndex(
-                    (e) => e.id == empresa.id
-                );
-                this.service._lista_empresas.update((empresas) => {
-                    empresas.splice(i);
-                    empresas.push(empresa);
-                    return empresas;
-                });
-                this.alert.close();
+            next: (value: any) => {
+                if (value.STATUS) {
+                    const i = this.service.lista_empresas().findIndex(
+                        (e) => e.id == empresa.id
+                    );
+                    this.service._lista_empresas.update((empresas) => {
+                        empresas.splice(i);
+                        empresas.push(empresa);
+                        return empresas;
+                    });
+                }
                 this.modalNuevaEmpresa = false;
+                this.alert.showMessage({
+                    position: "center",
+                    icon: value.STATUS ? "success" : "error",
+                    title: "!NOTIFICACION¡",
+                    text: value.MSG,
+                    showConfirmButton: true,
+                });
             },
             error: (err) => {
                 this.alert.close();
@@ -126,7 +137,7 @@ export default class EmpresasComponent implements OnInit {
                     this.alert.close();
                     if (value.STATUS) {
                         this.service._lista_empresas.update((empresas: any) => {
-                            empresas.find((e) => e.id == empresa.id).estado =
+                            empresas.find((e: any) => e.id == empresa.id).estado =
                                 empresa.estado == 'A' ? 'I' : 'A';
                             return empresas;
                         });
@@ -146,6 +157,8 @@ export default class EmpresasComponent implements OnInit {
             nombre: '',
             direccion: '',
             estado: 'A',
+            correo: '',
+            imagen: '',
         });
     }
 }

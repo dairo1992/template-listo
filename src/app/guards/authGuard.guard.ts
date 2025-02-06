@@ -11,8 +11,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const storageService = inject(AlmacenService);
   let currentUser = storageService.obtenerDatosUsuario();
-  let currentURL = storageService.obtenerRutaActual();
-
+  
   if (currentUser) {
     // Si existe el token, permite el acceso
     return true;

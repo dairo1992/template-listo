@@ -189,6 +189,10 @@ export default class UsuariosComponent {
         this.modals.nuevoUsuario = true;
     }
 
+    setSede() {
+        this.formUsuario.controls['sede_id'].setValue(0);
+    }
+
     setRow(usuario: Usuario): void {
         this.rowSelect = usuario;
     }
@@ -224,6 +228,11 @@ export default class UsuariosComponent {
                     ...(this.service.lista_usuarios() || []),
                     value,
                 ]);
+                this.service.lista_usuarios().forEach((u: Usuario) => {
+                    if (u.tipo_usuario == 'TEMP') {
+                        u.estado = 'I';
+                    }
+                })
                 this.alert.showMessage({
                     position: "center",
                     icon: "success",
@@ -288,17 +297,19 @@ export default class UsuariosComponent {
 
     uiEstado(usuario: Usuario): void {
         this.service.uiEstado(usuario).subscribe({
-            next: (value: Usuario) => {
-                this.service._lista_usuarios.update((empresas) => {
-                    empresas.find((e) => e.id == usuario.id).estado =
-                        usuario.estado == 'A' ? 'I' : 'A';
-                    return empresas;
-                });
+            next: (value: any) => {
+                if (value.STATUS) {
+                    this.service._lista_usuarios.update((empresas) => {
+                        empresas.find((e) => e.id == usuario.id).estado =
+                            usuario.estado == 'A' ? 'I' : 'A';
+                        return empresas;
+                    });
+                }
                 this.alert.showMessage({
                     position: "center",
-                    icon: "success",
+                    icon: value.STATUS ? "success" : "error",
                     title: "!NOTIFICACION¡",
-                    text: `ACTUALIZADO CORRECTAMENTE`,
+                    text: value.MSG,
                     showConfirmButton: true,
                 });
             },

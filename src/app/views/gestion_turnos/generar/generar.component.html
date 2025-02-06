@@ -150,8 +150,8 @@
                         </div>
                         @if(usuarioService.currentUser().tipo_usuario == 'SUPER_ADMIN'){
                         <div class="field col"><label htmlfor="empresa">EMPRESA</label>
-                            <p-dropdown [options]="[]" formControlName="empresa_id"
-                                [optionLabel]="'nombre'" [optionValue]="'id'" [readonly]="formCliente.value.id > 0" />
+                            <p-dropdown [options]="[]" formControlName="empresa_id" [optionLabel]="'nombre'"
+                                [optionValue]="'id'" [readonly]="formCliente.value.id > 0" />
                             @if(formCliente.get('empresa_id').invalid && (formCliente.get('empresa_id').dirty ||
                             formCliente.get('empresa_id').touched)){
                             <div>

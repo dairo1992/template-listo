@@ -19,17 +19,17 @@
         <p-button label="DESCARGAR" severity="success" icon="pi pi-file-excel" />
     </div>
 </div> -->
-<div class="flex flex-row flex-wrap w-full mb-3">
+<!-- <div class="flex flex-row flex-wrap w-full mb-3">
     <div class="flex align-items-center justify-content-center w-9 h-4rem font-bold border-round mr-2">
         <form [formGroup]="formReporte" #formDirective="ngForm" (ngSubmit)="obtenerReporte()">
             <div class="formgrid grid">
                 <div class="field col">
                     <label for="fecha_inicio">FECHA INICIO</label>
-                    <p-calendar appendTo="body" formControlName="fecha_inicio" />
+                    <p-calendar appendTo="body" formControlName="fecha_inicio"  dateFormat="dd-mm-yy"/>
                 </div>
                 <div class="field col">
                     <label for="fecha_fin">FECHA INICIO</label>
-                    <p-calendar appendTo="body" formControlName="fecha_fin" />
+                    <p-calendar appendTo="body" formControlName="fecha_fin" dateFormat="dd-mm-yy" />
                 </div>
                 <div class="field col">
                     <p-button label="BUSCAR" icon="pi pi-search" styleClass="mt-4" (onClick)="obtenerReporte()" />
@@ -41,24 +41,24 @@
     <div class="flex align-items-center justify-content-center w-2 h-4rem font-bold border-round">
         <p-button label="DESCARGAR" severity="success" icon="pi pi-file-excel" (onClick)="descargarReporte()" />
     </div>
-</div>
+</div> -->
 <div class="flex flex-column md:flex-row w-full">
-    <div class="flex card align-items-center justify-content-center w-12 h-20rem font-bold border-round mb-3">
+    <div class="flex card align-items-center justify-content-center w-12 h-25rem font-bold border-round border-primary border-3 mb-3">
         <p-chart type="bar" [data]="dataBarras" [options]="optionsBarras" width="calc(100vw - 33rem)" height="22rem" />
     </div>
 </div>
 <div class="flex flex-column md:flex-row w-full">
-    <div class="flex card align-items-center justify-content-center w-6 h-22rem font-bold border-round m-2">
+    <div class="flex card align-items-center justify-content-center w-6 h-22rem font-bold border-round border-primary border-3 m-2">
         <div class="flex flex-column">
             <div class="flex font-bold border-round">
                 <strong>TURNOS POR SERVICIO</strong>
             </div>
-            <div class="flex align-items-center justify-content-center font-bold border-round">
+            <div class="flex align-items-center justify-content-center font-bold">
                 <p-chart type="pie" [data]="dataDonuts" [options]="optionsDonuts" height="20rem" />
             </div>
         </div>
     </div>
-    <div class="flex card align-items-center justify-content-center w-6 h-22rem font-bold border-round m-2">
+    <div class="flex card align-items-center justify-content-center w-6 h-22rem font-bold border-round border-primary border-3 m-2">
         <div class="flex flex-column">
             <div class="flex font-bold border-round">
                 <strong>TURNOS POR USUARIO</strong>

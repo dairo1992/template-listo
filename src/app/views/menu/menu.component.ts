@@ -86,6 +86,7 @@ export default class MenuComponent implements OnInit {
     }
 
     removerMenu(menu: any) {
+        this.alert.loading();
         if (menu.hasOwnProperty('routerLink')) {
             for (let ip = 0; ip < this.menus.length; ip++) {
                 for (let ih = 0; ih < this.menus[ip].items.length; ih++) {
@@ -99,11 +100,49 @@ export default class MenuComponent implements OnInit {
                     }
                 }
             }
-            this.menuService.uiMenu(this.menus);
+            this.menuService.uiMenu(this.menus).subscribe({
+                next: (value: any) => {
+                    this.alert.showMessage({
+                        position: "center",
+                        icon: "success",
+                        title: "!NOTIFICACION¡",
+                        text: value,
+                        showConfirmButton: true,
+                    });
+                },
+                error: (err) => {
+                    this.alert.showMessage({
+                        position: "center",
+                        icon: "error",
+                        title: "!NOTIFICACION¡",
+                        text: err.error,
+                        showConfirmButton: true,
+                    });
+                },
+            });
         } else {
             let i = this.menus.findIndex((m) => m.label == menu.label);
             this.menus.splice(i, 1);
-            this.menuService.uiMenu(this.menus);
+            this.menuService.uiMenu(this.menus).subscribe({
+                next: (value: any) => {
+                    this.alert.showMessage({
+                        position: "center",
+                        icon: "success",
+                        title: "!NOTIFICACION¡",
+                        text: value,
+                        showConfirmButton: true,
+                    });
+                },
+                error: (err) => {
+                    this.alert.showMessage({
+                        position: "center",
+                        icon: "error",
+                        title: "!NOTIFICACION¡",
+                        text: err.error,
+                        showConfirmButton: true,
+                    });
+                },
+            });
         }
     }
 
