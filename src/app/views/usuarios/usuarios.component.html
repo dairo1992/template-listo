@@ -50,9 +50,10 @@
             <td><p-tag [value]="utilitiService.getStatus(usuario.estado).nombre"
                     [severity]="utilitiService.getStatus(usuario.estado).color" />
             <td>
+                @if (usuario.tipo_usuario != 'TEMP') {
                 <p-splitButton icon="pi pi-cog" [model]="items" (onDropdownClick)="setRow(usuario)" outlined
                     appendTo="body" />
-
+                }
                 <!-- <div class="flex align-items-center justify-content-center gap-2">
                     <p-button pRipple [icon]="usuario.estado== 'A' ?'pi pi-trash' : 'pi pi-check'" [rounded]="true"
                         [disabled]="loading" [severity]="usuario.estado== 'A' ? 'danger' : 'success'" [outlined]="true"

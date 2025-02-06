@@ -100,6 +100,14 @@ import { isSuperAdminGuard } from './guards/isSuperAdmin.guard';
                                     loadComponent: () =>
                                         import('./views/menu/menu.component'),
                                 },
+                                {
+                                    path: 'organigrama',
+                                    title: 'Organigrama',
+                                    canActivate: [isAdminGuard],
+                                    data: ['pi pi pi-sitemap'],
+                                    loadComponent: () =>
+                                        import('./views/organigrama/organigrama.component'),
+                                },
                             ],
                         },
                         {
