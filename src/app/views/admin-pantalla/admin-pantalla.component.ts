@@ -5,6 +5,7 @@ import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { PantallaAdminService } from 'src/app/services/pantalla-admin.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
+import { url } from 'src/environments/environment';
 
 interface UploadedFile {
   name: string;
@@ -21,6 +22,7 @@ interface UploadedFile {
   encapsulation: ViewEncapsulation.None // Importante para que los estilos se apliquen correctamente
 })
 export default class ArchivoComponent implements OnInit {
+  private alert: AlertaSwal = new AlertaSwal();
   @ViewChild('fileUpload') fileUpload!: FileUpload;
   files: UploadedFile[] = [];
   imagenes: any[] = [];
@@ -45,7 +47,6 @@ export default class ArchivoComponent implements OnInit {
   displayCustom: boolean | undefined;
 
   activeIndex: number = 0;
-  private alert: AlertaSwal;
   constructor(private cdr: ChangeDetectorRef) {
     this.alert = new AlertaSwal();
   }
@@ -77,6 +78,7 @@ export default class ArchivoComponent implements OnInit {
   }
 
   cargarArchivos(event: any) {
+    this.alert.loading("CARGANDO IMAGENES AL SERVIDOR");
     const files = event.files;
     const id_empresa = this.usuarioService._currentUser().empresa.id;
     this.service.cargarImagenes(id_empresa != null ? id_empresa : 0, files).subscribe({
@@ -97,11 +99,12 @@ export default class ArchivoComponent implements OnInit {
       next: (resp: any[]) => {
         if (resp.length > 0) {
           this.imagenes = resp.map(item => ({
-            itemImageSrc: `http://localhost/api-digiturno/uploads/${id_empresa}/${item}`,
-            thumbnailImageSrc: `http://localhost/api-digiturno/uploads/${id_empresa}/${item}`,
+            itemImageSrc: `${url}/uploads/${id_empresa}/${item}`,
+            thumbnailImageSrc: `${url}/uploads/${id_empresa}/${item}`,
             alt: item.nombreArchivo,
             title: item.nombreArchivo
           }));
+          this.alert.close();
         }
       },
       error: (err) => {

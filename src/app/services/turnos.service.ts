@@ -7,6 +7,7 @@ import { TurnosActivos } from '../interfaces/turnos-activos.interface';
 import { TurnoLlamado } from '../interfaces/turno-llamado.interface';
 import { AlmacenService } from './storage.service';
 import { TurnosByUsuario } from '../interfaces/turnos-usuario.interface';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -20,15 +21,20 @@ export class TurnosService {
     public lista_turnos = computed(() => this._lista_turnos());
     private http = inject(HttpClient);
     private storage = inject(AlmacenService);
-
     private _resumen = signal<TurnosByUsuario>({ ACTIVOS: 0, ATENDIDOS: 0, TOTAL: 0, TURNOS: [] });
     public resumen = computed(() => this._resumen());
-
+    private _modal = new BehaviorSubject<boolean>(false);
+    modal$: Observable<boolean>;
     constructor(private messageService: MessageService) {
         const turno = this.storage.obtenerDatosTurno();
         if (turno != null) {
             this._currentTurno.set(turno);
         }
+        this.modal$ = this._modal.asObservable();
+    }
+
+    toggleYourValue(): void {
+        this._modal.next(!this._modal.getValue());
     }
 
     generarTurno(turno: any) {

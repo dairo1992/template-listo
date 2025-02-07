@@ -6,6 +6,7 @@ import { PrimeModule } from 'src/app/layout/prime-module/prime-module.module';
 import { PantallaAdminService } from 'src/app/services/pantalla-admin.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
+import { url } from 'src/environments/environment';
 
 @Component({
   selector: 'app-pantalla',
@@ -127,8 +128,8 @@ export default class PantallaComponent implements OnInit, OnDestroy {
       next: (resp: any[]) => {
         if (resp.length > 0) {
           this.imagenes = resp.map(item => ({
-            itemImageSrc: `http://localhost/api-digiturno/uploads/${id_empresa}/${item}`,
-            thumbnailImageSrc: `http://localhost/api-digiturno/uploads/${id_empresa}/${item}`,
+            itemImageSrc: `${url}/uploads/${id_empresa}/${item}`,
+            thumbnailImageSrc: `${url}/uploads/${id_empresa}/${item}`,
             alt: item.nombreArchivo,
             title: item.nombreArchivo
           }));

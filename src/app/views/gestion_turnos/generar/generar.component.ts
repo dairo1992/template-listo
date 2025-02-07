@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { Cliente } from 'src/app/interfaces/cliente.interface';
@@ -43,6 +43,7 @@ export default class GenerarComponent implements OnInit {
     modalImprimir: boolean = false;
     alert: AlertaSwal;
     currentUser: Usuario = inject(UsuarioService).currentUser();
+
     constructor() {
         this.limpiarForm();
         this.alert = new AlertaSwal();
@@ -89,6 +90,7 @@ export default class GenerarComponent implements OnInit {
     }
 
     consultarCliente() {
+        this.Service.toggleYourValue();
         this.alert.loading();
         const empresa_id = this.usuarioService.currentUser().empresa.id ?? 0;
         this.consultaForm.controls['empresa_id'].setValue(empresa_id);
@@ -98,6 +100,7 @@ export default class GenerarComponent implements OnInit {
                 next: (resp: any) => {
                     this.paso = 2;
                     // this.clienteService.setLoading(false);
+                    this.Service.toggleYourValue();
                     if (resp.STATUS) {
                         const cliente: Cliente = resp.MSG;
                         cliente.fecha_nacimiento = new Date(
@@ -105,7 +108,7 @@ export default class GenerarComponent implements OnInit {
                         ).toISOString();
                         this.formCliente.setValue(cliente);
                         this.formCliente.get('tipo_documento')?.disable();
-                    } else {
+                        } else {
                         this.formCliente.get('tipo_documento')?.enable();
                         this.formCliente.controls['id'].setValue(0);
                         this.formCliente.controls['empresa_id'].setValue(empresa_id);
@@ -134,8 +137,10 @@ export default class GenerarComponent implements OnInit {
             this.paso = 3;
             this.alert.close();
         } else {
+            this.Service.toggleYourValue();
             this.clienteService.nuevoCliente(this.formCliente.value).subscribe({
                 next: (value: Cliente) => {
+                    this.Service.toggleYourValue();
                     this.paso = 3;
                     this.formCliente.setValue(value);
                     this.clienteService._cliente.set(value);
@@ -180,6 +185,7 @@ export default class GenerarComponent implements OnInit {
     }
 
     generarTurno(servicio: Servicio) {
+        this.Service.toggleYourValue();
         const currentUser = this.usuarioService.currentUser();
         // if (currentUser.modulo.id == null) {
         //     this.alert.showMessage({
@@ -224,6 +230,13 @@ export default class GenerarComponent implements OnInit {
                     summary: response.MSG,
                     detail: response.DATA,
                     data: response.TURNO_ID,
+                });
+                this.alert.showMessage({
+                    position: "center",
+                    icon: response.STATUS ? 'success' : 'error',
+                    title: "!NOTIFICACION¡",
+                    text: `${response.MSG.split(' ')[0]} ${response.DATA} ${response.MSG.split(' ')[1]}`,
+                    showConfirmButton: true,
                 });
                 if (response.STATUS) {
                     this.socketService.emit('lista-turnos', { "empresa_id": currentUser.empresa.id, sede_id: currentUser.empresa.sede.id });

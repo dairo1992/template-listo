@@ -10,8 +10,8 @@ export const environment = {
 // DEVELOPER
 // export const url = 'http://localhost:5500';
 // API NEST
-// export const url = 'https://api-digiturno.ingdairo.com';
-export const url = 'http://192.168.52.5/api-digiturno';
+export const url = 'https://api-digiturno.ingdairo.com';
+// export const url = 'http://192.168.52.5/api-digiturno';
 // export const url = 'http://localhost:5500';
 export const cryptoKey = 'Restomaikovf87';
 

@@ -216,7 +216,8 @@ export default class UsuariosComponent {
     }
 
     nuevoUsuario(): void {
-        this.alert.loading();
+        this.alert.loading('Almacenando datos');
+        this.modals.nuevoUsuario = false;
         if (this.currentUser.tipo_usuario != 'SUPER_ADMIN') {
             this.formUsuario.controls['empresa_id'].setValue(
                 this.service.currentUser().empresa.id
@@ -240,7 +241,6 @@ export default class UsuariosComponent {
                     text: `${value.nombre.toUpperCase()} CREADO CORRECTAMENTE`,
                     showConfirmButton: true,
                 });
-                this.modals.nuevoUsuario = false;
             },
             error: (err) => {
                 this.modals.nuevoUsuario = false;

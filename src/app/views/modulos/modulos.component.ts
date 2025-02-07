@@ -48,7 +48,7 @@ export default class ModulosComponent {
     ngOnInit(): void {
         this.moduloForm = new FormGroup({
             id: new FormControl(Validators.required),
-            nombre: new FormControl('',Validators.required),
+            nombre: new FormControl('', Validators.required),
             estado: new FormControl('A'),
             created_at: new FormControl(''),
             sede: new FormControl(''),
@@ -73,19 +73,10 @@ export default class ModulosComponent {
 
     nuevoModulo(): void {
         const form = { ...this.moduloForm.value, empresa_id: this.usuarioService.currentUser().empresa.id };
+        this.modalNuevaSede = false;
         this.alert.loading();
         this.service.nuevoModulo(form).subscribe({
             next: (value: Modulo) => {
-                // const sede = this._sedes_Service.lista_sedes().find(
-                //     (m) => m.id == this.moduloForm.value.sede_id
-                // );
-                // value.sede = sede;
-                // this.service._lista_modulos.set([
-                //     ...(this.service.lista_modulos() || []),
-                //     value,
-                // ]);
-                this.modalNuevaSede = false;
-
                 Swal.fire({
                     position: "center",
                     icon: "success",
@@ -222,6 +213,7 @@ export default class ModulosComponent {
     }
 
     configModulo(modulo: Modulo | null, accion: string): void {
+        this.modalConfig = false;
         const usuario = this.usuarioService.currentUser();
         if (accion == 'C') {
             this.moduloSeleccionado = modulo;
@@ -240,7 +232,6 @@ export default class ModulosComponent {
             }
             this.service.configModuloServicio(servicios, this.moduloSeleccionado.id).subscribe({
                 next: (value: any) => {
-                    this.modalConfig = false;
                     this.alert.showMessage({
                         position: "center",
                         icon: value.STATUS ? "success" : "error",

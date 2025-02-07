@@ -17,7 +17,7 @@ export class SocketService {
   private connectToSocket(): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        this.socket = io('http://localhost:3000', {
+        this.socket = io('https://socket-digiturno.onrender.com', {
           auth: {
             user_id: this.usuarioService.currentUser().id,
             empresa_id: this.usuarioService.currentUser().empresa.id,

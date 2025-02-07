@@ -59,7 +59,8 @@ export default class SedesComponent implements OnInit {
     }
 
     nuevaSede(): void {
-        this.alert.loading();
+        this.alert.loading('Almacenando datos');
+        this.modalNuevaSede = false;
         if (this.currentUser.tipo_usuario != 'SUPER_ADMIN') {
             this.sedeForm.controls['empresa_id'].setValue(
                 this.currentUser.empresa.id
@@ -69,7 +70,6 @@ export default class SedesComponent implements OnInit {
             .subscribe({
                 next: (value: Sede) => {
                     this.service._lista_sedes.set([...(this.service.lista_sedes() || []), value]);
-                    this.modalNuevaSede = false;
                     this.alert.showMessage({
                         position: "center",
                         icon: "success",
@@ -86,7 +86,7 @@ export default class SedesComponent implements OnInit {
                         text: err.error,
                         showConfirmButton: true,
                     });
-                    this.modalNuevaSede = false;
+                    
                 },
             });
 

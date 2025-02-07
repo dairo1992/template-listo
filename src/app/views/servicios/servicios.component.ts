@@ -107,11 +107,12 @@ export default class ServiciosComponent implements OnInit {
 
     nuevoServicio(): void {
         this.alert.loading();
+        this.modalNuevoServicio = false;
         // this.servicioForm.controls['empresa_id'].setValue(this.usuarioService.currentUser().empresa.id);
         // const form = { ...this.servicioForm.value, empresa_id: this.usuarioService.currentUser().empresa.id };
         this.service.nuevoServicio(this.servicioForm.value).subscribe({
             next: (value: any) => {
-                this.modalNuevoServicio = false;
+                
                 Swal.fire({
                     position: "center",
                     icon: "success",

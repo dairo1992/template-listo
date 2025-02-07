@@ -13,6 +13,8 @@ import { ServiciosService } from 'src/app/services/servicios.service';
 import { Servicio } from 'src/app/interfaces/servicio.interface';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { Subscription } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-gestionar',
@@ -21,7 +23,7 @@ import Swal from 'sweetalert2';
     templateUrl: './gestionar.component.html',
     styleUrl: './gestionar.component.scss',
 })
-export default class GestionarComponent {
+export default class GestionarComponent implements OnInit, OnDestroy {
     modalGenerarTurno: boolean = false;
     modalListaTurno: boolean = false;
     modalRedirigirTurno: boolean = false;
@@ -32,6 +34,9 @@ export default class GestionarComponent {
     private socketService = inject(SocketService);
     public serviciosService = inject(ServiciosService);
     public getStatus = inject(UtilitiesService).getStatus;
+    private messageService = inject(MessageService);
+    subscription: Subscription;
+    statusModal: boolean;
     alert: AlertaSwal;
 
 
@@ -52,11 +57,27 @@ export default class GestionarComponent {
             return;
         }
         this.turnosService.obtenerTurnosCant(this.currentUser.id);
+
+    }
+
+    ngOnInit(): void {
+        this.subscription =
+            this.turnosService.modal$.subscribe(yourValue => {
+                this.statusModal = yourValue;
+            });
+    }
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
 
     consultarTurnos() {
         this.modalListaTurno = true;
         this.turnosService.obtenerTurnos(this.currentUser.id);
+    }
+
+    nuevoTurno() {
+        this.turnosService.toggleYourValue();
     }
 
     llamarTurno() {
