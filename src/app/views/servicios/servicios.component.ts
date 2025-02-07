@@ -171,7 +171,7 @@ export default class ServiciosComponent implements OnInit {
             color: servicio.color,
             icono: servicio.icono,
             estado: servicio.estado,
-            empresa_id: servicio.sede.empresa.id,
+            empresa_id: this.usuarioService.currentUser().empresa.id,
         }
         this.iconSelect = servicio.icono;
         this.servicioForm.setValue(servicioTemp);
