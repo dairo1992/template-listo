@@ -60,6 +60,7 @@ export default class ModulosComponent {
     }
 
     obtenermodulos(id_user: number): void {
+        this.alert.loading();
         this.service.obtenerModulos(id_user).subscribe({
             next: (data) => {
                 this.service._lista_modulos.set(data);
@@ -105,22 +106,24 @@ export default class ModulosComponent {
     }
 
     actualizarModulo(sede: Modulo): void {
+        const comdulo = this.moduloForm.value;
+        this.modalNuevaSede = false;
         this.alert.loading();
         this.service.actualizarModulo(sede.id, sede).subscribe({
             next: (value: any) => {
                 const i = this.service.lista_modulos().findIndex(
-                    (e) => e.id == this.moduloForm.value.id
+                    (e) => e.id == comdulo.id
                 );
                 this.service._lista_modulos.update((empresas) => {
-                    empresas.splice(i);
+                    empresas.splice(i,1);
                     const sed = this._sedes_Service.lista_sedes().find(
-                        (s) => s.id == this.moduloForm.value.sede_id
+                        (s) => s.id == comdulo.sede_id
                     );
-                    this.moduloForm.value.sede = sed;
-                    empresas.push(this.moduloForm.value);
+                    comdulo.sede = sed;
+                    empresas.push(comdulo);
                     return empresas;
                 });
-                this.modalNuevaSede = false;
+                // this.obtenermodulos(this.usuarioService.currentUser().empresa.id);
                 this.alert.showMessage({
                     position: "center",
                     icon: value.STATUS ? "success" : "error",

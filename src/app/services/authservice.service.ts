@@ -76,7 +76,7 @@ export class AuthService {
         if (formAuth.RECORDAR) {
             this.storageService.recordarUsuario(formAuth);
         } else {
-            // this.storageService.olvidarUsuario();
+            this.storageService.olvidarUsuario();
         }
     }
 

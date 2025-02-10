@@ -3,7 +3,7 @@ enum type { error, success, info, warning, question };
 
 export class AlertaSwal {
 
-    loading(title: string = "Obteniendo datos...") {
+    loading(title: string = "OBTENIENDO DATOS...") {
         Swal.fire({
             title: title,
             allowOutsideClick: false,

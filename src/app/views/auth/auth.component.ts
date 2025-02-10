@@ -32,8 +32,8 @@ export default class AuthComponent implements OnInit {
     constructor() {
         this.obtenerEmpresas(0);
         this.formAuth = new FormGroup({
-            EMPRESA: new FormControl(0),
-            USUARIO: new FormControl(0),
+            EMPRESA: new FormControl('', [Validators.required]),
+            USUARIO: new FormControl('', [Validators.required]),
             PASSWORD: new FormControl('', [Validators.required]),
             RECORDAR: new FormControl(false),
         });

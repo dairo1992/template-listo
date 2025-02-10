@@ -141,7 +141,7 @@
     </div>
 </p-dialog>
 
-<p-dialog header="SELECCIONAR ICONO" [(visible)]="modalIcon" [modal]="true"
+<p-dialog header="SELECCIONAR ICONO" [(visible)]="modalIcon" [modal]="true" (onHide)="query = '';filterIcon('')"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false"
     [resizable]="false">
     <div class="flex flex-column">

@@ -28,7 +28,7 @@ export default class ArchivoComponent implements OnInit {
   imagenes: any[] = [];
   modalPauta: boolean = false;
   nuevaPauta = "";
-  pautaActual: any;
+  pautaActual: string = '';
 
 
   responsiveOptions = [
@@ -151,6 +151,6 @@ export default class ArchivoComponent implements OnInit {
   }
 
   obtenerPauta(empresa_id: number) {
-    this.service.obtenerPauta(empresa_id != null ? empresa_id : 0).subscribe((data: any) => this.pautaActual = data.pauta);
+    this.service.obtenerPauta(empresa_id != null ? empresa_id : 0).subscribe((data: any) => this.pautaActual = data != null ? data.pauta : '');
   }
 }

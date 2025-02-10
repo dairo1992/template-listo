@@ -65,6 +65,7 @@ export default class ServiciosComponent implements OnInit {
             estado: new FormControl('A'),
             empresa_id: new FormControl(this.usuarioService.currentUser().empresa.id, Validators.required),
         });
+        this.query = '';
     }
 
 
@@ -112,7 +113,7 @@ export default class ServiciosComponent implements OnInit {
         // const form = { ...this.servicioForm.value, empresa_id: this.usuarioService.currentUser().empresa.id };
         this.service.nuevoServicio(this.servicioForm.value).subscribe({
             next: (value: any) => {
-                
+
                 Swal.fire({
                     position: "center",
                     icon: "success",
@@ -176,12 +177,11 @@ export default class ServiciosComponent implements OnInit {
         this.iconSelect = servicio.icono;
         this.servicioForm.setValue(servicioTemp);
         this.modalNuevoServicio = true;
-        console.log(this.servicioForm);
-
     }
 
     actualizarServicio(servicio: any): void {
-        this.alert.loading();
+        this.modalNuevoServicio = false;
+        this.alert.loading('ALMACENANDO DATOS');
         this.service.actualizarServicio(servicio.id, servicio).subscribe({
             next: (value: Servicio) => {
                 const i = this.service.lista_servicios().findIndex(
@@ -190,7 +190,6 @@ export default class ServiciosComponent implements OnInit {
                 this.service._lista_servicios.update((servicios) => {
                     const sed = this.sedesService.lista_sedes().find((e) => e.id == servicio.sede_id);
                     servicios.splice(i, 1);
-                    servicio.modulo.sede = sed;
                     servicios.push(servicio);
                     return servicios;
                 });
@@ -216,6 +215,7 @@ export default class ServiciosComponent implements OnInit {
     }
 
     uiEstado(servicio: Servicio): void {
+        this.alert.loading('ENVIANDO SOLICITUD');
         this.service.uiEstado(servicio).subscribe({
             next: (value: Servicio) => {
                 this.service._lista_servicios.update((servicios) => {
