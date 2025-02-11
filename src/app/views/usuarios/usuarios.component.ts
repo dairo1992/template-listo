@@ -326,48 +326,57 @@ export default class UsuariosComponent {
     }
 
     configUsuario(usuario: Usuario) {
-        this.alert.loading("Obteniendo modulos");
+        this.alert.loading("Obteniendo módulos");
         this.menuFull = [];
         this.menuUser = [];
+    
+        const existeModulo = (label: string): boolean => {
+            return this.menuUser.some((menu) => menu.label === label);
+        };
+    
         this.service.obt_modulos(usuario.id).subscribe({
             next: (response: any) => {
                 this.modals.config = true;
+    
                 response.menu.map((m: any, i: number) => {
                     this.menuFull.push({
                         key: `${i + 1}`,
                         label: m.label,
-                        children: m.items.filter((c: any) => c.label != 'Empresas').map((c: any, p: number) => {
-                            return {
+                        children: m.items
+                            .filter((c: any) => c.label !== 'Empresas')
+                            .map((c: any, p: number) => ({
                                 key: `${i}-${p}`,
                                 label: c.label,
                                 data: c.routerLink,
                                 icon: c.icon,
-                            };
-                        })
+                            })),
                     });
-                    this.alert.close();
                 });
+    
                 response.usuarioMenu.map((m: any, i: number) => {
-                    this.menuUser.push({
-                        key: `${i}`,
-                        label: m.label,
-                        children: m.items.map((c: any, p: number) => {
-                            return {
+                    if (!existeModulo(m.label)) {
+                        this.menuUser.push({
+                            key: `${i}`,
+                            label: m.label,
+                            children: m.items.map((c: any, p: number) => ({
                                 key: `${i}-${p}`,
                                 label: c.label,
                                 data: c.routerLink,
                                 icon: c.icon,
-                            };
-                        }),
-                    });
+                            })),
+                        });
+                    }
                 });
+    
+                this.alert.close();
             },
             error: (error) => {
                 this.alert.close();
             },
         });
+    
         this.usuarioSelected = usuario;
-        this.modals.modalTitle = `CONFIGURACION DE USUARIO`;
+        this.modals.modalTitle = `CONFIGURACIÓN DE USUARIO`;
     }
 
     agregarModulo() {
